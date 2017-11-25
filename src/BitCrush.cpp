@@ -6,11 +6,13 @@
 struct BitCrush: Module {
 	enum ParamIds {
 		CH1_PARAM,
+		CH2_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
 		CH1_INPUT,
 		CH1_CV_INPUT,
+		CH2_CV_INPUT,
 		NUM_INPUTS
 	};
 	enum OutputIds {
@@ -29,24 +31,18 @@ void BitCrush::step() {
 	float ch1 = inputs[CH1_INPUT].value;
 
 	float combined_input = params[CH1_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+	float combined_crush_floor = params[CH2_PARAM].value * clampf(inputs[CH2_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+
 	// new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-	float mapped_input = ((combined_input - 0.0) / (1.0 - 0.0) ) * (32.0 - 1.0) + 1.0;
-	// float bit_depth = 32 - mapped_input;
+	float mapped_crush_floor = ((combined_crush_floor - 0.0) / (1.0 - 0.0) ) * (32.0 - 1.0) + 1.0;
+	int crush_floor = 32 - static_cast<int>(mapped_crush_floor) + 1;
 
-	int bit_depth = 32 - static_cast<int>(mapped_input) + 1;
+    float mapped_input = ((combined_input - 0.0) / (1.0 - 0.0) ) * (crush_floor - 1.0) + 1.0;
 
-	// float ch1 = inputs[CH1_INPUT].value * params[CH1_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+	int bit_depth = crush_floor - static_cast<int>(mapped_input) + 1;
 
-	// int BitDepth = 1;
 	int max = pow(2, bit_depth) - 1;
     float ch1_crushed = ROUND((ch1 + 1.0) * max) / max - 1.0;
-
-    // std::cout << "value: " << params[CH1_PARAM].value << '\n';
-	// std::cout << "bit_depth: " << bit_depth << '\n';
-	// std::cout << "combined_input: " << combined_input << '\n';
-	// std::cout << "mapped_input: " << mapped_input << '\n';
-	// std::cout << "input: " << ch1 << '\n';
-    // std::cout << "crushed: " << ch1_crushed << '\n';
 
 	outputs[CH1_OUTPUT].value = ch1_crushed;
 }
@@ -70,8 +66,12 @@ BitCrushWidget::BitCrushWidget() {
 	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 	addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, BitCrush::CH1_PARAM, 0.0, 1.0, 0.0));
+	addParam(createParam<RoundBlackKnob>(Vec(57, 219), module, BitCrush::CH2_PARAM, 0.0, 1.0, 0.0));
+
 	addInput(createInput<PJ301MPort>(Vec(22, 129), module, BitCrush::CH1_INPUT));
 	addInput(createInput<PJ301MPort>(Vec(22, 160), module, BitCrush::CH1_CV_INPUT));
+
+	addInput(createInput<PJ301MPort>(Vec(22, 241), module, BitCrush::CH2_CV_INPUT));
 
 	addOutput(createOutput<PJ301MPort>(Vec(110, 145), module, BitCrush::CH1_OUTPUT));
 }
