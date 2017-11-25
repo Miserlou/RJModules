@@ -10,11 +10,11 @@ Various DIY modules I've made for [VCV Rack](https://github.com/VCVRack/Rack). S
 It's a bit crusher! Accepts control voltage, and sets a (voltage controlled) minimum bit depth for fine tuning.
 
 ### Integers
-<img src='https://i.imgur.com/NRQjpmZ.png' width="50%" />
+<img src='https://i.imgur.com/NRQjpmZ.png' width="25%" />
 It generates three (voltage controlled) integers from -12 to +12!
 
 ### Floats
-<img src='https://i.imgur.com/spQgKmr.png' width="50%" />
+<img src='https://i.imgur.com/spQgKmr.png' width="25`%" />
 It generates three (voltage controlled) floats from -12 to +12!
 
 ## Future Plans
