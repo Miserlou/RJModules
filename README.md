@@ -4,8 +4,10 @@ Various DIY modules for [VCV Rack](https://github.com/VCVRack/Rack).
 
 ## Contents
 
-<img src='https://i.imgur.com/tjKYMUn.png' width="50%">
+<img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
+
 ### BitCrusher
+
 It's a bit crusher! Accepts control voltage, and sets a (voltage controlled) minimum bit depth for fine tuning.
 
 ## Future Plans
