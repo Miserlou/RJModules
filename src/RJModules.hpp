@@ -11,3 +11,11 @@ extern Plugin *plugin;
 struct BitCrushWidget: ModuleWidget {
 	BitCrushWidget();
 };
+
+struct IntegersWidget: ModuleWidget {
+    IntegersWidget();
+};
+
+struct FloatsWidget: ModuleWidget {
+    FloatsWidget();
+};

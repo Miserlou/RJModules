@@ -1,14 +1,23 @@
 # RJModules
 
-Various DIY modules for [VCV Rack](https://github.com/VCVRack/Rack).
+Various DIY modules I've made for [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilites, hopefully some more interesting ones soon!
 
 ## Contents
 
 <img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
 
 ### BitCrusher
+<img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
 
 It's a bit crusher! Accepts control voltage, and sets a (voltage controlled) minimum bit depth for fine tuning.
+
+### Integers
+<img src='https://i.imgur.com/spQgKmr.png' width="50%" />
+It generates three (voltage controlled) integers from -12 to +12!
+
+### Floats
+<img src='https://i.imgur.com/spQgKmr.png' width="50%" />
+It generates three (voltage controlled) floats from -12 to +12!
 
 ## Future Plans
 
@@ -22,8 +31,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Autopanner - Given a signal, oscillate into two output channels
   * VCDryWet
   * Button - It's literally just a fucking button. You hit it, it sends a reset signal.
-  * Integers - Just some integers!
-  * Floats - Just some floats!
   * DubEcho - Two delays and a spring.
 
 ## Building
