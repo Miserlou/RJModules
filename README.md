@@ -4,15 +4,13 @@ Various DIY modules I've made for [VCV Rack](https://github.com/VCVRack/Rack). S
 
 ## Contents
 
-<img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
-
 ### BitCrusher
 <img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
 
 It's a bit crusher! Accepts control voltage, and sets a (voltage controlled) minimum bit depth for fine tuning.
 
 ### Integers
-<img src='https://i.imgur.com/spQgKmr.png' width="50%" />
+<img src='https://i.imgur.com/NRQjpmZ.png' width="50%" />
 It generates three (voltage controlled) integers from -12 to +12!
 
 ### Floats
