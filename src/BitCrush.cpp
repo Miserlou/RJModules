@@ -37,12 +37,11 @@ void BitCrush::step() {
 	float mapped_crush_floor = ((combined_crush_floor - 0.0) / (1.0 - 0.0) ) * (32.0 - 1.0) + 1.0;
 	int crush_floor = 32 - static_cast<int>(mapped_crush_floor) + 1;
 
-    float mapped_input = ((combined_input - 0.0) / (1.0 - 0.0) ) * (crush_floor - 1.0) + 1.0;
-
+	float mapped_input = ((combined_input - 0.0) / (1.0 - 0.0) ) * (crush_floor - 1.0) + 1.0;
 	int bit_depth = crush_floor - static_cast<int>(mapped_input) + 1;
 
 	int max = pow(2, bit_depth) - 1;
-    float ch1_crushed = ROUND((ch1 + 1.0) * max) / max - 1.0;
+	float ch1_crushed = ROUND((ch1 + 1.0) * max) / max - 1.0;
 
 	outputs[CH1_OUTPUT].value = ch1_crushed;
 }
