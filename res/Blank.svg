@@ -14,7 +14,7 @@
    viewBox="0 0 39.747425 100.54168"
    version="1.1"
    id="svg4541"
-   sodipodi:docname="Floats.svg"
+   sodipodi:docname="Blank.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
   <defs
      id="defs4535" />
@@ -27,7 +27,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
      inkscape:cx="110.5301"
-     inkscape:cy="282.36269"
+     inkscape:cy="296.6484"
      inkscape:document-units="mm"
      inkscape:current-layer="layer3"
      showgrid="false"
@@ -37,7 +37,7 @@
      fit-margin-bottom="0"
      inkscape:window-width="1440"
      inkscape:window-height="851"
-     inkscape:window-x="59"
+     inkscape:window-x="32"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
      units="px" />
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -401,7 +401,21 @@
          d="m 33.5103,21.052103 h -0.352208 v -0.286541 h 1.008861 v 0.286541 h -0.352205 v 1.838636 H 33.5103 Z"
          inkscape:connector-curvature="0" />
     </g>
-  </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot923-4"
+       style="font-style:normal;font-weight:normal;font-size:14.66666698px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.80924457"
+       transform="matrix(0.26458333,0,0,0.26458333,-11.883987,24.103453)"><flowRegion
+         id="flowRegion925-3"
+         style="font-size:14.66666698px"><rect
+           id="rect927-8"
+           width="136.42857"
+           height="79.285713"
+           x="6.7857141"
+           y="11.428541"
+           style="font-size:14.66666698px" /></flowRegion><flowPara
+         id="flowPara929-2"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.66666698px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle">SWITCH</flowPara></flowRoot>  </g>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"

@@ -22,11 +22,6 @@ struct LowFrequencyOscillator {
     float getFreq() {
         return freq;
     }
-
-    // void setPulseWidth(float pw_) {
-    //     const float pwMin = 0.01;
-    //     pw = clampf(pw_, pwMin, 1.0 - pwMin);
-    // }
     void setReset(float reset) {
         if (resetTrigger.process(reset)) {
             phase = 0.0;
@@ -38,21 +33,6 @@ struct LowFrequencyOscillator {
         if (phase >= 1.0)
             phase -= 1.0;
     }
-    // float sin() {
-    //     if (offset)
-    //         return 1.0 - cosf(2*M_PI * phase) * (invert ? -1.0 : 1.0);
-    //     else
-    //         return sinf(2*M_PI * phase) * (invert ? -1.0 : 1.0);
-    // }
-    // float tri(float x) {
-    //     return 4.0 * fabsf(x - roundf(x));
-    // }
-    // float tri() {
-    //     if (offset)
-    //         return tri(invert ? phase - 0.5 : phase);
-    //     else
-    //         return -1.0 + tri(invert ? phase - 0.25 : phase - 0.75);
-    // }
     float saw(float x) {
         return 2.0 * (x - roundf(x));
     }
@@ -62,10 +42,6 @@ struct LowFrequencyOscillator {
         else
             return saw(phase) * (invert ? -1.0 : 1.0);
     }
-    // float sqr() {
-    //     float sqr = (phase < pw) ^ invert ? 1.0 : -1.0;
-    //     return offset ? sqr + 1.0 : sqr;
-    // }
     float light() {
         return sinf(2*M_PI * phase);
     }
@@ -78,12 +54,15 @@ struct Supersaw : Module {
         INVERT_PARAM,
         FREQ_PARAM,
         DETUNE_PARAM,
+        MIX_PARAM,
+        THREE_OSC_PARAM,
 
         NUM_PARAMS
     };
     enum InputIds {
-        FM1_INPUT,
-        FM2_INPUT,
+        FREQ_VC_INPUT,
+        DETUNE_VC_INPUT,
+        MIX_VC_INPUT,
         RESET_INPUT,
         PW_INPUT,
         NUM_INPUTS
@@ -151,14 +130,20 @@ SupersawWidget::SupersawWidget() {
     addChild(createScrew<ScrewSilver>(Vec(15, 365)));
     addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<CKSS>(Vec(15, 77), module, Supersaw::OFFSET_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<CKSS>(Vec(119, 77), module, Supersaw::INVERT_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 100), module, Supersaw::OFFSET_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 180), module, Supersaw::INVERT_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 260), module, Supersaw::THREE_OSC_PARAM, 0.0, 1.0, 1.0));
 
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Supersaw::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(createParam<RoundBlackKnob>(Vec(23, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(createInput<PJ301MPort>(Vec(80, 276), module, Supersaw::RESET_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(80, 320), module, Supersaw::SAW_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Supersaw::FREQ_VC_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Supersaw::DETUNE_VC_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Supersaw::MIX_VC_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(38, 310), module, Supersaw::RESET_INPUT));
 
-    addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 42.5), module, Supersaw::PHASE_POS_LIGHT));
+    addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, Supersaw::SAW_OUTPUT));
+
+    addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Supersaw::PHASE_POS_LIGHT));
 }
