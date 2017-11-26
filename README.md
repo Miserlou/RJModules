@@ -59,13 +59,14 @@ Panner is a voltage controlled panner. Without CV, it pans a mono signal into le
 None of them actually exist yet, but I'm hoping this will project eventually contain:
 
   * FFTTuner - FFT / Tuner
-  * VCMono - Combine two signals into one, modulated by VC
+  * VCMono - Combine two signals into "one", through two identical outputs, modulated by VC
   * VCWidener - Use the Haas effect to widen two inputs
   * BPM - Dial in a pulse to a specific beats per minute. Also VC-able and "reset"-able.
   * Sidechain - Lower the volume of A based on B.
   * VCDryWet
   * DubEcho - Two delays and a spring.
   * Filter Delay
+  * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
 
 ## Building
