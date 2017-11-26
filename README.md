@@ -64,6 +64,10 @@ First, clone and [make Rack for yourself](https://github.com/VCVRack/Rack#buildi
 
 Then, clone this repo into the `plugins` directory and run `make` from this directory.
 
+## Related Projects
+
+  * [Autopan](https://github.com/Miserlou/Autopan)
+
 ## License
 
 (c) Rich Jones 2017, BSD.
