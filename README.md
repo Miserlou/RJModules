@@ -1,6 +1,23 @@
-# RJModules
+<img src="https://i.imgur.com/1D1ffjO.png" width="50%">
 
+# RJModules
 Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilites, hopefully some more interesting ones soon!
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [RJModules](#rjmodules)
+  - [Contents](#contents)
+    - [Bit Crusher](#bit-crusher)
+    - [Integers](#integers)
+    - [Floats](#floats)
+    - [Randoms](#randoms)
+    - [Button](#button)
+  - [Future Plans](#future-plans)
+  - [Building](#building)
+  - [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Contents
 
