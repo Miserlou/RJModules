@@ -15,6 +15,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Button](#button)
   - [Splitter](#splitter)
   - [Panner](#panner)
+  - [Filter Delay](#filter-delay)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
