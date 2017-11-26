@@ -18,8 +18,7 @@ It generates three (voltage controlled) integers from -12 to +12!
 It generates three (voltage controlled) floats from -12 to +12!
 
 ### Randoms
-<img src='https://i.imgur.com/spQgKmr.png' width="50%" />
-https://i.imgur.com/CuM471K.png
+<img src='https://i.imgur.com/CuM471K.png' width="50%" />
 
 Generates three random values. The range of the values can be controlled via CV, but will default to (-12, +12) if CV values are empty/equal.
 
