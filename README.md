@@ -14,6 +14,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Randoms](#randoms)
   - [Button](#button)
   - [Splitter](#splitter)
+  - [Panner](#panner)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -49,16 +50,19 @@ It's literally just a big ass button with six outputs. You hit it, it sends a +1
 <img src="https://i.imgur.com/bvJKVEn.png" width="25%" />
 It's a 9-way splitter! You've got a signal - now send it everywhere!
 
+### Panner
+<img src="https://i.imgur.com/4z5li8u.png" width="25%" />
+Panner is a voltage controlled panner. Without CV, it pans a mono signal into left and right channels based on the value of the knob. Combine with an LFO to build an autopanner!
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
 
   * FFTTuner - FFT / Tuner
   * VCMono - Combine two signals into one, modulated by VC
-  * VCSplitter - Split one signal into two, modulated by VC
+  * VCWidener - Use the Haas effect to widen two inputs
   * BPM - Dial in a pulse to a specific beats per minute. Also VC-able and "reset"-able.
   * Sidechain - Lower the volume of A based on B.
-  * Autopanner - Given a signal, oscillate into two output channels
   * VCDryWet
   * DubEcho - Two delays and a spring.
   * Filter Delay

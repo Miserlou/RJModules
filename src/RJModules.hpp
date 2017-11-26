@@ -31,3 +31,7 @@ struct ButtonWidget: ModuleWidget {
 struct SplitterWidget: ModuleWidget {
     SplitterWidget();
 };
+
+struct PannerWidget: ModuleWidget {
+    PannerWidget();
+};
