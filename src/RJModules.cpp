@@ -13,4 +13,6 @@ void init(rack::Plugin *p) {
 	p->addModel(createModel<BitCrushWidget>("RJModules", "BitCrush", "BitCrush", FILTER_TAG));
     p->addModel(createModel<IntegersWidget>("RJModules", "Integers", "Integers", UTILITY_TAG));
     p->addModel(createModel<FloatsWidget>("RJModules", "Floats", "Floats", UTILITY_TAG));
+    p->addModel(createModel<RandomsWidget>("RJModules", "Randoms", "Randoms", UTILITY_TAG));
+
 }

@@ -19,3 +19,7 @@ struct IntegersWidget: ModuleWidget {
 struct FloatsWidget: ModuleWidget {
     FloatsWidget();
 };
+
+struct RandomsWidget: ModuleWidget {
+    RandomsWidget();
+};
