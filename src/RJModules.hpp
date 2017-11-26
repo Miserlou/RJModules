@@ -39,3 +39,11 @@ struct PannerWidget: ModuleWidget {
 struct FilterDelayWidget: ModuleWidget {
     FilterDelayWidget();
 };
+
+struct LRMixerWidget: ModuleWidget {
+    LRMixerWidget();
+};
+
+// struct FFTunerWidget: ModuleWidget {
+//     FFTunerWidget();
+// };

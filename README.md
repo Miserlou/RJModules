@@ -16,6 +16,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Splitter](#splitter)
   - [Panner](#panner)
   - [Filter Delay](#filter-delay)
+  - [Left Right Mixer](#left-right-mixer)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -58,6 +59,10 @@ Panner is a voltage controlled panner. Without CV, it pans a mono signal into le
 ### Filter Delay
 <img src="https://i.imgur.com/9CPtg6R.png" width="25%" />
 A modification of the basic delay that filters each feedbacking pass. Kind of reggaeish, good for pads too.
+
+### Left Right Mixer
+<img src="https://i.imgur.com/UOidGVr.png" width="25%" />
+A simple 12-to-2 mixer for mixing multiple stereo signals. With an additional overall voume knob.
 
 ## Future Plans
 
