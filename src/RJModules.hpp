@@ -44,6 +44,10 @@ struct LRMixerWidget: ModuleWidget {
     LRMixerWidget();
 };
 
+struct SupersawWidget: ModuleWidget {
+    SupersawWidget();
+};
+
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
 // };
