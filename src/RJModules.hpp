@@ -8,6 +8,10 @@ extern Plugin *plugin;
 // module widgets
 ////////////////////
 
+struct SupersawWidget: ModuleWidget {
+    SupersawWidget();
+};
+
 struct BitCrushWidget: ModuleWidget {
 	BitCrushWidget();
 };
@@ -40,6 +44,10 @@ struct PannerWidget: ModuleWidget {
     PannerWidget();
 };
 
+struct MonoWidget: ModuleWidget {
+    MonoWidget();
+};
+
 struct FilterDelayWidget: ModuleWidget {
     FilterDelayWidget();
 };
@@ -48,9 +56,7 @@ struct LRMixerWidget: ModuleWidget {
     LRMixerWidget();
 };
 
-struct SupersawWidget: ModuleWidget {
-    SupersawWidget();
-};
+
 
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();

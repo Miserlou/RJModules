@@ -19,6 +19,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Panner](#panner)
   - [Filter Delay](#filter-delay)
   - [Left Right Mixer](#left-right-mixer)
+  - [Mono](#mono)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -74,12 +75,15 @@ A modification of the basic delay that filters each feedbacking pass. Kind of re
 <img src="https://i.imgur.com/UOidGVr.png" width="25%" />
 A simple 12-to-2 mixer for mixing multiple stereo signals. With an additional overall voume knob.
 
+### Mono
+<img src="https://i.imgur.com/tmSFepy.png" width="25%" />
+A voltage-controlled mono-izer. Given a wide dual input signal, convert to mono outputs based on a knob and CV. Has two outputs, but only one is need if you're just going to 100% mono.
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
 
   * FFTTuner - FFT / Tuner
-  * VCMono - Combine two signals into "one", through two identical outputs, modulated by VC
   * VCWidener - Use the Haas effect to widen two inputs
   * BPM - Dial in a pulse to a specific beats per minute. Also VC-able and "reset"-able.
   * Sidechain - Lower the volume of A based on B.
@@ -87,6 +91,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * DubEcho - Two delays and a spring.
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
+  * LFORange - LFO with controllable range
   * Dedicated 808/kick circuit
 
 ## Building
