@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/1D1ffjO.png" width="50%">
+<img src="https://i.imgur.com/aj1ZLih.png" width="100%">
 
 # RJModules
 Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilites, hopefully some more interesting ones soon!

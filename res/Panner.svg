@@ -308,33 +308,39 @@
       </g>
       <g
          aria-label="PANNER"
-         transform="matrix(0.95855268,0,0,0.95855268,-1302.8399,156.18363)"
+         transform="matrix(0.95855268,0,0,0.95855268,-1302.8399,160.01785)"
          style="font-style:normal;font-weight:normal;font-size:14.66666698px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.80924457"
          id="flowRoot923-7">
         <path
            d="m 46.667625,14.427734 h 3.672 q 1.008,0 1.776,0.264 0.768,0.264 1.392,0.936 0.624,0.672 0.864,1.584 0.24,0.888 0.24,2.424 0,1.128 -0.144,1.944 -0.12,0.792 -0.552,1.488 -0.504,0.84 -1.344,1.32 -0.84,0.456 -2.208,0.456 h -1.248 v 6.672 h -2.448 z m 2.448,8.112 h 1.176 q 0.744,0 1.152,-0.216 0.408,-0.216 0.6,-0.576 0.192,-0.384 0.216,-0.912 0.048,-0.528 0.048,-1.176 0,-0.6 -0.048,-1.128 -0.024,-0.552 -0.216,-0.936 -0.168,-0.408 -0.552,-0.624 -0.384,-0.24 -1.104,-0.24 h -1.272 z"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle"
-           id="path2583" />
+           id="path2583"
+           inkscape:connector-curvature="0" />
         <path
            d="m 59.271,19.347734 h -0.048 l -1.2,6.192 h 2.448 z m -1.032,-4.92 h 2.04 l 3.816,17.088 h -2.448 l -0.72,-3.672 h -3.336 l -0.72,3.672 h -2.448 z"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle"
-           id="path2585" />
+           id="path2585"
+           inkscape:connector-curvature="0" />
         <path
            d="m 65.181,14.427734 h 2.352 l 3.696,10.296 h 0.048 v -10.296 h 2.448 v 17.088 h -2.304 l -3.744,-10.272 h -0.048 v 10.272 h -2.448 z"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle"
-           id="path2587" />
+           id="path2587"
+           inkscape:connector-curvature="0" />
         <path
            d="m 75.821625,14.427734 h 2.352 l 3.696,10.296 h 0.048 v -10.296 h 2.448 v 17.088 h -2.304 l -3.744,-10.272 h -0.048 v 10.272 h -2.448 z"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle"
-           id="path2589" />
+           id="path2589"
+           inkscape:connector-curvature="0" />
         <path
            d="m 86.55825,14.427734 h 7.296 v 2.304 h -4.848 v 5.016 h 4.224 v 2.304 h -4.224 v 5.016 h 4.848 v 2.448 h -7.296 z"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle"
-           id="path2591" />
+           id="path2591"
+           inkscape:connector-curvature="0" />
         <path
            d="m 97.865625,22.059734 h 1.392 q 0.648,0 1.032005,-0.168 0.384,-0.192 0.57599,-0.528 0.21601,-0.336 0.28801,-0.816 0.072,-0.504 0.072,-1.152 0,-0.648 -0.072,-1.128 -0.072,-0.504 -0.31201,-0.84 -0.21599,-0.36 -0.624,-0.528 -0.407995,-0.168 -1.079995,-0.168 h -1.272 z m -2.448,-7.632 h 3.936 q 4.320005,0 4.320005,5.016 0,1.488 -0.48001,2.568 -0.456,1.056 -1.632,1.704 l 2.64001,7.8 h -2.59201 l -2.279995,-7.296 h -1.464 v 7.296 h -2.448 z"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';text-align:center;text-anchor:middle"
-           id="path2593" />
+           id="path2593"
+           inkscape:connector-curvature="0" />
       </g>
       <g
          style="font-style:normal;font-weight:normal;font-size:10.81355px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ececec;fill-opacity:1;stroke:none;stroke-width:0.21877018"
