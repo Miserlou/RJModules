@@ -27,14 +27,8 @@ struct Randoms: Module {
     void step() override;
 };
 
-#define ROUND(f) ((float)((f > 0.0) ? floor(f + 0.5) : ceil(f - 0.5)))
-
 void Randoms::step() {
-    // float combined_input_1 = params[CH1_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
-    // float combined_input_2 = params[CH2_PARAM].value * clampf(inputs[CH2_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
-    // float combined_input_3 = params[CH3_PARAM].value * clampf(inputs[CH3_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
 
-    // // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
     float mapped_ch1v1 = inputs[CH1_CV_INPUT_1].value;
     float mapped_ch1v2 = inputs[CH1_CV_INPUT_2].value;
     float mapped_ch2v1 = inputs[CH2_CV_INPUT_1].value;
@@ -56,14 +50,14 @@ void Randoms::step() {
         mapped_ch2v1 = -12;
         mapped_ch2v2 = 12;
     }
-    std::uniform_real_distribution<> distr2(mapped_ch2v1, mapped_ch2v2); // define the range
+    std::uniform_real_distribution<> distr2(mapped_ch2v1, mapped_ch2v2);
     outputs[CH1_OUTPUT].value = distr1(eng);
 
     if (mapped_ch3v1 == mapped_ch3v2){
         mapped_ch3v1 = -12;
         mapped_ch3v2 = 12;
     }
-    std::uniform_real_distribution<> distr3(mapped_ch3v1, mapped_ch3v2); // define the range
+    std::uniform_real_distribution<> distr3(mapped_ch3v1, mapped_ch3v2);
     outputs[CH1_OUTPUT].value = distr1(eng);
 }
 
