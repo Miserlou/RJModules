@@ -8,12 +8,14 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 
 - [Contents](#contents)
+  - [Supersaw](#supersaw)
   - [Bit Crusher](#bit-crusher)
   - [Integers](#integers)
   - [Floats](#floats)
   - [Randoms](#randoms)
   - [Button](#button)
   - [Splitter](#splitter)
+  - [Splitters](#splitters)
   - [Panner](#panner)
   - [Filter Delay](#filter-delay)
   - [Left Right Mixer](#left-right-mixer)
@@ -25,6 +27,10 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Contents
+
+### Supersaw
+<img src='https://i.imgur.com/ACIUKI0.png' width="25%" />
+It's a supersaw! Frequency, detune and mix are all voltage controlled, and there's switches for phase, inversion and 2/3 OSC. There's also a reset button.
 
 ### Bit Crusher
 <img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
@@ -50,7 +56,11 @@ It's literally just a big ass button with six outputs. You hit it, it sends a +1
 
 ### Splitter
 <img src="https://i.imgur.com/bvJKVEn.png" width="25%" />
-It's a 9-way splitter! You've got a signal - now send it everywhere!
+It's a 1 to 9-way splitter! You've got a signal - now send it everywhere!
+
+### Splitters
+<img src="https://i.imgur.com/NVWwfnZ.png" width="25%" />
+If splitting one signal to many isn't your fancy, Splitters gives you a 5:10 splitter instead! Handy!
 
 ### Panner
 <img src="https://i.imgur.com/4z5li8u.png" width="25%" />

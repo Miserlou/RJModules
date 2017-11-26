@@ -47,7 +47,6 @@ struct LowFrequencyOscillator {
     }
 };
 
-
 struct Supersaw : Module {
     enum ParamIds {
         OFFSET_PARAM,
@@ -60,9 +59,9 @@ struct Supersaw : Module {
         NUM_PARAMS
     };
     enum InputIds {
-        FREQ_VC_INPUT,
-        DETUNE_VC_INPUT,
-        MIX_VC_INPUT,
+        FREQ_CV_INPUT,
+        DETUNE_CV_INPUT,
+        MIX_CV_INPUT,
         RESET_INPUT,
         PW_INPUT,
         NUM_INPUTS
@@ -81,36 +80,45 @@ struct Supersaw : Module {
     LowFrequencyOscillator oscillator2;
     LowFrequencyOscillator oscillator3;
 
+    float DETUNE_STEP = .075;
+
     Supersaw() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
 };
 
-
 void Supersaw::step() {
 
-    float root_pitch = params[FREQ_PARAM].value;
+    float root_pitch = params[FREQ_PARAM].value * clampf(inputs[FREQ_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
     oscillator.setPitch(root_pitch);
     oscillator.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator.invert = (params[INVERT_PARAM].value <= 0.0);
     oscillator.step(1.0 / engineGetSampleRate());
     oscillator.setReset(inputs[RESET_INPUT].value);
 
-    oscillator2.setPitch(root_pitch + (params[DETUNE_PARAM].value * .075));
+    oscillator2.setPitch(root_pitch + (params[DETUNE_PARAM].value * DETUNE_STEP * clampf(inputs[DETUNE_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0)));
     oscillator2.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator2.invert = (params[INVERT_PARAM].value <= 0.0);
     oscillator2.step(1.0 / engineGetSampleRate());
     oscillator2.setReset(inputs[RESET_INPUT].value);
 
-    oscillator3.setPitch(root_pitch - (params[DETUNE_PARAM].value * .075));
+    oscillator3.setPitch(root_pitch - (params[DETUNE_PARAM].value * DETUNE_STEP * clampf(inputs[DETUNE_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0)));
     oscillator3.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator3.invert = (params[INVERT_PARAM].value <= 0.0);
     oscillator3.step(1.0 / engineGetSampleRate());
     oscillator3.setReset(inputs[RESET_INPUT].value);
 
-    outputs[SAW_OUTPUT].value = 5.0 * (( oscillator.saw() + oscillator2.saw() + oscillator3.saw() ) / 3);
+    float osc3_saw = oscillator3.saw();
+    if (params[OFFSET_PARAM].value < 1){
+        osc3_saw = 0;
+    } else{
+        osc3_saw = oscillator3.saw();
+    }
 
-    lights[PHASE_POS_LIGHT].setBrightnessSmooth(fmaxf(0.0, oscillator2.light()));
-    lights[PHASE_NEG_LIGHT].setBrightnessSmooth(fmaxf(0.0, -oscillator2.light()));
+    float mix_percent = params[MIX_PARAM].value * clampf(inputs[MIX_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    outputs[SAW_OUTPUT].value = 5.0 * (( oscillator.saw() + (oscillator2.saw() * mix_percent) + (osc3_saw * mix_percent) / 3));
+
+    lights[PHASE_POS_LIGHT].setBrightnessSmooth(fmaxf(0.0, oscillator.light()));
+    lights[PHASE_NEG_LIGHT].setBrightnessSmooth(fmaxf(0.0, -oscillator.light()));
 }
 
 SupersawWidget::SupersawWidget() {
@@ -135,12 +143,12 @@ SupersawWidget::SupersawWidget() {
     addParam(createParam<CKSS>(Vec(119, 260), module, Supersaw::THREE_OSC_PARAM, 0.0, 1.0, 1.0));
 
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Supersaw::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.1));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Supersaw::FREQ_VC_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Supersaw::DETUNE_VC_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Supersaw::MIX_VC_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Supersaw::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Supersaw::DETUNE_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Supersaw::MIX_CV_INPUT));
     addInput(createInput<PJ301MPort>(Vec(38, 310), module, Supersaw::RESET_INPUT));
 
     addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, Supersaw::SAW_OUTPUT));
