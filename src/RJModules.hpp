@@ -23,3 +23,7 @@ struct FloatsWidget: ModuleWidget {
 struct RandomsWidget: ModuleWidget {
     RandomsWidget();
 };
+
+struct ButtonWidget: ModuleWidget {
+    ButtonWidget();
+};

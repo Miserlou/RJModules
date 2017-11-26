@@ -14,5 +14,7 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<IntegersWidget>("RJModules", "Integers", "Integers", UTILITY_TAG));
     p->addModel(createModel<FloatsWidget>("RJModules", "Floats", "Floats", UTILITY_TAG));
     p->addModel(createModel<RandomsWidget>("RJModules", "Randoms", "Randoms", UTILITY_TAG));
+    p->addModel(createModel<ButtonWidget>("RJModules", "Button", "Button", UTILITY_TAG));
+
 
 }

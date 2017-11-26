@@ -22,6 +22,10 @@ It generates three (voltage controlled) floats from -12 to +12!
 
 Generates three random values. The range of the values can be controlled via CV, but will default to (-12, +12) if CV values are empty/equal.
 
+### Button
+<img src='https://i.imgur.com/msNcs07.png' width="25%" />
+It's literally just a big ass button with six outputs. You hit it, it sends a +12 reset signal.
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
@@ -33,7 +37,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Sidechain - Lower the volume of A based on B.
   * Autopanner - Given a signal, oscillate into two output channels
   * VCDryWet
-  * Button - It's literally just a big fucking button. You hit it, it sends a reset signal.
   * DubEcho - Two delays and a spring.
   * Filter Delay
   * Vocoder, maybe?
