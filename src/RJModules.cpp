@@ -17,5 +17,6 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<ButtonWidget>("RJModules", "Button", "Button", UTILITY_TAG));
     p->addModel(createModel<SplitterWidget>("RJModules", "Splitter", "Splitter", UTILITY_TAG));
     p->addModel(createModel<PannerWidget>("RJModules", "Panner", "Panner", UTILITY_TAG));
+    p->addModel(createModel<FilterDelayWidget>("RJModules", "FilterDelay", "FilterDelay", UTILITY_TAG));
 
 }

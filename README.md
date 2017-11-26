@@ -1,7 +1,7 @@
 <img src="https://i.imgur.com/aj1ZLih.png" width="100%">
 
 # RJModules
-Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilites, hopefully some more interesting ones soon!
+Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilities and effects, hopefully some more interesting ones soon!
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -54,6 +54,10 @@ It's a 9-way splitter! You've got a signal - now send it everywhere!
 <img src="https://i.imgur.com/4z5li8u.png" width="25%" />
 Panner is a voltage controlled panner. Without CV, it pans a mono signal into left and right channels based on the value of the knob. Combine with an LFO to build an autopanner!
 
+### Filter Delay
+<img src="https://i.imgur.com/9CPtg6R.png" width="25%" />
+A modification of the basic delay that filters each feedbacking pass. Kind of reggaeish, good for pads too.
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
@@ -65,9 +69,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Sidechain - Lower the volume of A based on B.
   * VCDryWet
   * DubEcho - Two delays and a spring.
-  * Filter Delay
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
+  * Dedicated 808/kick circuit
 
 ## Building
 

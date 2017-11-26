@@ -35,3 +35,7 @@ struct SplitterWidget: ModuleWidget {
 struct PannerWidget: ModuleWidget {
     PannerWidget();
 };
+
+struct FilterDelayWidget: ModuleWidget {
+    FilterDelayWidget();
+};
