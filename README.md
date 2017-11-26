@@ -1,6 +1,6 @@
 # RJModules
 
-Various DIY modules I've made for [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilites, hopefully some more interesting ones soon!
+Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilites, hopefully some more interesting ones soon!
 
 ## Contents
 
