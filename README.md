@@ -6,16 +6,18 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [RJModules](#rjmodules)
-  - [Contents](#contents)
-    - [Bit Crusher](#bit-crusher)
-    - [Integers](#integers)
-    - [Floats](#floats)
-    - [Randoms](#randoms)
-    - [Button](#button)
-  - [Future Plans](#future-plans)
-  - [Building](#building)
-  - [License](#license)
+
+- [Contents](#contents)
+  - [Bit Crusher](#bit-crusher)
+  - [Integers](#integers)
+  - [Floats](#floats)
+  - [Randoms](#randoms)
+  - [Button](#button)
+  - [Splitter](#splitter)
+- [Future Plans](#future-plans)
+- [Building](#building)
+- [Related Projects](#related-projects)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -42,6 +44,10 @@ Generates three random values. The range of the values can be controlled via CV,
 ### Button
 <img src='https://i.imgur.com/msNcs07.png' width="25%" />
 It's literally just a big ass button with six outputs. You hit it, it sends a +12 reset signal.
+
+### Splitter
+<img src="https://i.imgur.com/bvJKVEn.png" width="25%" />
+It's a 9-way splitter! You've got a signal - now send it everywhere!
 
 ## Future Plans
 

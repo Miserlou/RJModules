@@ -27,3 +27,7 @@ struct RandomsWidget: ModuleWidget {
 struct ButtonWidget: ModuleWidget {
     ButtonWidget();
 };
+
+struct SplitterWidget: ModuleWidget {
+    SplitterWidget();
+};
