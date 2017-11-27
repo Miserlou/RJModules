@@ -46,6 +46,8 @@ It's a bit crusher! Accepts control voltage, and sets a (voltage controlled) min
 <img src='https://i.imgur.com/A5MbJJq.png' width="25%">
 BPM lets you set a voltage-controllable beats per minute, with an array of outputs that get a +12 signal. There is also a CV reset with a connected button.
 
+You can get some weird polyrhythmic stuff by putting an LFO on the CV, which gives a variable BPM. Even weirder if you start using a bunch!
+
 ### Integers
 <img src='https://i.imgur.com/NRQjpmZ.png' width="25%" />
 It generates three (voltage controlled) integers from -12 to +12!
