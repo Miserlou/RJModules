@@ -99,7 +99,7 @@ A voltage-controlled mono-izer. Given a wide dual input signal, convert to mono 
 
 ### Volumes
 <img src="https://i.imgur.com/KqWUEvB.png" width="25%" />
-A modification of 'Mutes' that adds the ability to adjust the volume of 10 different input-output pairs.
+A modification of 'Mutes' that adds the ability to adjust the volume of 10 different input-output pairs. Can be used to quiet and amplify.
 
 ### Displays
 <img src="https://i.imgur.com/JVVs2fg.png" width="25%">

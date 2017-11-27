@@ -89,16 +89,16 @@ VolumesWidget::VolumesWidget() {
     addChild(createScrew<ScrewSilver>(Vec(15, 365)));
     addChild(createScrew<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 17.165)), module, Volumes::MUTE_PARAM + 0, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 27.164)), module, Volumes::MUTE_PARAM + 1, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 37.164)), module, Volumes::MUTE_PARAM + 2, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 47.165)), module, Volumes::MUTE_PARAM + 3, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 57.164)), module, Volumes::MUTE_PARAM + 4, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 67.165)), module, Volumes::MUTE_PARAM + 5, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 77.164)), module, Volumes::MUTE_PARAM + 6, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 87.164)), module, Volumes::MUTE_PARAM + 7, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Volumes::MUTE_PARAM + 8, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Volumes::MUTE_PARAM + 9, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 17.165)), module, Volumes::MUTE_PARAM + 0, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 27.164)), module, Volumes::MUTE_PARAM + 1, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 37.164)), module, Volumes::MUTE_PARAM + 2, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 47.165)), module, Volumes::MUTE_PARAM + 3, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 57.164)), module, Volumes::MUTE_PARAM + 4, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 67.165)), module, Volumes::MUTE_PARAM + 5, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 77.164)), module, Volumes::MUTE_PARAM + 6, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 87.164)), module, Volumes::MUTE_PARAM + 7, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Volumes::MUTE_PARAM + 8, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Volumes::MUTE_PARAM + 9, 0.0, 2.0, 1.0));
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 17.81)), module, Volumes::IN_INPUT + 0));
     addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 27.809)), module, Volumes::IN_INPUT + 1));
