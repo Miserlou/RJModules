@@ -60,6 +60,9 @@ struct LRMixerWidget: ModuleWidget {
     LRMixerWidget();
 };
 
+struct BPMWidget: ModuleWidget {
+    BPMWidget();
+};
 
 
 // struct FFTunerWidget: ModuleWidget {
