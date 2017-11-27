@@ -48,6 +48,10 @@ struct MonoWidget: ModuleWidget {
     MonoWidget();
 };
 
+struct VolumesWidget: ModuleWidget {
+    VolumesWidget();
+};
+
 struct FilterDelayWidget: ModuleWidget {
     FilterDelayWidget();
 };

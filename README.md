@@ -79,6 +79,10 @@ A simple 12-to-2 mixer for mixing multiple stereo signals. With an additional ov
 <img src="https://i.imgur.com/tmSFepy.png" width="25%" />
 A voltage-controlled mono-izer. Given a wide dual input signal, convert to mono outputs based on a knob and CV. Has two outputs, but only one is need if you're just going to 100% mono.
 
+### Volumes
+<img src="https://i.imgur.com/KqWUEvB.png" width="25%" />
+A modification of 'Mutes' that adds the ability to adjust the volume of 10 different input-output pairs.
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
@@ -92,6 +96,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
   * LFORange - LFO with controllable range
+  * Volumes - Like Mutes, but for volumes
   * Dedicated 808/kick circuit
 
 ## Building
