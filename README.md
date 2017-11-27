@@ -69,7 +69,7 @@ It's not one big button - it's lot of little butons!
 
 They're arranged a drum pad, so it's fun and easy to make a playable drum pad simulator by building a circuit like this:
 
-<img src='https://i.imgur.com/qdBbvFD.jpg' width="50%" />
+<img src='https://i.imgur.com/qdBbvFD.jpg' width="100%" />
 
 ### Splitter
 <img src="https://i.imgur.com/bvJKVEn.png" width="25%" />
