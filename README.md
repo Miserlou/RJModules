@@ -10,6 +10,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 - [Contents](#contents)
   - [Supersaw](#supersaw)
   - [Bit Crusher](#bit-crusher)
+  - [BPM](#bpm)
   - [Integers](#integers)
   - [Floats](#floats)
   - [Randoms](#randoms)
@@ -38,6 +39,10 @@ It's a supersaw! Frequency, detune and mix are all voltage controlled, and there
 <img src='https://i.imgur.com/tjKYMUn.png' width="50%" />
 
 It's a bit crusher! Accepts control voltage, and sets a (voltage controlled) minimum bit depth for fine tuning.
+
+### BPM
+<img src='https://i.imgur.com/A5MbJJq.png' width="25%">
+BPM lets you set a voltage-controllable beats per minute, with an array of outputs that get a +12 signal. There is also a CV reset with a connected button.
 
 ### Integers
 <img src='https://i.imgur.com/NRQjpmZ.png' width="25%" />

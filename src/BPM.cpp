@@ -96,12 +96,6 @@ void BPM::BPMChange( float fbpm, bool bforce ){
 
     m_fBPM = fbpm;
     m_fBeatsPers = fbpm / 60.0;
-
-    // if( m_pDigitDisplayBPM )
-    //    m_pDigitDisplayBPM->SetFloat( m_fBPM );
-
-    // for( int i = 0; i < nCHANNELS; i++ )
-    //     CalcChannelClockRate( i );
 }
 
 void BPM::step() {
@@ -111,17 +105,9 @@ void BPM::step() {
     SchmittTrigger resetTrigger;
 
     bool bMainClockTrig = false;
-    BPMChange(params[BPM_PARAM].value, false);
-    BPMChange(133.0, true);
-
-    // keep track of main bpm
-    // m_fMainClockCount += m_fBeatsPers;
-    // m_fMainClockCount += (133/60.0);
-
-    //float combined_crush_floor = params[CH2_PARAM].value * clampf(inputs[CH2_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
 
     // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-    float bpm_val = params[BPM_PARAM].value;
+    float bpm_val = params[BPM_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
     float mapped_bpm = ((bpm_val - 0.0) / (1.0 - 0.0) ) * (400.0 - 70.0) + 70.0;
 
     m_fBPM = mapped_bpm;
@@ -135,14 +121,17 @@ void BPM::step() {
 
     if( bMainClockTrig )
     {
-        // printf("Trigger!\n");
         output = 12.0;
         resetLight = 1.0;
         pulseLight = 1.0;
     }
 
-    // std::cout << m_fBeatsPers  << "\n";
-    // std::cout << m_fMainClockCount  << "\n";
+    // Reset
+    if (params[RESET_PARAM].value > 0 || inputs[RESET_CV_INPUT].value > 0) {
+        resetLight = 1.0;
+        output = 12.0;
+        m_fMainClockCount = 0;
+    }
 
     pulseLight -= pulseLight / lightLambda / engineGetSampleRate();
 
