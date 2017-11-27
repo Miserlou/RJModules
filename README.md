@@ -15,6 +15,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Floats](#floats)
   - [Randoms](#randoms)
   - [Button](#button)
+  - [Buttons](#buttons)
   - [Splitter](#splitter)
   - [Splitters](#splitters)
   - [Panner](#panner)
@@ -61,6 +62,14 @@ Generates three random values. The range of the values can be controlled via CV,
 ### Button
 <img src='https://i.imgur.com/msNcs07.png' width="25%" />
 It's literally just a big ass button with six outputs. You hit it, it sends a +12 reset signal.
+
+### Buttons
+<img src='https://i.imgur.com/A3SD0WT.png' width="25%" />
+It's not one big button - it's lot of little butons!
+
+They're arranged a drum pad, so it's fun and easy to make a playable drum pad simulator by building a circuit like this:
+
+<img src='https://i.imgur.com/qdBbvFD.jpg' width="50%" />
 
 ### Splitter
 <img src="https://i.imgur.com/bvJKVEn.png" width="25%" />
