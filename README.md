@@ -97,7 +97,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
   * LFORange - LFO with controllable range
-  * Volumes - Like Mutes, but for volumes
   * Dedicated 808/kick circuit
 
 ## Building
