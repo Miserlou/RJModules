@@ -95,7 +95,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
 
   * FFTTuner - FFT / Tuner
   * VCWidener - Use the Haas effect to widen two inputs
-  * BPM - Dial in a pulse to a specific beats per minute. Also VC-able and "reset"-able.
   * Sidechain - Lower the volume of A based on B.
   * VCDryWet
   * DubEcho - Two delays and a spring.
