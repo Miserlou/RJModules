@@ -22,6 +22,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Left Right Mixer](#left-right-mixer)
   - [Mono](#mono)
   - [Volumes](#volumes)
+  - [Displays](#displays)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -88,6 +89,10 @@ A voltage-controlled mono-izer. Given a wide dual input signal, convert to mono 
 ### Volumes
 <img src="https://i.imgur.com/KqWUEvB.png" width="25%" />
 A modification of 'Mutes' that adds the ability to adjust the volume of 10 different input-output pairs.
+
+### Displays
+<img src="https://i.imgur.com/JVVs2fg.png" width="25%">
+Three digital displays. Useful for debugging. Provides a passthrough output as well.
 
 ## Future Plans
 

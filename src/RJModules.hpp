@@ -64,6 +64,9 @@ struct BPMWidget: ModuleWidget {
     BPMWidget();
 };
 
+struct DisplaysWidget: ModuleWidget {
+    DisplaysWidget();
+};
 
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
