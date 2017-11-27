@@ -20,6 +20,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Filter Delay](#filter-delay)
   - [Left Right Mixer](#left-right-mixer)
   - [Mono](#mono)
+  - [Volumes](#volumes)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
