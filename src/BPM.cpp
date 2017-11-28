@@ -108,7 +108,7 @@ void BPM::step() {
 
     // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
     float bpm_val = params[BPM_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
-    float mapped_bpm = ((bpm_val - 0.0) / (1.0 - 0.0) ) * (400.0 - 70.0) + 70.0;
+    float mapped_bpm = ((bpm_val - 0.0) / (1.0 - 0.0) ) * (600.0 - 40.0) + 40.0;
 
     m_fBPM = mapped_bpm;
     m_fMainClockCount += (mapped_bpm/60.0);

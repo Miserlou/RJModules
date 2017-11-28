@@ -47,7 +47,7 @@ void Sidechain::step() {
     float decay = 1 - (params[DECAY_PARAM].value * clampf(inputs[DECAY_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0)) + .00001;
     float decayLambda = .0001;
 
-    if(inputs[TRIGGER_INPUT].value > 0 || inputs[TRIGGER_INPUT].value  0){
+    if(inputs[TRIGGER_INPUT].value > 0 || inputs[TRIGGER_INPUT].value > 0){
         decayAmount = clampf(inputs[RATIO_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
     }
 
