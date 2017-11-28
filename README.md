@@ -116,13 +116,16 @@ None of them actually exist yet, but I'm hoping this will project eventually con
 
   * FFTTuner - FFT / Tuner
   * VCWidener - Use the Haas effect to widen two inputs
-  * Sidechain - Lower the volume of A based on B.
-  * VCDryWet
+  * VCDryWet - A simple dry/wet mixer
   * DubEcho - Two delays and a spring.
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
   * LFORange - LFO with controllable range
-  * Dedicated 808/kick circuit
+  * Dedicated 808/kick circuit with click
+  * Panners - Like 'Volumes', but for stereo pan
+  * Noise - White/Pink noise generator with BPF, VC for volume
+  * Reverb - It's a reverb!
+  * Phaser - Pssshheeeeeooooooowwwwwwoooowowwaaaaaahhhhhh
 
 ## Building
 
