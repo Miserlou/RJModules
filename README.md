@@ -24,6 +24,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Mono](#mono)
   - [Volumes](#volumes)
   - [Displays](#displays)
+  - [Sidechain](#sidechain)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -104,6 +105,10 @@ A modification of 'Mutes' that adds the ability to adjust the volume of 10 diffe
 ### Displays
 <img src="https://i.imgur.com/JVVs2fg.png" width="25%">
 Three digital displays. Useful for debugging. Provides a passthrough output as well.
+
+### Sidechain
+<img src="https://i.imgur.com/3bQONmT.png" width="25%">
+Based on a trigger signal, lower the volume of the input/output signal. CV controllable decay and ratio. Use a kick or a button to make some awesome wooshy noises or hard-knocking beats! I think there's a bug in this module but it works pretty good for me anyway.
 
 ## Future Plans
 

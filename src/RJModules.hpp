@@ -72,6 +72,10 @@ struct DisplaysWidget: ModuleWidget {
     DisplaysWidget();
 };
 
+struct SidechainWidget: ModuleWidget {
+    SidechainWidget();
+};
+
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
 // };

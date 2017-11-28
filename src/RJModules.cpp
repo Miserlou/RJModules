@@ -26,5 +26,7 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<VolumesWidget>("RJModules", "Volumes", "Volumes", UTILITY_TAG));
     p->addModel(createModel<BPMWidget>("RJModules", "BPM", "BPM", UTILITY_TAG));
     p->addModel(createModel<DisplaysWidget>("RJModules", "Displays", "Displays", UTILITY_TAG));
+    p->addModel(createModel<SidechainWidget>("RJModules", "Sidechain", "Sidechain", UTILITY_TAG));
+
 
 }
