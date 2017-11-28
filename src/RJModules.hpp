@@ -48,6 +48,10 @@ struct PannerWidget: ModuleWidget {
     PannerWidget();
 };
 
+struct PannersWidget: ModuleWidget {
+    PannersWidget();
+};
+
 struct MonoWidget: ModuleWidget {
     MonoWidget();
 };

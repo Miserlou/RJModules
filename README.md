@@ -19,6 +19,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Splitter](#splitter)
   - [Splitters](#splitters)
   - [Panner](#panner)
+  - [Panners](#panners)
   - [Filter Delay](#filter-delay)
   - [Left Right Mixer](#left-right-mixer)
   - [Mono](#mono)
@@ -85,6 +86,10 @@ If splitting one signal to many isn't your fancy, Splitters gives you a 5:10 spl
 ### Panner
 <img src="https://i.imgur.com/4z5li8u.png" width="25%" />
 Panner is a voltage controlled panner. Without CV, it pans a mono signal into left and right channels based on the value of the knob. Combine with an LFO to build an autopanner!
+
+### Panners
+<img src="https://i.imgur.com/Z53pj0S.png" width="25%" />
+Panners is a bank of 5 panners. Each takes a stereo input and a stereo output. Pretty simple but handy for placing lots of elements around a stereo space.
 
 ### Filter Delay
 <img src="https://i.imgur.com/9CPtg6R.png" width="25%" />
