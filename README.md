@@ -127,7 +127,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Vocoder, maybe?
   * LFORange - LFO with controllable range
   * Dedicated 808/kick circuit with click
-  * Panners - Like 'Volumes', but for stereo pan
   * Noise - White/Pink noise generator with BPF, VC for volume
   * Reverb - It's a reverb!
   * Phaser - Pssshheeeeeooooooowwwwwwoooowowwaaaaaahhhhhh
