@@ -1,4 +1,5 @@
 #include "RJModules.hpp"
+#include "VAStateVariableFilter.h"
 
 Plugin *plugin;
 
