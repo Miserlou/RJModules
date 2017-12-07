@@ -3,10 +3,7 @@
 
 #include "RJModules.hpp"
 #include "dsp/digital.hpp"
-#include "dsp/ringbuffer.hpp"
-#include "dsp/filter.hpp"
-
-// #include "source/ChebyshevI.cpp"
+#include "VAStateVariableFilter.h"
 
 #define NUM_CHANNELS 10
 
@@ -23,18 +20,12 @@ struct Filters : Module {
         OUT_OUTPUT,
         NUM_OUTPUTS = OUT_OUTPUT + NUM_CHANNELS
     };
-    enum LightIds {
-        MUTE_LIGHT,
-        NUM_LIGHTS = MUTE_LIGHT + NUM_CHANNELS
-    };
 
     bool state[NUM_CHANNELS];
-    SchmittTrigger muteTrigger[NUM_CHANNELS];
+    VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
+    VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
-    RCFilter lowpassFilter;
-    RCFilter highpassFilter;
-
-    Filters() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+    Filters() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {
         reset();
     }
     void step() override;
@@ -76,7 +67,15 @@ struct Filters : Module {
 
 void Filters::step() {
 
-    //Dsp::SimpleFilter <Dsp::ChebyshevI::BandStop <3>, 2> f;
+    lpFilter->setFilterType(0);
+    hpFilter->setFilterType(2);
+
+    // todo get from param
+    lpFilter->setResonance(.7);
+    hpFilter->setResonance(.7);
+
+    lpFilter->setSampleRate(engineGetSampleRate());
+    hpFilter->setSampleRate(engineGetSampleRate());
 
     //for (int i = 0; i < NUM_CHANNELS; i++) {
     for (int i = 0; i < 1; i++) {
@@ -84,17 +83,32 @@ void Filters::step() {
         //outputs[OUT_OUTPUT + i].value = in * params[MUTE_PARAM + i].value;
 
         float dry = inputs[IN_INPUT + i].value;
-        float color = 1.0;
+        float param = params[MUTE_PARAM + i].value;
+        float wet = dry;
 
-        //float lowpassFreq = 200.0 * powf(10.0, clampf(2.0*color, 0.0, 1.0));
-        //float lowpassFreq = 500.0; //* powf(10.0, clampf(2.0*color, 0.0, 1.0));
+        // if param < .5
+        //      LPF, 30:8000
+        // if param > .5
+        //      HPF, 30:8000
+        // if param == .5, wet = dry
 
-        float lowpassFreq = 1000.0 * params[MUTE_PARAM + i].value;
-        lowpassFilter.setCutoff(lowpassFreq / engineGetSampleRate());
-        lowpassFilter.process(dry);
-        float wet = lowpassFilter.lowpass();
-        wet = lowpassFilter.lowpass();
-        wet = lowpassFilter.lowpass();
+        if(param < .5){
+
+            // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
+            float lp_cutoff = ( (param - 0) / (.5 - 0.0)) * (8000.0 - 30.0) + 30.0;
+            lpFilter->setCutoffFreq(lp_cutoff);
+            wet = lpFilter->processAudioSample(dry, 1);
+        }
+        if(param > .5){
+
+            // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
+            float hp_cutoff = ( (param - .5) / (1.0 - 0.5)) * (8000.0 - 200.0) + 200.0;
+            hpFilter->setCutoffFreq(hp_cutoff);
+            wet = hpFilter->processAudioSample(dry, 1);
+        }
+        if(param == .5){
+            wet = dry;
+        }
 
         outputs[OUT_OUTPUT + i].value = wet;
 
@@ -119,16 +133,16 @@ FiltersWidget::FiltersWidget() {
     addChild(createScrew<ScrewSilver>(Vec(15, 365)));
     addChild(createScrew<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 17.165)), module, Filters::MUTE_PARAM + 0, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 27.164)), module, Filters::MUTE_PARAM + 1, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 37.164)), module, Filters::MUTE_PARAM + 2, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 47.165)), module, Filters::MUTE_PARAM + 3, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 57.164)), module, Filters::MUTE_PARAM + 4, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 67.165)), module, Filters::MUTE_PARAM + 5, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 77.164)), module, Filters::MUTE_PARAM + 6, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 87.164)), module, Filters::MUTE_PARAM + 7, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Filters::MUTE_PARAM + 8, 0.0, 2.0, 1.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Filters::MUTE_PARAM + 9, 0.0, 2.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 17.165)), module, Filters::MUTE_PARAM + 0, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 27.164)), module, Filters::MUTE_PARAM + 1, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 37.164)), module, Filters::MUTE_PARAM + 2, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 47.165)), module, Filters::MUTE_PARAM + 3, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 57.164)), module, Filters::MUTE_PARAM + 4, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 67.165)), module, Filters::MUTE_PARAM + 5, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 77.164)), module, Filters::MUTE_PARAM + 6, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 87.164)), module, Filters::MUTE_PARAM + 7, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Filters::MUTE_PARAM + 8, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Filters::MUTE_PARAM + 9, 0.0, 1.0, 0.5));
 
     addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 17.81)), module, Filters::IN_INPUT + 0));
     addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 27.809)), module, Filters::IN_INPUT + 1));

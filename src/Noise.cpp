@@ -93,7 +93,7 @@ struct Noise : Module {
     float outHP;
 
     VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
-    VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a lpFilter;
+    VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
     Noise() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
