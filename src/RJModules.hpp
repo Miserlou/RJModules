@@ -12,6 +12,10 @@ struct SupersawWidget: ModuleWidget {
     SupersawWidget();
 };
 
+struct NoiseWidget: ModuleWidget {
+    NoiseWidget();
+};
+
 struct BitCrushWidget: ModuleWidget {
 	BitCrushWidget();
 };
@@ -78,6 +82,10 @@ struct DisplaysWidget: ModuleWidget {
 
 struct SidechainWidget: ModuleWidget {
     SidechainWidget();
+};
+
+struct FiltersWidget: ModuleWidget {
+    FiltersWidget();
 };
 
 // struct FFTunerWidget: ModuleWidget {
