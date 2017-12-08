@@ -34,6 +34,8 @@ struct Range: Module {
     float display2_val;
     float display3_val;
     float display4_val;
+    float display5_val;
+    float display6_val;
 
     Range() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
@@ -58,9 +60,9 @@ struct SmallNumberDisplayWidgeter : TransparentWidget {
     nvgFill(vg);
 
     // text
-    nvgFontSize(vg, 24);
+    nvgFontSize(vg, 16);
     nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 2.5);
+    nvgTextLetterSpacing(vg, 0.5);
 
     std::stringstream to_display;
     to_display << std::setprecision(2) << std::setw(1) << *value;
@@ -78,8 +80,13 @@ void Range::step() {
     display2_val = params[CH2_PARAM].value;
     display3_val = params[CH3_PARAM].value;
     display4_val = params[CH4_PARAM].value;
+    display5_val = inputs[CH1_PARAM].value;
 
-    outputs[CH1_OUTPUT].value = 0;
+    // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
+    float output = ( (inputs[CH1_PARAM].value - params[CH1_PARAM].value) / (params[CH2_PARAM].value - params[CH1_PARAM].value) ) * (params[CH4_PARAM].value - params[CH3_PARAM].value) + params[CH3_PARAM].value;
+
+    display6_val = output;
+    outputs[CH1_OUTPUT].value = output;
 
 }
 
@@ -129,7 +136,17 @@ RangeWidget::RangeWidget() {
     addChild(display4);
     addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, Range::CH4_PARAM, -12.0, 12.0, 12.0));
 
+    SmallNumberDisplayWidgeter *display5 = new SmallNumberDisplayWidgeter();
+    display5->box.pos = Vec(23, 260);
+    display5->box.size = Vec(50, 40);
+    display5->value = &module->display5_val;
+    addChild(display5);
 
+    SmallNumberDisplayWidgeter *display6 = new SmallNumberDisplayWidgeter();
+    display6->box.pos = Vec(83, 260);
+    display6->box.size = Vec(50, 40);
+    display6->value = &module->display6_val;
+    addChild(display6);
 
 
     // addInput(createInput<PJ301MPort>(Vec(35, 123), module, Range::CH1_INPUT));

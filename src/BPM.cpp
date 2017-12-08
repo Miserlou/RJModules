@@ -175,7 +175,7 @@ BPMWidget::BPMWidget() {
     addOutput(createOutput<PJ301MPort>(Vec(65, 274), module, BPM::CH5_OUTPUT));
     addOutput(createOutput<PJ301MPort>(Vec(106, 274), module, BPM::CH6_OUTPUT));
 
-    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.165));
     // addChild(createLight<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
     //addChild(createLight<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
 
