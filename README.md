@@ -26,6 +26,8 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Volumes](#volumes)
   - [Displays](#displays)
   - [Sidechain](#sidechain)
+  - [Noise](#noise)
+  - [Notch](#notch)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -114,6 +116,14 @@ Three digital displays. Useful for debugging. Provides a passthrough output as w
 ### Sidechain
 <img src="https://i.imgur.com/3bQONmT.png" width="25%">
 Based on a trigger signal, lower the volume of the input/output signal. CV controllable decay and ratio. Use a kick or a button to make some awesome wooshy noises or hard-knocking beats! I think there's a bug in this module but it works pretty good for me anyway.
+
+### Noise
+<img src="https://i.imgur.com/l9yj0jt.png" width="25%">
+Noise generates pink and white noise! It also has an integreted high pass and low pass filter. Everything is voltage controlled, and there's a bonus volume knob.
+
+### Notch
+<img src="https://i.imgur.com/AzhKPZ1.png" width="25%">
+Notch is a notch filter! You can play with the frequency, depth and width. All voltage controlled.
 
 ## Future Plans
 
