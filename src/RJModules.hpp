@@ -100,6 +100,10 @@ struct NotchWidget: ModuleWidget {
     NotchWidget();
 };
 
+struct RangeWidget: ModuleWidget {
+    RangeWidget();
+};
+
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
 // };
