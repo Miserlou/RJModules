@@ -88,6 +88,10 @@ struct FiltersWidget: ModuleWidget {
     FiltersWidget();
 };
 
+struct NotchWidget: ModuleWidget {
+    NotchWidget();
+};
+
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
 // };

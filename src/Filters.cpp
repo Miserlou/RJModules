@@ -22,6 +22,9 @@ struct Filters : Module {
     };
 
     bool state[NUM_CHANNELS];
+
+    //VAStateVariableFilter filters[NUM_CHANNELS];
+
     VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
