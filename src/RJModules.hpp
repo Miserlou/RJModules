@@ -84,6 +84,10 @@ struct SidechainWidget: ModuleWidget {
     SidechainWidget();
 };
 
+struct FilterWidget: ModuleWidget {
+    FilterWidget();
+};
+
 struct FiltersWidget: ModuleWidget {
     FiltersWidget();
 };

@@ -28,6 +28,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Sidechain](#sidechain)
   - [Noise](#noise)
   - [Notch](#notch)
+  - [Filter](#filter)
   - [Filters](#filters)
 - [Future Plans](#future-plans)
 - [Building](#building)
@@ -125,6 +126,10 @@ Noise generates pink and white noise! It also has an integreted high pass and lo
 ### Notch
 <img src="https://i.imgur.com/AzhKPZ1.png" width="25%">
 Notch is a notch filter! You can play with the frequency, depth and width. All voltage controlled.
+
+### Filter
+<img src="https://i.imgur.com/xv2GyWO.png" width="25%">
+Filter is a voltage-controlled integrated high-pass and low-pass filter. Also includes a voltage-controlled res and mix paramater knobs. It's a really good VCF.
 
 ### Filters
 <img src="https://i.imgur.com/ApBCVaC.png" width="25%">
