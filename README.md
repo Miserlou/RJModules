@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [Supersaw](#supersaw)
+  - [Twin LFO](#twin-lfo)
   - [Bit Crusher](#bit-crusher)
   - [BPM](#bpm)
   - [Integers](#integers)
@@ -42,6 +43,12 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 ### Supersaw
 <img src='https://i.imgur.com/ACIUKI0.png' width="25%" />
 It's a supersaw! Frequency, detune and mix are all voltage controlled, and there's switches for phase, inversion and 2/3 OSC. There's also a reset button.
+
+### Twin LFO
+<img src="https://i.imgur.com/dsEUqse.png" width="50%" />
+Two oscillators, one output! This thing generates crazy wubs - it's super fun! The first LFO is the "main" LFO output, the second one controls the rate of the first. Set the first one higher than the second to get crazy wub effects.
+
+Also has a shape wheel for mixing the sin/saw shape, and has knobs for offset and inversion. All parameters are voltage controllable!
 
 ### Bit Crusher
 <img src='https://i.imgur.com/tjKYMUn.png' width="50%" />

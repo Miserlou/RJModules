@@ -27,6 +27,7 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<FilterDelayWidget>("RJModules", "FilterDelay", "FilterDelay", DELAY_TAG));
     p->addModel(createModel<LRMixerWidget>("RJModules", "LRMixer", "LRMixer", UTILITY_TAG));
     p->addModel(createModel<SupersawWidget>("RJModules", "Supersaw", "Supersaw", LFO_TAG));
+    p->addModel(createModel<TwinLFOWidget>("RJModules", "TwinLFO", "TwinLFO", LFO_TAG));
     p->addModel(createModel<NoiseWidget>("RJModules", "Noise", "Noise", LFO_TAG));
     p->addModel(createModel<MonoWidget>("RJModules", "Mono", "Mono", UTILITY_TAG));
     p->addModel(createModel<VolumesWidget>("RJModules", "Volumes", "Volumes", UTILITY_TAG));

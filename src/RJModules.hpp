@@ -12,6 +12,10 @@ struct SupersawWidget: ModuleWidget {
     SupersawWidget();
 };
 
+struct TwinLFOWidget: ModuleWidget {
+    TwinLFOWidget();
+};
+
 struct NoiseWidget: ModuleWidget {
     NoiseWidget();
 };
