@@ -28,6 +28,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Sidechain](#sidechain)
   - [Noise](#noise)
   - [Notch](#notch)
+  - [Filters](#filters)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -125,6 +126,10 @@ Noise generates pink and white noise! It also has an integreted high pass and lo
 <img src="https://i.imgur.com/AzhKPZ1.png" width="25%">
 Notch is a notch filter! You can play with the frequency, depth and width. All voltage controlled.
 
+### Filters
+<img src="https://i.imgur.com/ApBCVaC.png" width="25%">
+Filters is like Volumes or Panners, but for Filters. Each knob controls both a low pass and high pass filter. Super handy!
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
@@ -137,7 +142,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Vocoder, maybe?
   * LFORange - LFO with controllable range
   * Dedicated 808/kick circuit with click
-  * Noise - White/Pink noise generator with BPF, VC for volume
   * Reverb - It's a reverb!
   * Phaser - Pssshheeeeeooooooowwwwwwoooowowwaaaaaahhhhhh
 

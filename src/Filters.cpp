@@ -23,8 +23,8 @@ struct Filters : Module {
 
     bool state[NUM_CHANNELS];
 
-    //VAStateVariableFilter filters[NUM_CHANNELS];
-
+    VAStateVariableFilter lpFilters[NUM_CHANNELS];
+    VAStateVariableFilter hpFilters[NUM_CHANNELS];
     VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
@@ -70,20 +70,22 @@ struct Filters : Module {
 
 void Filters::step() {
 
-    lpFilter->setFilterType(0);
-    hpFilter->setFilterType(2);
+    VAStateVariableFilter *lpFilter;
+    VAStateVariableFilter *hpFilter;
 
-    // todo get from param
-    lpFilter->setResonance(.7);
-    hpFilter->setResonance(.7);
+    for (int i = 0; i < NUM_CHANNELS; i++) {
+        lpFilter = &lpFilters[i];
+        hpFilter = &hpFilters[i];
 
-    lpFilter->setSampleRate(engineGetSampleRate());
-    hpFilter->setSampleRate(engineGetSampleRate());
+        lpFilter->setFilterType(0);
+        hpFilter->setFilterType(2);
 
-    //for (int i = 0; i < NUM_CHANNELS; i++) {
-    for (int i = 0; i < 1; i++) {
-        // float in = inputs[IN_INPUT + i].value;
-        //outputs[OUT_OUTPUT + i].value = in * params[MUTE_PARAM + i].value;
+        // todo get from param
+        lpFilter->setResonance(.7);
+        hpFilter->setResonance(.7);
+
+        lpFilter->setSampleRate(engineGetSampleRate());
+        hpFilter->setSampleRate(engineGetSampleRate());
 
         float dry = inputs[IN_INPUT + i].value;
         float param = params[MUTE_PARAM + i].value;
