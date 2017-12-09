@@ -104,6 +104,11 @@ struct RangeWidget: ModuleWidget {
     RangeWidget();
 };
 
+struct WidenerWidget: ModuleWidget {
+    WidenerWidget();
+};
+
+
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
 // };

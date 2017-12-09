@@ -32,6 +32,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
   - [Filter](#filter)
   - [Filters](#filters)
   - [Range](#range)
+  - [Widener](#widener)
 - [Future Plans](#future-plans)
 - [Building](#building)
 - [Related Projects](#related-projects)
@@ -147,12 +148,15 @@ Filters is like Volumes or Panners, but for Filters. Each knob controls both a l
 <img src="https://i.imgur.com/3EgRCQ6.png" width="50%" />
 Range will map an input from one range of values to another. So, if you have an oscillator which outputs from 0/2, you can map it to a -5/5 audio signal or a -10/10 CV. Handy!
 
+### Widener
+<img src="https://i.imgur.com/KL50fgV.png" width="25%" />
+Widener is a CV-controlled Haas-effect stereo widener with integrated high pass/low pass filter and a mix knob. Really useful for adding motion to a lead or for making drums rumble!
+
 ## Future Plans
 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
 
   * FFTTuner - FFT / Tuner
-  * VCWidener - Use the Haas effect to widen two inputs
   * VCDryWet - A simple dry/wet mixer
   * DubEcho - Two delays and a spring.
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)

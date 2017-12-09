@@ -80,7 +80,6 @@ void Filters::step() {
         lpFilter->setFilterType(0);
         hpFilter->setFilterType(2);
 
-        // todo get from param
         lpFilter->setResonance(.7);
         hpFilter->setResonance(.7);
 

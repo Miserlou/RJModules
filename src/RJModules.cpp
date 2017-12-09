@@ -35,6 +35,7 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<DisplaysWidget>("RJModules", "Displays", "Displays", UTILITY_TAG));
     p->addModel(createModel<RangeWidget>("RJModules", "Range", "Range", UTILITY_TAG));
     p->addModel(createModel<SidechainWidget>("RJModules", "Sidechain", "Sidechain", UTILITY_TAG));
+    p->addModel(createModel<WidenerWidget>("RJModules", "Widener", "Widener", UTILITY_TAG));
 
 
 }
