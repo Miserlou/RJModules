@@ -187,6 +187,8 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Dedicated 808/kick circuit with click
   * Reverb - It's a reverb!
   * Phaser - Pssshheeeeeooooooowwwwwwoooowowwaaaaaahhhhhh
+  * Harmonic Saturator
+  * Ring Modulator
 
 ## Building
 
