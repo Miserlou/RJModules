@@ -26,4 +26,4 @@ endif
 	cp LICENSE* README* dist/$(DIST_NAME)/
 	cp $(TARGET) dist/$(DIST_NAME)/
 	cp -R res dist/$(DIST_NAME)/
-cd dist && zip -5 -r $(DIST_NAME)-$(VERSION)-$(ARCH).zip $(DIST_NAME)<Paste>
+	cd dist && zip -5 -r $(DIST_NAME)-$(VERSION)-$(ARCH).zip $(DIST_NAME)<Paste>
