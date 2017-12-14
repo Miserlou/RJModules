@@ -16,7 +16,7 @@ include ../../plugin.mk
 
 
 # Convenience target for including files in the distributable release
-DIST_NAME = RJModules 
+DIST_NAME=RJModules 
 .PHONY: dist
 dist: all
 ifndef VERSION
@@ -26,4 +26,4 @@ endif
 	cp LICENSE* README* dist/$(DIST_NAME)/
 	cp $(TARGET) dist/$(DIST_NAME)/
 	cp -R res dist/$(DIST_NAME)/
-	cd dist && zip -5 -r $(DIST_NAME)-$(VERSION)-$(ARCH).zip $(DIST_NAME)<Paste>
+	cd dist && zip -5 -r $(DIST_NAME)-$(VERSION)-$(ARCH).zip $(DIST_NAME)
