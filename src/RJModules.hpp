@@ -108,6 +108,9 @@ struct WidenerWidget: ModuleWidget {
     WidenerWidget();
 };
 
+struct RangeLFOWidget: ModuleWidget {
+    RangeLFOWidget();
+};
 
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();

@@ -15,6 +15,7 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<SupersawWidget>("RJModules", "Supersaw", "[GEN] Supersaw", LFO_TAG));
     p->addModel(createModel<TwinLFOWidget>("RJModules", "TwinLFO", "[GEN] TwinLFO", LFO_TAG));
     p->addModel(createModel<NoiseWidget>("RJModules", "Noise", "[GEN] Noise", LFO_TAG));
+    p->addModel(createModel<RangeLFOWidget>("RJModules", "RangeLFO", "[GEN] RangeLFO", LFO_TAG));
 
     // FX
 	p->addModel(createModel<BitCrushWidget>("RJModules", "BitCrush", "[FX] BitCrush", DISTORTION_TAG));
