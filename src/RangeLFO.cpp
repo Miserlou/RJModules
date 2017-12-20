@@ -132,6 +132,8 @@ struct RangeLFO : Module {
         RESET_INPUT,
         PW_INPUT,
         RATE_CV_INPUT,
+        FROM_CV_INPUT,
+        TO_CV_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -219,6 +221,7 @@ RangeLFOWidget::RangeLFOWidget() {
     display->value = &module->display1_val;
     addChild(display);
     addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
+    addInput(createInput<PJ301MPort>(Vec(5, 235), module, RangeLFO::FROM_CV_INPUT));
 
     SmallIntegerDisplayWidgeter *display2 = new SmallIntegerDisplayWidgeter();
     display2->box.pos = Vec(83, 160);
@@ -226,6 +229,7 @@ RangeLFOWidget::RangeLFOWidget() {
     display2->value = &module->display2_val;
     addChild(display2);
     addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
+    addInput(createInput<PJ301MPort>(Vec(62, 235), module, RangeLFO::TO_CV_INPUT));
 
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, RangeLFO::FREQ_PARAM, -8.0, 6.0, -1.0));
     // addParam(createParam<RoundBlackKnob>(Vec(23, 143), module, RangeLFO::FM1_PARAM, 0.0, 1.0, 0.0));
