@@ -65,6 +65,10 @@ Also has a shape wheel for mixing the sin/saw shape, and has knobs for offset an
 <img src="https://i.imgur.com/l9yj0jt.png" width="25%">
 Noise generates pink and white noise! It also has an integreted high pass and low pass filter. Everything is voltage controlled, and there's a bonus volume knob.
 
+#### Range LFO
+<img src="https://i.imgur.com/wtTzimg.png" width="50%" />
+Range LFO is an LFO which can be explictly mapped to a specific (controllable) range. Very handy!
+
 ### FX
 
 #### Bit Crusher

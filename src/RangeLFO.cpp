@@ -167,10 +167,12 @@ struct RangeLFO : Module {
 void RangeLFO::step() {
 
     // display
-    display1_val = params[CH1_PARAM].value;
-    display2_val = params[CH2_PARAM].value;
+    display1_val = params[CH1_PARAM].value * clampf(inputs[FROM_CV_INPUT].normalize(10.0) / 10.0, -1.0, 1.0);
+    display2_val = params[CH2_PARAM].value * clampf(inputs[TO_CV_INPUT].normalize(10.0) / 10.0, -1.0, 1.0);
 
-    oscillator.setPitch(params[FREQ_PARAM].value + params[FM1_PARAM].value * inputs[FM1_INPUT].value + params[FM2_PARAM].value * inputs[FM2_INPUT].value);
+    float osc_pitch = params[FREQ_PARAM].value + params[FM1_PARAM].value * inputs[FM1_INPUT].value + params[FM2_PARAM].value * inputs[FM2_INPUT].value;
+    osc_pitch = osc_pitch * clampf(inputs[RATE_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    oscillator.setPitch(osc_pitch);
     oscillator.setPulseWidth(params[PW_PARAM].value + params[PWM_PARAM].value * inputs[PW_INPUT].value / 10.0);
     oscillator.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator.invert = (params[INVERT_PARAM].value <= 0.0);
