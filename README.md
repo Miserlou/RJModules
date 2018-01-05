@@ -12,6 +12,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
     - [Supersaw](#supersaw)
     - [Twin LFO](#twin-lfo)
     - [Noise](#noise)
+    - [Range LFO](#range-lfo)
   - [FX](#fx)
     - [Bit Crusher](#bit-crusher)
     - [Filter Delay](#filter-delay)
