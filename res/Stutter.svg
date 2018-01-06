@@ -50,7 +50,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -243,16 +243,6 @@
          id="path25541-6"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccc" />
-      <path
-         inkscape:connector-curvature="0"
-         d="m 3.0634627,30.353611 q 0,0.0985 -0.038803,0.188044 -0.035817,0.08954 -0.1014829,0.158192 -0.065666,0.06567 -0.155211,0.107454 -0.086558,0.0388 -0.1880412,0.0388 -0.086558,0 -0.1761031,-0.02388 -0.089545,-0.02388 -0.1611786,-0.08059 -0.071637,-0.05969 -0.1193914,-0.155202 -0.044774,-0.09551 -0.044774,-0.241769 v -1.17004 q 0,-0.10447 0.03582,-0.194012 0.035817,-0.08955 0.1014829,-0.155211 0.065666,-0.06566 0.1552082,-0.101483 0.092529,-0.0388 0.2029658,-0.0388 0.1044695,0 0.1940116,0.0388 0.089545,0.03582 0.1552109,0.10447 0.065666,0.06566 0.101483,0.161178 0.038803,0.09253 0.038803,0.202966 v 0.119391 H 2.7590114 v -0.101482 q 0,-0.08954 -0.050741,-0.155209 -0.050741,-0.06567 -0.1372997,-0.06567 -0.1134237,0 -0.1522244,0.07163 -0.035817,0.06865 -0.035817,0.176103 v 1.086469 q 0,0.09253 0.038801,0.155208 0.041787,0.06268 0.1462567,0.06268 0.029846,0 0.06268,-0.009 0.035817,-0.01195 0.062682,-0.03582 0.029846,-0.02388 0.047755,-0.06567 0.017914,-0.04179 0.017914,-0.104467 v -0.104466 h 0.3044515 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.81355095px;line-height:1.25;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.06038577"
-         id="path74-2" />
-      <path
-         inkscape:connector-curvature="0"
-         d="M 3.9059204,30.828195 H 3.6372885 L 3.2044943,28.703019 h 0.3223571 l 0.2417692,1.483443 h 0.00596 l 0.2447531,-1.483443 h 0.3223599 z"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.81355095px;line-height:1.25;font-family:'DIN Condensed';-inkscape-font-specification:'DIN Condensed, ';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.06038577"
-         id="path76-7" />
     </g>
     <g
        id="g5241"
@@ -440,7 +430,7 @@
     </g>
     <g
        aria-label="ON/OFF"
-       transform="matrix(0.26458333,0,0,0.26458333,-0.06658038,7.5754392)"
+       transform="matrix(0.26458333,0,0,0.26458333,0.50038392,8.1424032)"
        style="font-style:normal;font-weight:normal;font-size:14.66666698px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.80924457"
        id="flowRoot923-4-27">
       <path

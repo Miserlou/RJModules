@@ -89,6 +89,10 @@ Based on a trigger signal, lower the volume of the input/output signal. CV contr
 <img src="https://i.imgur.com/KL50fgV.png" width="25%" />
 Widener is a CV-controlled Haas-effect stereo widener with integrated high pass/low pass filter and a mix knob. Really useful for adding motion to a lead or for making drums rumble!
 
+#### Stutter
+<img src="https://i.imgur.com/oHHdCHF.png" width="25%" />
+It's a digital glitch effect! Use the main on/off button (and related input) to turn the looper on and off, then use the time knob (controllable with CV) to adjust the size of the stutter. Also has a mix knob.
+
 ### Filters
 
 #### Filter
