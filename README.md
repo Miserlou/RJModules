@@ -18,6 +18,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
     - [Filter Delay](#filter-delay)
     - [Sidechain](#sidechain)
     - [Widener](#widener)
+    - [Stutter](#stutter)
   - [Filters](#filters)
     - [Filter](#filter)
     - [Filters](#filters-1)
