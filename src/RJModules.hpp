@@ -112,6 +112,10 @@ struct RangeLFOWidget: ModuleWidget {
     RangeLFOWidget();
 };
 
+struct StutterWidget: ModuleWidget {
+    StutterWidget();
+};
+
 // struct FFTunerWidget: ModuleWidget {
 //     FFTunerWidget();
 // };

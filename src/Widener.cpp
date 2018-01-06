@@ -106,7 +106,7 @@ void Widener::step(){
   lpFilter->setSampleRate(engineGetSampleRate());
   hpFilter->setSampleRate(engineGetSampleRate());
 
-  float param = params[FILTER_PARAM].value * clampf(inputs[FILTER_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0); ;
+  float param = params[FILTER_PARAM].value * clampf(inputs[FILTER_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
 
   if(param < .5){
       // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min

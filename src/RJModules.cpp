@@ -22,6 +22,7 @@ void init(rack::Plugin *p) {
     p->addModel(createModel<WidenerWidget>("RJModules", "Widener", "[FX] Widener", UTILITY_TAG));
     p->addModel(createModel<FilterDelayWidget>("RJModules", "FilterDelay", "[FX] FilterDelay", DELAY_TAG));
     p->addModel(createModel<SidechainWidget>("RJModules", "Sidechain", "[FX] Sidechain", UTILITY_TAG));
+    p->addModel(createModel<StutterWidget>("RJModules", "Stutter", "[FX] Stutter", DELAY_TAG));
 
     // Filters
     p->addModel(createModel<FilterWidget>("RJModules", "Filter", "[FILT] Filter", UTILITY_TAG));
