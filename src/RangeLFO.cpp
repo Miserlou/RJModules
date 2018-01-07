@@ -1,7 +1,7 @@
 #include "RJModules.hpp"
 #include "dsp/digital.hpp"
 
-#include "dsp/digital.hpp"
+#include "common.hpp"
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -99,12 +99,17 @@ struct SmallIntegerDisplayWidgeter : TransparentWidget {
     nvgTextLetterSpacing(vg, 0.5);
 
     std::stringstream to_display;
-    to_display << std::setprecision(2) << std::setw(1) << *value;
+    to_display = format4display(*value);
 
-    Vec textPos = Vec(16.0f, 33.0f);
+    Vec textPos = Vec(8.0f, 33.0f);
     NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
     nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
+    nvgText(vg, textPos.x, textPos.y, to_display.str().substr(0, 4).c_str(), NULL);
+
+    nvgFontSize(vg, 8);
+    textPos = Vec(1.0f, (*value<0?28.0f:32.0f));
+    nvgText(vg, textPos.x, textPos.y, (*value<0?"-":"+"), NULL);
+
   }
 };
 

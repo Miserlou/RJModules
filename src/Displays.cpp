@@ -1,10 +1,12 @@
 #include "RJModules.hpp"
 
 #include "dsp/digital.hpp"
+#include "common.hpp"
 #include <iostream>
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include "util.hpp"
 
 /*
 Thanks to Strum for the display widget!
@@ -62,12 +64,16 @@ struct NumberDisplayWidgeter : TransparentWidget {
     nvgTextLetterSpacing(vg, 2.5);
 
     std::stringstream to_display;
-    to_display << std::setprecision(2) << std::setw(3) << *value;
+    to_display = format4display(*value);
 
     Vec textPos = Vec(16.0f, 33.0f);
     NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
     nvgFillColor(vg, textColor);
     nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
+
+    nvgFontSize(vg, 16);
+    textPos = Vec(1.0f, (*value<0?20.0f:30.0f));
+    nvgText(vg, textPos.x, textPos.y, (*value<0?"-":"+"), NULL);
   }
 };
 
