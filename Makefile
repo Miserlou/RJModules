@@ -16,7 +16,7 @@ include ../../plugin.mk
 
 
 # Convenience target for including files in the distributable release
-DIST_NAME=RJModules 
+DIST_NAME=RJModules
 .PHONY: dist
 dist: all
 ifndef VERSION
