@@ -30,9 +30,9 @@ struct Integers: Module {
 #define ROUND(f) ((float)((f > 0.0) ? floor(f + 0.5) : ceil(f - 0.5)))
 
 void Integers::step() {
-    float combined_input_1 = params[CH1_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
-    float combined_input_2 = params[CH2_PARAM].value * clampf(inputs[CH2_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
-    float combined_input_3 = params[CH3_PARAM].value * clampf(inputs[CH3_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    float combined_input_1 = params[CH1_PARAM].value * clamp(inputs[CH1_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
+    float combined_input_2 = params[CH2_PARAM].value * clamp(inputs[CH2_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
+    float combined_input_3 = params[CH3_PARAM].value * clamp(inputs[CH3_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
 
     // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
     float mapped_input_1 = ((combined_input_1 - 0.0) / (1.0 - 0.0) ) * (12.0 - -12.0) + -12.0;
@@ -49,9 +49,11 @@ void Integers::step() {
 }
 
 
-IntegersWidget::IntegersWidget() {
-    Integers *module = new Integers();
-    setModule(module);
+struct IntegersWidget: ModuleWidget {
+    IntegersWidget(Integers *module);
+};
+
+IntegersWidget::IntegersWidget(Integers *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -61,20 +63,22 @@ IntegersWidget::IntegersWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, Integers::CH1_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Integers::CH2_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Integers::CH3_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 79), module, Integers::CH1_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 159), module, Integers::CH2_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 239), module, Integers::CH3_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Integers::CH1_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Integers::CH2_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Integers::CH3_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Integers::CH1_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Integers::CH2_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Integers::CH3_CV_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(110, 85), module, Integers::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(110, 165), module, Integers::CH2_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(110, 245), module, Integers::CH3_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 85), Port::OUTPUT, module, Integers::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 165), Port::OUTPUT, module, Integers::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 245), Port::OUTPUT, module, Integers::CH3_OUTPUT));
 }
+
+Model *modelIntegers = Model::create<Integers, IntegersWidget>("RJModules", "Integers", "[NUM] Integers", UTILITY_TAG);

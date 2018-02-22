@@ -27,7 +27,7 @@ struct Panner: Module {
 void Panner::step() {
     float ch1 = inputs[CH1_INPUT].value;
 
-    float combined_input = params[CH1_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    float combined_input = params[CH1_PARAM].value * clamp(inputs[CH1_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
 
     float left_percent = combined_input;
     float right_percent = 1 - combined_input;
@@ -37,9 +37,11 @@ void Panner::step() {
 }
 
 
-PannerWidget::PannerWidget() {
-    Panner *module = new Panner();
-    setModule(module);
+struct PannerWidget: ModuleWidget {
+    PannerWidget(Panner *module);
+};
+
+PannerWidget::PannerWidget(Panner *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -49,16 +51,18 @@ PannerWidget::PannerWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, Panner::CH1_PARAM, 0.0, 1.0, 0.0));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 139), module, Panner::CH1_PARAM, 0.0, 1.0, 0.0));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 129), module, Panner::CH1_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 160), module, Panner::CH1_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 129), Port::INPUT, module, Panner::CH1_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 160), Port::INPUT, module, Panner::CH1_CV_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(110, 125), module, Panner::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(110, 175), module, Panner::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 125), Port::OUTPUT, module, Panner::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 175), Port::OUTPUT, module, Panner::CH2_OUTPUT));
 }
+
+Model *modelPanner = Model::create<Panner, PannerWidget>("RJModules", "Panner", "[MIX] Panner", UTILITY_TAG);

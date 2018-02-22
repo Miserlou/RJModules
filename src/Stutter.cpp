@@ -70,10 +70,8 @@ void Stutter::step(){
 
   float in = inputs[CH1_INPUT].value;
   float on_off = params[ONOFF_PARAM].value;
-  int time = params[TIME_PARAM].value * clampf(inputs[TIME_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0); ;
+  int time = params[TIME_PARAM].value * clamp(inputs[TIME_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f); ;
   float wet = in;
-
-  resetTrigger.setThresholds(0.0, 0.01);
 
   // issa hack
   if (last_press > 6000){
@@ -113,7 +111,7 @@ void Stutter::step(){
   last_press++;
 
   //mix
-  float mix_percent = params[MIX_PARAM].value * clampf(inputs[MIX_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+  float mix_percent = params[MIX_PARAM].value * clamp(inputs[MIX_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
   float mixed = ((wet * mix_percent)) + (in * (1-mix_percent));
 
   outputs[CH1_OUTPUT].value = mixed;
@@ -125,9 +123,11 @@ void Stutter::step(){
 
 }
 
-StutterWidget::StutterWidget() {
-    Stutter *module = new Stutter();
-    setModule(module);
+struct StutterWidget: ModuleWidget {
+    StutterWidget(Stutter *module);
+};
+
+StutterWidget::StutterWidget(Stutter *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -137,22 +137,23 @@ StutterWidget::StutterWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    //addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Stutter::ONOFF_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<BigSwitchLEDButton>(Vec(47, 61), module, Stutter::ONOFF_PARAM, 0.0, 1.0, 0.0));
-    addChild(createLight<GiantLight<GreenLight>>(Vec(53, 67), module, Stutter::RESET_LIGHT));
+    //addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Stutter::ONOFF_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<BigSwitchLEDButton>(Vec(47, 61), module, Stutter::ONOFF_PARAM, 0.0, 1.0, 0.0));
+    addChild(ModuleLightWidget::create<GiantLight<GreenLight>>(Vec(53, 67), module, Stutter::RESET_LIGHT));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Stutter::TIME_PARAM, 0, 36000, 4000));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Stutter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Stutter::TIME_PARAM, 0, 36000, 4000));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Stutter::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Stutter::ONOFF_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Stutter::TIME_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Stutter::MIX_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Stutter::ONOFF_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Stutter::TIME_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Stutter::MIX_CV_INPUT));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 315), module, Stutter::CH1_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(100, 315), module, Stutter::CH1_OUTPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 315), Port::INPUT, module, Stutter::CH1_INPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(100, 315), Port::OUTPUT, module, Stutter::CH1_OUTPUT));
 }
+Model *modelStutter = Model::create<Stutter, StutterWidget>("RJModules", "Stutter", "[FX] Stutter", DELAY_TAG);
