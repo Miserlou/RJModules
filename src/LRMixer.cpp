@@ -43,9 +43,11 @@ void LRMixer::step() {
     outputs[CH2_OUTPUT].value = (inputs[R1_INPUT].value + inputs[R2_INPUT].value + inputs[R3_INPUT].value + inputs[R4_INPUT].value + inputs[R5_INPUT].value + inputs[R6_INPUT].value) * params[CH1_PARAM].value;
 }
 
-LRMixerWidget::LRMixerWidget() {
-    LRMixer *module = new LRMixer();
-    setModule(module);
+struct LRMixerWidget: ModuleWidget {
+    LRMixerWidget(LRMixer *module);
+};
+
+LRMixerWidget::LRMixerWidget(LRMixer *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -55,28 +57,30 @@ LRMixerWidget::LRMixerWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(Vec(23, 320), module, LRMixer::CH1_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<RoundSmallBlackKnob>(Vec(23, 320), module, LRMixer::CH1_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(createInput<PJ301MPort>(Vec(25, 96), module, LRMixer::L1_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(65, 96), module, LRMixer::L2_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(105, 96), module, LRMixer::L3_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(25, 148), module, LRMixer::L4_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(65, 148), module, LRMixer::L5_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(105, 148), module, LRMixer::L6_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(25, 96), Port::INPUT, module, LRMixer::L1_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(65, 96), Port::INPUT, module, LRMixer::L2_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(105, 96), Port::INPUT, module, LRMixer::L3_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(25, 148), Port::INPUT, module, LRMixer::L4_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(65, 148), Port::INPUT, module, LRMixer::L5_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(105, 148), Port::INPUT, module, LRMixer::L6_INPUT));
 
-    addInput(createInput<PJ301MPort>(Vec(25, 220), module, LRMixer::R1_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(65, 220), module, LRMixer::R2_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(105, 220), module, LRMixer::R3_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(25, 270), module, LRMixer::R4_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(65, 270), module, LRMixer::R5_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(105, 270), module, LRMixer::R6_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(25, 220), Port::INPUT, module, LRMixer::R1_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(65, 220), Port::INPUT, module, LRMixer::R2_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(105, 220), Port::INPUT, module, LRMixer::R3_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(25, 270), Port::INPUT, module, LRMixer::R4_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(65, 270), Port::INPUT, module, LRMixer::R5_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(105, 270), Port::INPUT, module, LRMixer::R6_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(65, 322), module, LRMixer::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(104, 322), module, LRMixer::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 322), Port::OUTPUT, module, LRMixer::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(104, 322), Port::OUTPUT, module, LRMixer::CH2_OUTPUT));
 
 }
+
+Model *modelLRMixer = Model::create<LRMixer, LRMixerWidget>("RJModules", "LRMixer", "[MIX] LRMixer", UTILITY_TAG);

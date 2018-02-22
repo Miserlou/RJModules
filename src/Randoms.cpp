@@ -61,9 +61,11 @@ void Randoms::step() {
     outputs[CH1_OUTPUT].value = distr1(eng);
 }
 
-RandomsWidget::RandomsWidget() {
-    Randoms *module = new Randoms();
-    setModule(module);
+struct RandomsWidget: ModuleWidget {
+    RandomsWidget(Randoms *module);
+};
+
+RandomsWidget::RandomsWidget(Randoms *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -73,22 +75,24 @@ RandomsWidget::RandomsWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-    addInput(createInput<PJ301MPort>(Vec(22, 70), module, Randoms::CH1_CV_INPUT_1));
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Randoms::CH1_CV_INPUT_2));
+    addInput(Port::create<PJ301MPort>(Vec(22, 70), Port::INPUT, module, Randoms::CH1_CV_INPUT_1));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Randoms::CH1_CV_INPUT_2));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 150), module, Randoms::CH2_CV_INPUT_1));
-    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Randoms::CH2_CV_INPUT_2));
+    addInput(Port::create<PJ301MPort>(Vec(22, 150), Port::INPUT, module, Randoms::CH2_CV_INPUT_1));
+    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Randoms::CH2_CV_INPUT_2));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 230), module, Randoms::CH3_CV_INPUT_1));
-    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Randoms::CH3_CV_INPUT_2));
+    addInput(Port::create<PJ301MPort>(Vec(22, 230), Port::INPUT, module, Randoms::CH3_CV_INPUT_1));
+    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Randoms::CH3_CV_INPUT_2));
 
-    addOutput(createOutput<PJ301MPort>(Vec(110, 85), module, Randoms::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(110, 165), module, Randoms::CH2_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(110, 245), module, Randoms::CH3_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 85), Port::OUTPUT, module, Randoms::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 165), Port::OUTPUT, module, Randoms::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 245), Port::OUTPUT, module, Randoms::CH3_OUTPUT));
 }
+
+Model *modelRandoms = Model::create<Randoms, RandomsWidget>("RJModules", "Randoms", "[NUM] Randoms", UTILITY_TAG);

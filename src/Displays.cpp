@@ -6,7 +6,6 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
-#include "util.hpp"
 
 /*
 Thanks to Strum for the display widget!
@@ -90,9 +89,11 @@ void Displays::step() {
 
 }
 
-DisplaysWidget::DisplaysWidget() {
-    Displays *module = new Displays();
-    setModule(module);
+struct DisplaysWidget: ModuleWidget {
+    DisplaysWidget(Displays *module);
+};
+
+DisplaysWidget::DisplaysWidget(Displays *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -102,10 +103,10 @@ DisplaysWidget::DisplaysWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
     NumberDisplayWidgeter *display = new NumberDisplayWidgeter();
@@ -114,8 +115,8 @@ DisplaysWidget::DisplaysWidget() {
     display->value = &module->display1_val;
     addChild(display);
 
-    addInput(createInput<PJ301MPort>(Vec(35, 123), module, Displays::CH1_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(95, 123), module, Displays::CH1_OUTPUT));
+    addInput(Port::create<PJ301MPort>(Vec(35, 123), Port::INPUT, module, Displays::CH1_INPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(95, 123), Port::OUTPUT, module, Displays::CH1_OUTPUT));
 
     NumberDisplayWidgeter *display2 = new NumberDisplayWidgeter();
     display2->box.pos = Vec(28, 160);
@@ -123,8 +124,8 @@ DisplaysWidget::DisplaysWidget() {
     display2->value = &module->display2_val;
     addChild(display2);
 
-    addInput(createInput<PJ301MPort>(Vec(35, 223), module, Displays::CH2_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(95, 223), module, Displays::CH2_OUTPUT));
+    addInput(Port::create<PJ301MPort>(Vec(35, 223), Port::INPUT, module, Displays::CH2_INPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(95, 223), Port::OUTPUT, module, Displays::CH2_OUTPUT));
 
     NumberDisplayWidgeter *display3 = new NumberDisplayWidgeter();
     display3->box.pos = Vec(28, 260);
@@ -132,7 +133,9 @@ DisplaysWidget::DisplaysWidget() {
     display3->value = &module->display3_val;
     addChild(display3);
 
-    addInput(createInput<PJ301MPort>(Vec(35, 323), module, Displays::CH3_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(95, 323), module, Displays::CH3_OUTPUT));
+    addInput(Port::create<PJ301MPort>(Vec(35, 323), Port::INPUT, module, Displays::CH3_INPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(95, 323), Port::OUTPUT, module, Displays::CH3_OUTPUT));
 
 }
+
+Model *modelDisplays = Model::create<Displays, DisplaysWidget>("RJModules", "Displays", "[UTIL] Displays", UTILITY_TAG);

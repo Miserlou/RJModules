@@ -65,7 +65,7 @@ void Widener::step(){
   float in = inputs[CH1_INPUT].value;
 
   // Compute delay time in seconds
-  float delay = .001 * powf(10.0 / .001, clampf(params[TIME_PARAM].value + inputs[TIME_CV_INPUT].value / 10.0, 0.0, 1.0));
+  float delay = .001 * powf(10.0 / .001, clamp(params[TIME_PARAM].value + inputs[TIME_CV_INPUT].value / 10.0f, 0.0f, 1.0f));
   // Number of delay samples
   float index = delay * engineGetSampleRate();
 
@@ -82,9 +82,12 @@ void Widener::step(){
       else if (consume >= 16)
           ratio = 2.0;
 
-      int inFrames = mini(historyBuffer.size(), 16);
+      float inSR = engineGetSampleRate();
+      float outSR = ratio * inSR;
+
+      int inFrames = min(historyBuffer.size(), 16);
       int outFrames = outBuffer.capacity();
-      src.setRatioSmooth(ratio);
+      src.setRates(inSR, outSR);
       src.process((const Frame<1>*)historyBuffer.startData(), &inFrames, (Frame<1>*)outBuffer.endData(), &outFrames);
       historyBuffer.startIncr(inFrames);
       outBuffer.endIncr(outFrames);
@@ -106,7 +109,7 @@ void Widener::step(){
   lpFilter->setSampleRate(engineGetSampleRate());
   hpFilter->setSampleRate(engineGetSampleRate());
 
-  float param = params[FILTER_PARAM].value * clampf(inputs[FILTER_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+  float param = params[FILTER_PARAM].value * clamp(inputs[FILTER_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
 
   if(param < .5){
       // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
@@ -125,7 +128,7 @@ void Widener::step(){
   // }
 
   //mix
-  float mix_percent = params[MIX_PARAM].value * clampf(inputs[MIX_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+  float mix_percent = params[MIX_PARAM].value * clamp(inputs[MIX_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
   float mixed = ((wet * mix_percent)) + (in * (1-mix_percent));
 
   outputs[CH1_OUTPUT].value = in;
@@ -133,9 +136,11 @@ void Widener::step(){
 
 }
 
-WidenerWidget::WidenerWidget() {
-    Widener *module = new Widener();
-    setModule(module);
+struct WidenerWidget: ModuleWidget {
+    WidenerWidget(Widener *module);
+};
+
+WidenerWidget::WidenerWidget(Widener *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -145,20 +150,21 @@ WidenerWidget::WidenerWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Widener::TIME_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Widener::MIX_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Widener::FILTER_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Widener::TIME_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Widener::MIX_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Widener::FILTER_CV_INPUT));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 315), module, Widener::CH1_INPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(62, 315), module, Widener::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(100, 315), module, Widener::CH2_OUTPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 315), Port::INPUT, module, Widener::CH1_INPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(62, 315), Port::OUTPUT, module, Widener::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(100, 315), Port::OUTPUT, module, Widener::CH2_OUTPUT));
 }
+Model *modelWidener = Model::create<Widener, WidenerWidget>("RJModules", "Widener", "[FX] Widener", UTILITY_TAG);

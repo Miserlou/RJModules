@@ -44,9 +44,11 @@ void Splitter::step() {
 
 }
 
-SplitterWidget::SplitterWidget() {
-    Splitter *module = new Splitter();
-    setModule(module);
+struct SplitterWidget: ModuleWidget {
+    SplitterWidget(Splitter *module);
+};
+
+SplitterWidget::SplitterWidget(Splitter *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -56,23 +58,25 @@ SplitterWidget::SplitterWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(createInput<PJ301MPort>(Vec(64, 89), module, Splitter::CH1_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(64, 89), Port::INPUT, module, Splitter::CH1_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 173), module, Splitter::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 173), module, Splitter::CH2_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(105, 173), module, Splitter::CH3_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 173), Port::OUTPUT, module, Splitter::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 173), Port::OUTPUT, module, Splitter::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(105, 173), Port::OUTPUT, module, Splitter::CH3_OUTPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 223), module, Splitter::CH5_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 223), module, Splitter::CH6_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(105, 223), module, Splitter::CH6_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 223), Port::OUTPUT, module, Splitter::CH5_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 223), Port::OUTPUT, module, Splitter::CH6_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(105, 223), Port::OUTPUT, module, Splitter::CH6_OUTPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 274), module, Splitter::CH7_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 274), module, Splitter::CH8_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(106, 274), module, Splitter::CH9_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 274), Port::OUTPUT, module, Splitter::CH7_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 274), Port::OUTPUT, module, Splitter::CH8_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(106, 274), Port::OUTPUT, module, Splitter::CH9_OUTPUT));
 
 }
+
+Model *modelSplitter = Model::create<Splitter, SplitterWidget>("RJModules", "Splitter", "[UTIL] Splitter", UTILITY_TAG);

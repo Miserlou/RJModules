@@ -34,10 +34,10 @@ void Filter::step() {
 
     float dry = inputs[CH1_INPUT].value;
     float wet = 0.0;
-    dry += 1.0e-6 * (2.0*randomf() - 1.0)*1000;
+    dry += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
     float mixed = 1.0;
 
-    float param = params[FREQ_PARAM].value * clampf(inputs[FREQ_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    float param = params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 10.0f);
 
     // if param < .5
     //      LPF, 30:8000
@@ -49,8 +49,8 @@ void Filter::step() {
     hpFilter->setFilterType(2);
 
     // todo get from param
-    lpFilter->setResonance(params[RES_PARAM].value * clampf(inputs[RES_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0));
-    hpFilter->setResonance(params[RES_PARAM].value * clampf(inputs[RES_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0));
+    lpFilter->setResonance(params[RES_PARAM].value * clamp(inputs[RES_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
+    hpFilter->setResonance(params[RES_PARAM].value * clamp(inputs[RES_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
 
     lpFilter->setSampleRate(engineGetSampleRate());
     hpFilter->setSampleRate(engineGetSampleRate());
@@ -73,16 +73,18 @@ void Filter::step() {
         wet = dry;
     }
 
-    float mix_cv = clampf(inputs[MIX_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    float mix_cv = clamp(inputs[MIX_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
     mixed = (wet * (params[MIX_PARAM].value * mix_cv)) + (dry * ((1-params[MIX_PARAM].value) * mix_cv));
 
     outputs[CH1_OUTPUT].value = mixed;
 }
 
 
-FilterWidget::FilterWidget() {
-    Filter *module = new Filter();
-    setModule(module);
+struct FilterWidget: ModuleWidget {
+    FilterWidget(Filter *module);
+};
+
+FilterWidget::FilterWidget(Filter *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -92,19 +94,21 @@ FilterWidget::FilterWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Filter::FREQ_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM,  0.0, 1.0, .8));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Filter::FREQ_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM,  0.0, 1.0, .8));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Filter::FREQ_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Filter::RES_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Filter::MIX_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 310), module, Filter::CH1_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Filter::FREQ_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Filter::RES_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Filter::MIX_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 310), Port::INPUT, module, Filter::CH1_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(110, 310), module, Filter::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, Filter::CH1_OUTPUT));
 }
+
+Model *modelFilter = Model::create<Filter, FilterWidget>("RJModules", "Filter", "[FILT] Filter", UTILITY_TAG);

@@ -30,8 +30,8 @@ struct BitCrush: Module {
 void BitCrush::step() {
 	float ch1 = inputs[CH1_INPUT].value;
 
-	float combined_input = params[CH1_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
-	float combined_crush_floor = params[CH2_PARAM].value * clampf(inputs[CH2_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+	float combined_input = params[CH1_PARAM].value * clamp(inputs[CH1_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
+	float combined_crush_floor = params[CH2_PARAM].value * clamp(inputs[CH2_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
 
 	// new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
 	float mapped_crush_floor = ((combined_crush_floor - 0.0) / (1.0 - 0.0) ) * (32.0 - 1.0) + 1.0;
@@ -47,9 +47,11 @@ void BitCrush::step() {
 }
 
 
-BitCrushWidget::BitCrushWidget() {
-	BitCrush *module = new BitCrush();
-	setModule(module);
+struct BitCrushWidget: ModuleWidget {
+	BitCrushWidget(BitCrush *module);
+};
+
+BitCrushWidget::BitCrushWidget(BitCrush *module) : ModuleWidget(module) {
 	box.size = Vec(15*10, 380);
 
 	{
@@ -59,18 +61,20 @@ BitCrushWidget::BitCrushWidget() {
 		addChild(panel);
 	}
 
-	addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-	addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-	addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+	addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+	addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-	addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, BitCrush::CH1_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<RoundBlackKnob>(Vec(57, 219), module, BitCrush::CH2_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 139), module, BitCrush::CH1_PARAM, 0.0, 1.0, 0.0));
+	addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 219), module, BitCrush::CH2_PARAM, 0.0, 1.0, 0.0));
 
-	addInput(createInput<PJ301MPort>(Vec(22, 129), module, BitCrush::CH1_INPUT));
-	addInput(createInput<PJ301MPort>(Vec(22, 160), module, BitCrush::CH1_CV_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(22, 129), Port::INPUT, module, BitCrush::CH1_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(22, 160), Port::INPUT, module, BitCrush::CH1_CV_INPUT));
 
-	addInput(createInput<PJ301MPort>(Vec(22, 241), module, BitCrush::CH2_CV_INPUT));
+	addInput(Port::create<PJ301MPort>(Vec(22, 241), Port::INPUT, module, BitCrush::CH2_CV_INPUT));
 
-	addOutput(createOutput<PJ301MPort>(Vec(110, 145), module, BitCrush::CH1_OUTPUT));
+	addOutput(Port::create<PJ301MPort>(Vec(110, 145), Port::OUTPUT, module, BitCrush::CH1_OUTPUT));
 }
+
+Model *modelBitCrush = Model::create<BitCrush, BitCrushWidget>("RJModules", "BitCrush", "[FX] BitCrush", DISTORTION_TAG);
