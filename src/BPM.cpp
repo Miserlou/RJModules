@@ -107,7 +107,7 @@ void BPM::step() {
     bool bMainClockTrig = false;
 
     // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-    float bpm_val = params[BPM_PARAM].value * clampf(inputs[CH1_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    float bpm_val = params[BPM_PARAM].value * clamp(inputs[CH1_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
     float mapped_bpm = ((bpm_val - 0.0) / (1.0 - 0.0) ) * (600.0 - 40.0) + 40.0;
 
     m_fBPM = mapped_bpm;
@@ -145,9 +145,11 @@ void BPM::step() {
 
 }
 
-BPMWidget::BPMWidget() {
-    BPM *module = new BPM();
-    setModule(module);
+struct BPMWidget: ModuleWidget {
+    BPMWidget(BPM *module);
+};
+
+BPMWidget::BPMWidget(BPM *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -157,27 +159,27 @@ BPMWidget::BPMWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(createInput<PJ301MPort>(Vec(24, 160), module, BPM::CH1_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(106, 165), module, BPM::RESET_CV_INPUT));
-    addParam(createParam<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM, 0.0, 1.0, 0.0));
-    addChild(createLight<MediumLight<GreenLight>>(Vec(113.4, 136.4), module, BPM::RESET_LIGHT));
+    addInput(Port::create<PJ301MPort>(Vec(24, 160), Port::INPUT, module, BPM::CH1_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(106, 165), Port::INPUT, module, BPM::RESET_CV_INPUT));
+    addParam(ParamWidget::create<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM, 0.0, 1.0, 0.0));
+    addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(113.4, 136.4), module, BPM::RESET_LIGHT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 223), module, BPM::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 223), module, BPM::CH2_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(105, 223), module, BPM::CH3_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 223), Port::OUTPUT, module, BPM::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 223), Port::OUTPUT, module, BPM::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(105, 223), Port::OUTPUT, module, BPM::CH3_OUTPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 274), module, BPM::CH4_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 274), module, BPM::CH5_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(106, 274), module, BPM::CH6_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 274), Port::OUTPUT, module, BPM::CH4_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 274), Port::OUTPUT, module, BPM::CH5_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(106, 274), Port::OUTPUT, module, BPM::CH6_OUTPUT));
 
-    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.165));
-    // addChild(createLight<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
-    //addChild(createLight<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.165));
+    // addChild(ModuleLightWidget::create<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
+    //addChild(ModuleLightWidget::create<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
 
     NumberDisplayWidget *display = new NumberDisplayWidget();
     display->box.pos = Vec(28, 70);
@@ -185,3 +187,5 @@ BPMWidget::BPMWidget() {
     display->value = &module->m_fBPM;
     addChild(display);
 }
+
+Model *modelBPM = Model::create<BPM, BPMWidget>("RJModules", "BPM", "[LIVE] BPM", UTILITY_TAG);

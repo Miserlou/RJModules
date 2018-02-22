@@ -67,10 +67,11 @@ void BigButton::step() {
 
 }
 
+struct ButtonWidget: ModuleWidget {
+    ButtonWidget(BigButton *module);
+};
 
-ButtonWidget::ButtonWidget() {
-    BigButton *module = new BigButton();
-    setModule(module);
+ButtonWidget::ButtonWidget(BigButton *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -80,20 +81,22 @@ ButtonWidget::ButtonWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 223), module, BigButton::CH1_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 223), module, BigButton::CH2_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(105, 223), module, BigButton::CH3_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 223), Port::OUTPUT, module, BigButton::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 223), Port::OUTPUT, module, BigButton::CH2_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(105, 223), Port::OUTPUT, module, BigButton::CH3_OUTPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(24, 274), module, BigButton::CH4_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(65, 274), module, BigButton::CH5_OUTPUT));
-    addOutput(createOutput<PJ301MPort>(Vec(106, 274), module, BigButton::CH6_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(24, 274), Port::OUTPUT, module, BigButton::CH4_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(65, 274), Port::OUTPUT, module, BigButton::CH5_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(106, 274), Port::OUTPUT, module, BigButton::CH6_OUTPUT));
 
-    addParam(createParam<BigLEDButton>(Vec(15, 60), module, BigButton::RESET_PARAM, 0.0, 1.0, 0.0));
-    addChild(createLight<GiantLight<GreenLight>>(Vec(25, 70), module, BigButton::RESET_LIGHT));
+    addParam(ParamWidget::create<BigLEDButton>(Vec(15, 60), module, BigButton::RESET_PARAM, 0.0, 1.0, 0.0));
+    addChild(ModuleLightWidget::create<GiantLight<GreenLight>>(Vec(25, 70), module, BigButton::RESET_LIGHT));
 
 }
+
+Model *modelButton = Model::create<BigButton, ButtonWidget>("RJModules", "Button", "[LIVE] Button", UTILITY_TAG);

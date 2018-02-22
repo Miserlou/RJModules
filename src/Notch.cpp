@@ -35,13 +35,13 @@ void Notch::step() {
     float dry = inputs[CH1_INPUT].value;
     float wet = 0.0;
 
-    dry += 1.0e-6 * (2.0*randomf() - 1.0)*1000;
+    dry += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
 
     notchFilter->setFilterType(5);
 
-    notchFilter->setCutoffFreq(params[FREQ_PARAM].value *  clampf(inputs[FREQ_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0));
-    notchFilter->setShelfGain(params[VOL_PARAM].value *  clampf(inputs[VOL_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0));
-    notchFilter->setResonance(params[WIDTH_PARAM].value*  clampf(inputs[WIDTH_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0));
+    notchFilter->setCutoffFreq(params[FREQ_PARAM].value *  clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
+    notchFilter->setShelfGain(params[VOL_PARAM].value *  clamp(inputs[VOL_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
+    notchFilter->setResonance(params[WIDTH_PARAM].value*  clamp(inputs[WIDTH_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
     notchFilter->setSampleRate(engineGetSampleRate());
 
     wet = notchFilter->processAudioSample(dry, 1);
@@ -49,9 +49,11 @@ void Notch::step() {
 }
 
 
-NotchWidget::NotchWidget() {
-    Notch *module = new Notch();
-    setModule(module);
+struct NotchWidget: ModuleWidget {
+    NotchWidget(Notch *module);
+};
+
+NotchWidget::NotchWidget(Notch *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -61,19 +63,21 @@ NotchWidget::NotchWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Notch::FREQ_PARAM, 30.0, 6000.0, 1000.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Notch::VOL_PARAM,  0.0, 5.0, 2));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Notch::WIDTH_PARAM, 0.0, 1.0, 0.5));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Notch::FREQ_PARAM, 30.0, 6000.0, 1000.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Notch::VOL_PARAM,  0.0, 5.0, 2));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Notch::WIDTH_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Notch::FREQ_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Notch::VOL_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Notch::WIDTH_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 310), module, Notch::CH1_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Notch::FREQ_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Notch::VOL_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Notch::WIDTH_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 310), Port::INPUT, module, Notch::CH1_INPUT));
 
-    addOutput(createOutput<PJ301MPort>(Vec(110, 310), module, Notch::CH1_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, Notch::CH1_OUTPUT));
 }
+
+Model *modelNotch = Model::create<Notch, NotchWidget>("RJModules", "Notch", "[FILT] Notch", UTILITY_TAG);

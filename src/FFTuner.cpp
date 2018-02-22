@@ -273,9 +273,9 @@
 // }
 
 
-// FFTunerWidget::FFTunerWidget() {
-//     FFTuner *module = new FFTuner();
-//     setModule(module);
+
+
+// FFTunerWidget::FFTunerWidget(FFTuner *module) : ModuleWidget(module) {
 //     box.size = Vec(15*10, 380);
 
 //     {
@@ -285,12 +285,14 @@
 //         addChild(panel);
 //     }
 
-//     addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-//     addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-//     addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-//     addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+//     addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+//     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+//     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+//     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-//     addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, FFTuner::CH1_PARAM, 0.0, 1.0, 0.5));
-//     addInput(createInput<PJ301MPort>(Vec(22, 100), module, FFTuner::CH1_INPUT));
-//     addOutput(createOutput<PJ301MPort>(Vec(110, 85), module, FFTuner::CH1_OUTPUT));
+//     addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 79), module, FFTuner::CH1_PARAM, 0.0, 1.0, 0.5));
+//     addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, FFTuner::CH1_INPUT));
+//     addOutput(Port::create<PJ301MPort>(Vec(110, 85), Port::OUTPUT, module, FFTuner::CH1_OUTPUT));
 // }
+
+

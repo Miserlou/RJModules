@@ -108,15 +108,15 @@ void Noise::step(){
     std::uniform_real_distribution<> distr1(-5, 5); // define the range
     white =  distr1(eng);
 
-    mix_value = params[COLOR_PARAM].value * clampf(inputs[COLOR_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);
+    mix_value = params[COLOR_PARAM].value * clamp(inputs[COLOR_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
     mixed = ( (mapped_pink * mix_value) + (white * (1.0 - mix_value)) )/ 2;
 
     // filtration
-    mixed += 1.0e-6 * (2.0*randomf() - 1.0)*1000;
+    mixed += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
 
     //float cutoffcv =  400;//*params[LPF_PARAM].value * inputs[FREQ_INPUT].value+ 400*inputs[FREQ_INPUT2].value *params[FREQ_CV_PARAM2].value ;
-    float lp_cutoff = params[LPF_PARAM].value * clampf(inputs[LPF_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);;
-    float hp_cutoff = params[HPF_PARAM].value * clampf(inputs[HPF_CV_INPUT].normalize(10.0) / 10.0, 0.0, 1.0);;  // + cutoffcv;
+    float lp_cutoff = params[LPF_PARAM].value * clamp(inputs[LPF_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
+    float hp_cutoff = params[HPF_PARAM].value * clamp(inputs[HPF_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;  // + cutoffcv;
 
     lpFilter->setFilterType(0);
     hpFilter->setFilterType(2);
@@ -139,9 +139,11 @@ void Noise::step(){
 
 }
 
-NoiseWidget::NoiseWidget() {
-    Noise *module = new Noise();
-    setModule(module);
+struct NoiseWidget: ModuleWidget {
+    NoiseWidget(Noise *module);
+};
+
+NoiseWidget::NoiseWidget(Noise *module) : ModuleWidget(module) {
     box.size = Vec(15*10, 380);
 
     {
@@ -151,19 +153,20 @@ NoiseWidget::NoiseWidget() {
         addChild(panel);
     }
 
-    addChild(createScrew<ScrewSilver>(Vec(15, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createScrew<ScrewSilver>(Vec(15, 365)));
-    addChild(createScrew<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Noise::COLOR_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Noise::LPF_PARAM, 0.0, 8000.0, 8000.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Noise::HPF_PARAM, 30.0, 8000.0, 30.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Noise::COLOR_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Noise::LPF_PARAM, 0.0, 8000.0, 8000.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Noise::HPF_PARAM, 30.0, 8000.0, 30.0));
 
-    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Noise::COLOR_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Noise::LPF_CV_INPUT));
-    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Noise::HPF_CV_INPUT));
-    addParam(createParam<RoundSmallBlackKnob>(Vec(20, 310), module, Noise::VOL_PARAM, 0.0, 2.0, 1.0));
+    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Noise::COLOR_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Noise::LPF_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Noise::HPF_CV_INPUT));
+    addParam(ParamWidget::create<RoundSmallBlackKnob>(Vec(20, 310), module, Noise::VOL_PARAM, 0.0, 2.0, 1.0));
 
-    addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, Noise::NOISE_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(100, 310), Port::OUTPUT, module, Noise::NOISE_OUTPUT));
 }
+Model *modelNoise = Model::create<Noise, NoiseWidget>("RJModules", "Noise", "[GEN] Noise", LFO_TAG);
