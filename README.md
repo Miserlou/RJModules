@@ -199,6 +199,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Harmonic Saturator
   * Ring Modulator
   * Granulator
+  * Shepard Tone Generator
 
 ## Building
 
