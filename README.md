@@ -200,6 +200,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Ring Modulator
   * Granulator
   * Shepard Tone Generator
+  * Band Pass Filter
+  * BPM LFO - LFO with integrated divisible BPM (including triplets), for triplet wubs
+  * Buffer - Delay a signal
 
 ## Building
 
