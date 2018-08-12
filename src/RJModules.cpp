@@ -14,9 +14,10 @@ void init(rack::Plugin *p) {
     p->addModel(modelTwinLFO);
     p->addModel(modelNoise);
     p->addModel(modelRangeLFO);
+    p->addModel(modelRiser);
 
     // FX
-	p->addModel(modelBitCrush);
+    p->addModel(modelBitCrush);
     p->addModel(modelWidener);
     p->addModel(modelFilterDelay);
     p->addModel(modelSidechain);
@@ -49,7 +50,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelSplitters);
     p->addModel(modelDisplays);
     p->addModel(modelRange);
-
+    p->addModel(modelOctaves);
 
 }
 

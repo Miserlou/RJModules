@@ -31,3 +31,5 @@ extern Model *modelSplitter;
 extern Model *modelSplitters;
 extern Model *modelDisplays;
 extern Model *modelRange;
+extern Model *modelRiser;
+extern Model *modelOctaves;
