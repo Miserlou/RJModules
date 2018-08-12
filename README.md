@@ -203,6 +203,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Band Pass Filter
   * BPM LFO - LFO with integrated divisible BPM (including triplets), for triplet wubs
   * Buffer - Delay a signal
+  * Chords - 5 outputs, display and knob
+  * Octaves - Like Volumes, but for shifting a v/oct by an ocatve
+  * Random Filter - A mutating filter
 
 ## Building
 
