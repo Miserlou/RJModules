@@ -33,3 +33,4 @@ extern Model *modelDisplays;
 extern Model *modelRange;
 extern Model *modelRiser;
 extern Model *modelOctaves;
+extern Model *modelBPF;

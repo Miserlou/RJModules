@@ -135,4 +135,4 @@ OctavesWidget::OctavesWidget(Octaves *module) : ModuleWidget(module) {
     addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 107.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 9));
 }
 
-Model *modelOctaves = Model::create<Octaves, OctavesWidget>("RJModules", "Octaves", "[MISC] Octaves", UTILITY_TAG);
+Model *modelOctaves = Model::create<Octaves, OctavesWidget>("RJModules", "Octaves", "[UTIL] Octaves", UTILITY_TAG);

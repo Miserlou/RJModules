@@ -27,6 +27,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelFilter);
     p->addModel(modelFilters);
     p->addModel(modelNotch);
+    p->addModel(modelBPF);
 
     // Numerical
     p->addModel(modelIntegers);
