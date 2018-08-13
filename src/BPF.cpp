@@ -68,7 +68,7 @@ BPFWidget::BPFWidget(BPF *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM, 30.0, 8000.0, 1000.0));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM, 30.0, 3000.0, 400.0));
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, BPF::VOL_PARAM, 0.0, 1.0, 0.5));
 
     addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, BPF::FREQ_CV_INPUT));

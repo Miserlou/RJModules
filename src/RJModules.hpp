@@ -34,3 +34,5 @@ extern Model *modelRange;
 extern Model *modelRiser;
 extern Model *modelOctaves;
 extern Model *modelBPF;
+extern Model *modelRandomFilter;
+extern Model *modelBuffers;

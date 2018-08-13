@@ -28,6 +28,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelFilters);
     p->addModel(modelNotch);
     p->addModel(modelBPF);
+    p->addModel(modelRandomFilter);
 
     // Numerical
     p->addModel(modelIntegers);
@@ -52,6 +53,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelDisplays);
     p->addModel(modelRange);
     p->addModel(modelOctaves);
+    p->addModel(modelBuffers);
 
 }
 
