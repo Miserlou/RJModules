@@ -2,20 +2,18 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include "dsp/digital.hpp"
 #include "VAStateVariableFilter.h"
 
 struct RandomFilter: Module {
     enum ParamIds {
         RESET_PARAM,
-        FREQ_PARAM,
-        RES_PARAM,
         MIX_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
         CH1_INPUT,
-        FREQ_CV_INPUT,
-        RES_CV_INPUT,
+        BUTTON_CV_INPUT,
         MIX_CV_INPUT,
         NUM_INPUTS
     };
@@ -27,12 +25,14 @@ struct RandomFilter: Module {
         RESET_LIGHT,
         NUM_LIGHTS
     };
+
     float resetLight = 0.0;
+    float last_press = 999999;
 
-    VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
-    VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
+    SchmittTrigger resetTrigger;
+    VAStateVariableFilter *rFilter = new VAStateVariableFilter() ; // create a lpFilter;
 
-    RandomFilter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+    RandomFilter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
 };
 
@@ -51,51 +51,39 @@ struct GiantLight : BASE {
 
 void RandomFilter::step() {
 
+    const float lightLambda = 0.075;
+    float output = 0.0;
+
+    // Reset
+    if ((params[RESET_PARAM].value > 0 && last_press > 7000) || inputs[BUTTON_CV_INPUT].value > 0)   {
+        resetLight = 1.0;
+        last_press = 0;
+
+        std::random_device rd; // obtain a random number from hardware
+        std::mt19937 eng(rd()); // seed the generator
+        std::uniform_int_distribution<> distr(0, 7); // define the range
+        std::uniform_int_distribution<> distr2(-10, 10); // define the range
+        std::uniform_int_distribution<> distr3(0, 7); // define the range
+
+        float filter_type = distr(eng);
+
+        rFilter->setFilterType(filter_type);
+        // rFilter->setCutoffFreq(distr2(eng));
+        // rFilter->setResonance(distr2(eng));
+        rFilter->setSampleRate(engineGetSampleRate());
+
+    }
+
+    resetLight -= resetLight / lightLambda / engineGetSampleRate();
+
     float dry = inputs[CH1_INPUT].value;
-    float wet = 0.0;
-    dry += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
-    float mixed = 1.0;
-
-    float param = params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 10.0f);
-
-    // if param < .5
-    //      LPF, 30:8000
-    // if param > .5
-    //      HPF, 30:8000
-    // if param == .5, wet = dry
-
-    lpFilter->setFilterType(0);
-    hpFilter->setFilterType(2);
-
-    // todo get from param
-    lpFilter->setResonance(params[RES_PARAM].value * clamp(inputs[RES_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
-    hpFilter->setResonance(params[RES_PARAM].value * clamp(inputs[RES_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
-
-    lpFilter->setSampleRate(engineGetSampleRate());
-    hpFilter->setSampleRate(engineGetSampleRate());
-
-    if(param < .5){
-
-        // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-        float lp_cutoff = ( (param - 0) / (.5 - 0.0)) * (8000.0 - 30.0) + 30.0;
-        lpFilter->setCutoffFreq(lp_cutoff);
-        wet = lpFilter->processAudioSample(dry, 1);
-    }
-    if(param > .5){
-
-        // new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
-        float hp_cutoff = ( (param - .5) / (1.0 - 0.5)) * (8000.0 - 200.0) + 200.0;
-        hpFilter->setCutoffFreq(hp_cutoff);
-        wet = hpFilter->processAudioSample(dry, 1);
-    }
-    if(param == .5){
-        wet = dry;
-    }
-
+    float wet = rFilter->processAudioSample(dry, 1);
     float mix_cv = clamp(inputs[MIX_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
-    mixed = (wet * (params[MIX_PARAM].value * mix_cv)) + (dry * ((1-params[MIX_PARAM].value) * mix_cv));
+    float mixed = (wet * (params[MIX_PARAM].value * mix_cv)) + (dry * ((1-params[MIX_PARAM].value) * mix_cv));
 
     outputs[CH1_OUTPUT].value = mixed;
+    lights[RESET_LIGHT].value = resetLight;
+    last_press++;
 }
 
 
@@ -118,16 +106,13 @@ RandomFilterWidget::RandomFilterWidget(RandomFilter *module) : ModuleWidget(modu
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, RandomFilter::FREQ_PARAM, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, RandomFilter::RES_PARAM,  0.0, 1.0, .8));
+    addParam(ParamWidget::create<BigLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, RandomFilter::FREQ_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, RandomFilter::RES_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, RandomFilter::BUTTON_CV_INPUT));
     addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, RandomFilter::MIX_CV_INPUT));
     addInput(Port::create<PJ301MPort>(Vec(22, 310), Port::INPUT, module, RandomFilter::CH1_INPUT));
 
-    addParam(ParamWidget::create<BigLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
     addChild(ModuleLightWidget::create<GiantLight<GreenLight>>(Vec(25, 70), module, RandomFilter::RESET_LIGHT));
 
     addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, RandomFilter::CH1_OUTPUT));

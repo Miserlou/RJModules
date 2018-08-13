@@ -63,7 +63,7 @@ void BigButton::step() {
     outputs[CH4_OUTPUT].value = output;
     outputs[CH5_OUTPUT].value = output;
     outputs[CH6_OUTPUT].value = output;
-    lights[RESET_LIGHT].value = resetLight;
+    // lights[RESET_LIGHT].value = resetLight;
 
 }
 
