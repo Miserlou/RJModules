@@ -204,7 +204,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Buffer - Delay a signal
   * Chords - 5 outputs, display and knob
   * Random Filter - A mutating filter
-  * Wobbler
+  * Wobbler - Selectable classic wobble automation shapes
+  * 3xOSC - The classic, RJ style
+  * Chord-Seq - A Chord Sequencer
 
 ## Building
 
