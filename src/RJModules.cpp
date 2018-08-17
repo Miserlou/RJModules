@@ -54,6 +54,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRange);
     p->addModel(modelOctaves);
     p->addModel(modelBuffers);
+    
 
 }
 
