@@ -36,3 +36,4 @@ extern Model *modelOctaves;
 extern Model *modelBPF;
 extern Model *modelRandomFilter;
 extern Model *modelBuffers;
+extern Model *modelChord;

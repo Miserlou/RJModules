@@ -15,6 +15,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelNoise);
     p->addModel(modelRangeLFO);
     p->addModel(modelRiser);
+    p->addModel(modelChord);
 
     // FX
     p->addModel(modelBitCrush);
@@ -54,7 +55,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRange);
     p->addModel(modelOctaves);
     p->addModel(modelBuffers);
-    
+
 
 }
 
