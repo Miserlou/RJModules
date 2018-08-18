@@ -121,8 +121,9 @@ void Chord::step() {
     float pitch_offset = round(offset_raw) / 12;
     float root = 1.0*1 + pitch_offset;
 
-    float _pitch = params[CHORD_PARAM].value * clamp(inputs[CHORD_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
-    float _octave = 5;
+    float _input_pitch = params[CHORD_PARAM].value * clamp(inputs[CHORD_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
+    float _pitch = (int) _input_pitch % (int) 12;
+    float _octave = int(_input_pitch / 12);
 
     float _shape = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);; 
     float _three_interval;
@@ -240,7 +241,7 @@ void Chord::step() {
     }
 
     // chord_name = ("%c%c", pitch, sharpFlat);
-    chord_name = std::string(pitch) + std::string(shape);
+    chord_name = std::string(pitch) + std::to_string((int)_octave) + std::string(shape);
     //chord_name = "Ab5Min";
 
 }
@@ -264,13 +265,7 @@ ChordWidget::ChordWidget(Chord *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    // {
-    //     auto w = ParamWidget::create<Knob26>(pitchParamPosition, module, Chord::PITCH_PARAM, 0.0, 11.0, 9.0);
-    //     dynamic_cast<Knob*>(w)->snap = true;
-    //     addParam(w);
-    // }
-
-    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 11.0, 9.0));
+    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 95.0, 48.0));
     addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 3.0, 0.0));
 
     addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Chord::CHORD_CV_INPUT));
