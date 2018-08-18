@@ -135,32 +135,32 @@ void Chord::step() {
         case 0: {
             // Maj
             shape = "Maj";
-            _three_interval = 3;
-            _five_interval = 5;
-            _seven_interval = 7;
+            _three_interval = 4;
+            _five_interval = 7;
+            _seven_interval = 11;
             break;
         }
         case 1: {
             // Min
             shape = "Min";
-            _three_interval = 2;
-            _five_interval = 5;
-            _seven_interval = 6;
+            _three_interval = 3;
+            _five_interval = 7;
+            _seven_interval = 10;
             break;
         }
         case 2: {
             // Dim
             shape = "Dim";
-            _three_interval = 2;
-            _five_interval = 4;
-            _seven_interval = 6;
+            _three_interval = 3;
+            _five_interval = 6;
+            _seven_interval = 10;
             break;
         }
         case 3: {
             shape = "Aug";
-            _three_interval = 3;
-            _five_interval = 7;
-            _seven_interval = 9;
+            _three_interval = 4;
+            _five_interval = 8;
+            _seven_interval = 12;
             break;
         }
     }
