@@ -1,3 +1,5 @@
+// Lots of this is poached from Strum's Mental Chord and  Bogaudio's Retone!
+
 #include "dsp/digital.hpp"
 #include <iostream>
 #include <cmath>
@@ -122,18 +124,62 @@ void Chord::step() {
     float _pitch = params[CHORD_PARAM].value * clamp(inputs[CHORD_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
     float _octave = 5;
 
+    float _shape = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);; 
+    float _three_interval;
+    float _five_interval;
+    float _seven_interval;
+    char* shape = NULL;
+    // via https://en.wikibooks.org/wiki/Music_Theory/Chords
+    switch ((int) _shape) {
+        case 0: {
+            // Maj
+            shape = "Maj";
+            _three_interval = 3;
+            _five_interval = 5;
+            _seven_interval = 7;
+            break;
+        }
+        case 1: {
+            // Min
+            shape = "Min";
+            _three_interval = 2;
+            _five_interval = 5;
+            _seven_interval = 6;
+            break;
+        }
+        case 2: {
+            // Dim
+            shape = "Dim";
+            _three_interval = 2;
+            _five_interval = 4;
+            _seven_interval = 6;
+            break;
+        }
+        case 3: {
+            shape = "Aug";
+            _three_interval = 3;
+            _five_interval = 7;
+            _seven_interval = 9;
+            break;
+        }
+    }
+
     float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
     float _root_cv = frequencyToCV(_root_frequency);
 
-    float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + 3 - referencePitch));
+    float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _three_interval - referencePitch));
     float _third_cv = frequencyToCV(_third_frequency);
 
-    float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + 5- referencePitch));
+    float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _five_interval - referencePitch));
     float _fifth_cv = frequencyToCV(_fifth_frequency);
+
+    float _seventh_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _seven_interval - referencePitch));
+    float _seventh_cv = frequencyToCV(_seventh_frequency);
 
     outputs[ROOT_OUTPUT].value = _root_cv;
     outputs[THREE_OUTPUT].value = _third_cv;
     outputs[FIVE_OUTPUT].value = _fifth_cv;
+    outputs[SEVEN_OUTPUT].value = _seventh_cv;
 
     char* pitch = NULL;
     char* sharpFlat = NULL;
@@ -194,7 +240,7 @@ void Chord::step() {
     }
 
     // chord_name = ("%c%c", pitch, sharpFlat);
-    chord_name = pitch;
+    chord_name = std::string(pitch) + std::string(shape);
     //chord_name = "Ab5Min";
 
 }
@@ -225,7 +271,7 @@ ChordWidget::ChordWidget(Chord *module) : ModuleWidget(module) {
     // }
 
     addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 11.0, 9.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 1.0, 1.0));
+    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 3.0, 0.0));
 
     addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Chord::CHORD_CV_INPUT));
     addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Chord::SHAPE_CV_INPUT));
