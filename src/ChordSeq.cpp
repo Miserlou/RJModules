@@ -184,13 +184,70 @@ struct ChordSeq : Module {
 			setIndex(0);
 		}
 
-		// Gate buttons
+		// Gate buttons and Displays
 		for (int i = 0; i < 8; i++) {
 			if (gateTriggers[i].process(params[GATE_PARAM + i].value)) {
 				gates[i] = !gates[i];
 			}
 			outputs[GATE_OUTPUT + i].value = (running && gateIn && i == index && gates[i]) ? 10.0f : 0.0f;
 			lights[GATE_LIGHTS + i].setBrightnessSmooth((gateIn && i == index) ? (gates[i] ? 1.f : 0.33) : (gates[i] ? 0.66 : 0.0));
+		
+			float _pitch = params[ROW2_PARAM + i].value;
+			char* pitch = NULL;
+		    switch ((int) _pitch) {
+	        case 0: {
+	            pitch = "C";
+	            break;
+	        }
+	        case 1: {
+	            pitch = "C#";
+	            break;
+	        }
+	        case 2: {
+	            pitch = "D";
+	            break;
+	        }
+	        case 3: {
+	            pitch = "D#";
+	            break;
+	        }
+	        case 4: {
+	            pitch = "E";
+	            break;
+	        }
+	        case 5: {
+	            pitch = "F";
+	            break;
+	        }
+	        case 6: {
+	            pitch = "F#";
+	            break;
+	        }
+	        case 7: {
+	            pitch = "G";
+	            break;
+	        }
+	        case 8: {
+	            pitch = "G#";
+	            break;
+	        }
+	        case 9: {
+	            pitch = "A";
+	            break;
+	        }
+	        case 10: {
+	            pitch = "A#";
+	            break;
+	        }
+	        case 11: {
+	            pitch = "B";
+	            break;
+	        }
+	    }
+			chord_values[i] = pitch;
+
+
+
 		}
 
 		// Outputs
