@@ -37,3 +37,4 @@ extern Model *modelBPF;
 extern Model *modelRandomFilter;
 extern Model *modelBuffers;
 extern Model *modelChord;
+extern Model *modelChordSeq;
