@@ -264,7 +264,7 @@ ChordWidget::ChordWidget(Chord *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 95.0, 48.0));
+    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 59.0, 24.0));
     addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 3.0, 0.0));
 
     addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Chord::CHORD_CV_INPUT));

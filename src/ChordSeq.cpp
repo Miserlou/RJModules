@@ -305,7 +305,7 @@ struct ChordSeqWidget : ModuleWidget {
 		    display->value = &module->chord_values[i];
 		    addChild(display);
 
-			addParam(ParamWidget::create<RoundBlackKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0f, 10.0f, 0.0f));
+			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0f, 11.0f, 0.0f));
 			addParam(ParamWidget::create<RoundBlackKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0f, 10.0f, 0.0f));
 			addParam(ParamWidget::create<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
 			addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
