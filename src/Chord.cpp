@@ -34,7 +34,6 @@ struct StringDisplayWidget : TransparentWidget {
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
-   // to_display << std::setw(3) << "fart";
 
     Vec textPos = Vec(16.0f, 33.0f);
     NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
