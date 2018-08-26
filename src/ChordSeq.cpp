@@ -362,17 +362,15 @@ struct ChordSeq : Module {
 		}
 
 		// Outputs
-	    outputs[ROW1_OUTPUT].value = _root_cv;
-	    outputs[ROW2_OUTPUT].value = _third_cv;
-	    outputs[ROW3_OUTPUT].value = _fifth_cv;
-	    
-	    // XXX: Move these over and rm the gate input
-	    //outputs[ROW3_OUTPUT].value = _seventh_cv;
+		outputs[GATES_OUTPUT].value =_root_cv;
+	    outputs[ROW1_OUTPUT].value = _third_cv;
+	    outputs[ROW2_OUTPUT].value = _fifth_cv;
+	    outputs[ROW3_OUTPUT].value = _seventh_cv;
 
-		outputs[GATES_OUTPUT].value = (gateIn && gates[index]) ? 10.0f : 0.0f;
+		// outputs[GATES_OUTPUT].value = (gateIn && gates[index]) ? 10.0f : 0.0f;
 		lights[RUNNING_LIGHT].value = (running);
 		lights[RESET_LIGHT].setBrightnessSmooth(resetTrigger.isHigh());
-		lights[GATES_LIGHT].setBrightnessSmooth(gateIn);
+		lights[GATES_LIGHT].value = outputs[GATES_OUTPUT].value / 10.0f;
 		lights[ROW_LIGHTS].value = outputs[ROW1_OUTPUT].value / 10.0f;
 		lights[ROW_LIGHTS + 1].value = outputs[ROW2_OUTPUT].value / 10.0f;
 		lights[ROW_LIGHTS + 2].value = outputs[ROW3_OUTPUT].value / 10.0f;
