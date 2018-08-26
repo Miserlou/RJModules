@@ -338,25 +338,36 @@ struct ChordSeq : Module {
 			chord_values[i] = std::string(pitch) + std::string(shape);
 
 			if(i == index){
-			    float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
-			     _root_cv = frequencyToCV(_root_frequency);
+				if(!gates[i]){
+					_root_cv = NULL;
+					_third_cv = NULL;
+					_fifth_cv = NULL;
+					_seventh_cv = NULL;
+				}
+				else {
+				    float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
+				     _root_cv = frequencyToCV(_root_frequency);
 
-			    float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _three_interval - referencePitch));
-			     _third_cv = frequencyToCV(_third_frequency);
+				    float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _three_interval - referencePitch));
+				     _third_cv = frequencyToCV(_third_frequency);
 
-			    float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _five_interval - referencePitch));
-			     _fifth_cv = frequencyToCV(_fifth_frequency);
+				    float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _five_interval - referencePitch));
+				     _fifth_cv = frequencyToCV(_fifth_frequency);
 
-			    float _seventh_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _seven_interval - referencePitch));
-			    _seventh_cv = frequencyToCV(_seventh_frequency);
+				    float _seventh_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _seven_interval - referencePitch));
+				    _seventh_cv = frequencyToCV(_seventh_frequency);
+				}
 			 }
+
 		}
 
 		// Outputs
 	    outputs[ROW1_OUTPUT].value = _root_cv;
 	    outputs[ROW2_OUTPUT].value = _third_cv;
 	    outputs[ROW3_OUTPUT].value = _fifth_cv;
-	    outputs[ROW3_OUTPUT].value = _seventh_cv;
+	    
+	    // XXX: Move these over and rm the gate input
+	    //outputs[ROW3_OUTPUT].value = _seventh_cv;
 
 		outputs[GATES_OUTPUT].value = (gateIn && gates[index]) ? 10.0f : 0.0f;
 		lights[RUNNING_LIGHT].value = (running);
@@ -409,8 +420,8 @@ struct ChordSeqWidget : ModuleWidget {
 		    display->value = &module->chord_values[i];
 		    addChild(display);
 
-			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0f, 11.0f, 0.0f));
-			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0, 3.0, 0.0));
+			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0, 59.0, 24.0));
+			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0f, 3.0f, 0.0f));
 			addParam(ParamWidget::create<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
 			addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
 			addOutput(Port::create<PJ301MPort>(Vec(portX[i]-1, 307), Port::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));

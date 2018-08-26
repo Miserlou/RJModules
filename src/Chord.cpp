@@ -268,10 +268,10 @@ ChordWidget::ChordWidget(Chord *module) : ModuleWidget(module) {
     addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Chord::CHORD_CV_INPUT));
     addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Chord::SHAPE_CV_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(20, 310), Port::OUTPUT, module, Chord::ROOT_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(50, 310), Port::OUTPUT, module, Chord::THREE_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(80, 310), Port::OUTPUT, module, Chord::FIVE_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, Chord::SEVEN_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(16, 319), Port::OUTPUT, module, Chord::ROOT_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(48, 319), Port::OUTPUT, module, Chord::THREE_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(81, 319), Port::OUTPUT, module, Chord::FIVE_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(114, 319), Port::OUTPUT, module, Chord::SEVEN_OUTPUT));
 
     StringDisplayWidget *display = new StringDisplayWidget();
     display->box.pos = Vec(28, 70);
