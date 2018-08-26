@@ -16,6 +16,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRangeLFO);
     p->addModel(modelRiser);
     p->addModel(modelChord);
+    p->addModel(modelThreeXOSC);
 
     // FX
     p->addModel(modelBitCrush);

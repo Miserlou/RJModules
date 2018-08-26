@@ -38,3 +38,4 @@ extern Model *modelRandomFilter;
 extern Model *modelBuffers;
 extern Model *modelChord;
 extern Model *modelChordSeq;
+extern Model *modelThreeXOSC;
