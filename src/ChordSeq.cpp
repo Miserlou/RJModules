@@ -96,6 +96,43 @@ struct ChordSeq : Module {
 	bool gates[8] = {};
 	std::string chord_values[8] = {"A#4M", "A#4M", "A#4M", "A#4M", "A#4M", "A#4M", "A#4M", "A#4M"};
 
+    // Pitchies
+    float referenceFrequency = 261.626; // C4; frequency at which Rack 1v/octave CVs are zero.
+    float referenceSemitone = 60.0; // C4; value of C4 in semitones is arbitrary here, so have it match midi note numbers when rounded to integer.
+    float twelfthRootTwo = 1.0594630943592953;
+    float logTwelfthRootTwo = logf(1.0594630943592953);
+    int referencePitch = 0;
+    int referenceOctave = 4;
+
+	float _root_cv;
+	float _third_cv;
+	float _fifth_cv;
+	float _seventh_cv;
+
+    float frequencyToSemitone(float frequency) {
+        return logf(frequency / referenceFrequency) / logTwelfthRootTwo + referenceSemitone;
+    }
+
+    float semitoneToFrequency(float semitone) {
+        return powf(twelfthRootTwo, semitone - referenceSemitone) * referenceFrequency;
+    }
+
+    float frequencyToCV(float frequency) {
+        return log2f(frequency / referenceFrequency);
+    }
+
+    float cvToFrequency(float cv) {
+        return powf(2.0, cv) * referenceFrequency;
+    }
+
+    float cvToSemitone(float cv) {
+        return frequencyToSemitone(cvToFrequency(cv));
+    }
+
+    float semitoneToCV(float semitone) {
+        return frequencyToCV(semitoneToFrequency(semitone));
+    }
+
 	ChordSeq() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
 		onReset();
 	}
@@ -184,6 +221,19 @@ struct ChordSeq : Module {
 			setIndex(0);
 		}
 
+		float _input_pitch;
+		float _input_shape;
+	    float _pitch;
+	    float _octave;
+	    float _shape;
+	    float _three_interval;
+	    float _five_interval;
+	    float _seven_interval;
+
+	    float _out_one;
+	    float _out_three;
+	    float _out_five;
+
 		// Gate buttons and Displays
 		for (int i = 0; i < 8; i++) {
 			if (gateTriggers[i].process(params[GATE_PARAM + i].value)) {
@@ -192,68 +242,123 @@ struct ChordSeq : Module {
 			outputs[GATE_OUTPUT + i].value = (running && gateIn && i == index && gates[i]) ? 10.0f : 0.0f;
 			lights[GATE_LIGHTS + i].setBrightnessSmooth((gateIn && i == index) ? (gates[i] ? 1.f : 0.33) : (gates[i] ? 0.66 : 0.0));
 		
-			float _pitch = params[ROW2_PARAM + i].value;
+		    _input_pitch = params[ROW2_PARAM + i].value;
+		    _input_shape = params[ROW3_PARAM + i].value;
+		    _pitch = (int) _input_pitch % (int) 12;
+		    _octave = int(_input_pitch / 12);
+
 			char* pitch = NULL;
+			char* shape = NULL;
 		    switch ((int) _pitch) {
-	        case 0: {
-	            pitch = "C";
-	            break;
-	        }
-	        case 1: {
-	            pitch = "C#";
-	            break;
-	        }
-	        case 2: {
-	            pitch = "D";
-	            break;
-	        }
-	        case 3: {
-	            pitch = "D#";
-	            break;
-	        }
-	        case 4: {
-	            pitch = "E";
-	            break;
-	        }
-	        case 5: {
-	            pitch = "F";
-	            break;
-	        }
-	        case 6: {
-	            pitch = "F#";
-	            break;
-	        }
-	        case 7: {
-	            pitch = "G";
-	            break;
-	        }
-	        case 8: {
-	            pitch = "G#";
-	            break;
-	        }
-	        case 9: {
-	            pitch = "A";
-	            break;
-	        }
-	        case 10: {
-	            pitch = "A#";
-	            break;
-	        }
-	        case 11: {
-	            pitch = "B";
-	            break;
-	        }
-	    }
-			chord_values[i] = pitch;
+		        case 0: {
+		            pitch = "C";
+		            break;
+		        }
+		        case 1: {
+		            pitch = "C#";
+		            break;
+		        }
+		        case 2: {
+		            pitch = "D";
+		            break;
+		        }
+		        case 3: {
+		            pitch = "D#";
+		            break;
+		        }
+		        case 4: {
+		            pitch = "E";
+		            break;
+		        }
+		        case 5: {
+		            pitch = "F";
+		            break;
+		        }
+		        case 6: {
+		            pitch = "F#";
+		            break;
+		        }
+		        case 7: {
+		            pitch = "G";
+		            break;
+		        }
+		        case 8: {
+		            pitch = "G#";
+		            break;
+		        }
+		        case 9: {
+		            pitch = "A";
+		            break;
+		        }
+		        case 10: {
+		            pitch = "A#";
+		            break;
+		        }
+		        case 11: {
+		            pitch = "B";
+		            break;
+		        }
+		    }
 
+		    // via https://en.wikibooks.org/wiki/Music_Theory/Chords
+		    switch ((int) _input_shape) {
+		        case 0: {
+		            // Maj
+		            shape = "M";
+		            _three_interval = 4;
+		            _five_interval = 7;
+		            _seven_interval = 11;
+		            break;
+		        }
+		        case 1: {
+		            // Min
+		            shape = "m";
+		            _three_interval = 3;
+		            _five_interval = 7;
+		            _seven_interval = 10;
+		            break;
+		        }
+		        case 2: {
+		            // Dim
+		            shape = "D";
+		            _three_interval = 3;
+		            _five_interval = 6;
+		            _seven_interval = 10;
+		            break;
+		        }
+		        case 3: {
+		            shape = "A";
+		            _three_interval = 4;
+		            _five_interval = 8;
+		            _seven_interval = 12;
+		            break;
+		        }
+		    }
 
+			chord_values[i] = std::string(pitch) + std::string(shape);
 
+			if(i == index){
+
+			    float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
+			     _root_cv = frequencyToCV(_root_frequency);
+
+			    float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _three_interval - referencePitch));
+			     _third_cv = frequencyToCV(_third_frequency);
+
+			    float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _five_interval - referencePitch));
+			     _fifth_cv = frequencyToCV(_fifth_frequency);
+
+			    float _seventh_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _seven_interval - referencePitch));
+			    _seventh_cv = frequencyToCV(_seventh_frequency);
+			 }
 		}
 
 		// Outputs
-		outputs[ROW1_OUTPUT].value = params[ROW1_PARAM + index].value;
-		outputs[ROW2_OUTPUT].value = params[ROW2_PARAM + index].value;
-		outputs[ROW3_OUTPUT].value = params[ROW3_PARAM + index].value;
+	    outputs[ROW1_OUTPUT].value = _root_cv;
+	    outputs[ROW2_OUTPUT].value = _third_cv;
+	    outputs[ROW3_OUTPUT].value = _fifth_cv;
+	    outputs[ROW3_OUTPUT].value = _seventh_cv;
+
 		outputs[GATES_OUTPUT].value = (gateIn && gates[index]) ? 10.0f : 0.0f;
 		lights[RUNNING_LIGHT].value = (running);
 		lights[RESET_LIGHT].setBrightnessSmooth(resetTrigger.isHigh());
@@ -306,7 +411,7 @@ struct ChordSeqWidget : ModuleWidget {
 		    addChild(display);
 
 			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0f, 11.0f, 0.0f));
-			addParam(ParamWidget::create<RoundBlackKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0f, 10.0f, 0.0f));
+			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0, 3.0, 0.0f);
 			addParam(ParamWidget::create<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
 			addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
 			addOutput(Port::create<PJ301MPort>(Vec(portX[i]-1, 307), Port::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));
