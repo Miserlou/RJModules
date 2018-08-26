@@ -239,9 +239,7 @@ void Chord::step() {
         }
     }
 
-    // chord_name = ("%c%c", pitch, sharpFlat);
     chord_name = std::string(pitch) + std::to_string((int)_octave) + std::string(shape);
-    //chord_name = "Ab5Min";
 
 }
 
