@@ -338,7 +338,6 @@ struct ChordSeq : Module {
 			chord_values[i] = std::string(pitch) + std::string(shape);
 
 			if(i == index){
-
 			    float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
 			     _root_cv = frequencyToCV(_root_frequency);
 
@@ -411,7 +410,7 @@ struct ChordSeqWidget : ModuleWidget {
 		    addChild(display);
 
 			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0f, 11.0f, 0.0f));
-			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0, 3.0, 0.0f);
+			addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0, 3.0, 0.0));
 			addParam(ParamWidget::create<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
 			addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
 			addOutput(Port::create<PJ301MPort>(Vec(portX[i]-1, 307), Port::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));
