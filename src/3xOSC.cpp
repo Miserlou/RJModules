@@ -17,6 +17,10 @@ struct Osc {
         freq = powf(2.0, pitch);
     }
 
+    void setFreq(float freqi){
+        freq = freqi;
+    }
+
     float getFreq() {
         return freq;
     }
@@ -102,17 +106,130 @@ struct ThreeXOSC : Module {
         NUM_LIGHTS
     };
 
-    Osc oscillator;
-    Osc oscillator2;
-    Osc oscillator3;
+    // Pitchies
+    float referenceFrequency = 261.626; // C4; frequency at which Rack 1v/octave CVs are zero.
+    float referenceSemitone = 60.0; // C4; value of C4 in semitones is arbitrary here, so have it match midi note numbers when rounded to integer.
+    float twelfthRootTwo = 1.0594630943592953;
+    float logTwelfthRootTwo = logf(1.0594630943592953);
+    int referencePitch = 0;
+    int referenceOctave = 4;
+
+    float frequencyToSemitone(float frequency) {
+        return logf(frequency / referenceFrequency) / logTwelfthRootTwo + referenceSemitone;
+    }
+
+    float semitoneToFrequency(float semitone) {
+        return powf(twelfthRootTwo, semitone - referenceSemitone) * referenceFrequency;
+    }
+
+    float frequencyToCV(float frequency) {
+        return log2f(frequency / referenceFrequency);
+    }
+
+    float cvToFrequency(float cv) {
+        return powf(2.0, cv) * referenceFrequency;
+    }
+
+    float cvToSemitone(float cv) {
+        return frequencyToSemitone(cvToFrequency(cv));
+    }
+
+    float semitoneToCV(float semitone) {
+        return frequencyToCV(semitoneToFrequency(semitone));
+    }
+
+    Osc osc1;
+    Osc osc2;
+    Osc osc3;
+
+    float last_1 = 0.0;
+    bool gated1 = false;
 
     float DETUNE_STEP = .075;
+
+    bool decaying1 = false;
+    float env1 = 0.0f;
+    SchmittTrigger trigger1;
 
     ThreeXOSC() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
 };
 
 void ThreeXOSC::step() {
+
+    float attack1 = clamp(params[ATTACK_PARAM_1].value + inputs[ATTACK_CV1_1].value / 10.0f, 0.0f, 1.0f);
+    float decay1 = 0.0f;
+    float sustain1 = 1.0f;
+    float release1 = clamp(params[DECAY_PARAM_1].value + inputs[DECAY_CV1_1].value / 10.0f, 0.0f, 1.0f);
+
+    float osc1_pitch = inputs[VOCT_1].value;
+    osc1.setFreq(cvToFrequency(osc1_pitch));
+    osc1.step(1.0 / engineGetSampleRate());
+
+    // Gate
+    if (last_1 == inputs[VOCT_1].value){
+        gated1 = false;
+    } else{
+        gated1 = true;
+        last_1 = inputs[VOCT_1].value;
+    }
+
+    // ADSR
+    const float base = 20000.0f;
+    const float maxTime = 10.0f;
+    if (gated1) {
+        if (decaying1) {
+            // Decay
+            if (decay1 < 1e-4) {
+                env1 = sustain1;
+            }
+            else {
+                env1 += powf(base, 1 - decay1) / maxTime * (sustain1 - env1) * engineGetSampleTime();
+            }
+        }
+        else {
+            // Attack
+            // Skip ahead if attack is all the way down (infinitely fast)
+            if (attack1 < 1e-4) {
+                env1 = 1.0f;
+            }
+            else {
+                env1 += powf(base, 1 - attack1) / maxTime * (1.01f - env1) * engineGetSampleTime();
+            }
+            if (env1 >= 1.0f) {
+                env1 = 1.0f;
+                decaying1 = true;
+            }
+        }
+    }
+    else {
+        // Release
+        if (release1 < 1e-4) {
+            env1 = 0.0f;
+        }
+        else {
+            env1 += powf(base, 1 - release1) / maxTime * (0.0f - env1) * engineGetSampleTime();
+        }
+        decaying1 = false;
+    }
+
+    float env_out1 = 10.0f * env1;
+
+    // Osci
+    float osc_out1 = osc1.saw();
+
+    printf("env_out1 %f \n", env_out1);
+
+    // VCA
+    float cv = 1.f;
+    cv = fmaxf(env_out1 / 10.f, 0.f);
+    cv = powf(cv, 4.f);
+
+    printf("cv %f \n", cv);
+    printf("output %f\n", osc_out1 * cv);
+    //lastCv = cv;
+    outputs[OUTPUT_1].value = osc_out1 - cv;
+    //outputs[OUTPUT_1].value = osc1.saw() * env_out1;
 
     // float root_pitch = params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
     // oscillator.setPitch(root_pitch);

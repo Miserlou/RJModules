@@ -17,6 +17,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRiser);
     p->addModel(modelChord);
     p->addModel(modelThreeXOSC);
+    p->addModel(modelGlides);
 
     // FX
     p->addModel(modelBitCrush);
