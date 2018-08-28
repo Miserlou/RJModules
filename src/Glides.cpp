@@ -94,7 +94,7 @@ struct GlidesWidget: ModuleWidget {
 };
 
 GlidesWidget::GlidesWidget(Glides *module) : ModuleWidget(module) {
-    setPanel(SVG::load(assetPlugin(plugin, "res/Volumes.svg")));
+    setPanel(SVG::load(assetPlugin(plugin, "res/Glides.svg")));
 
     addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 0)));
