@@ -208,6 +208,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * 3xOSC - The classic, RJ style
   * Chord-Seq - A Chord Sequencer
   * MIDI Recorder - record MIDI notes to a MIDI file
+  * Glides
 
 ## Building
 
