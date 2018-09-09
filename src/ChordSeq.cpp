@@ -362,7 +362,7 @@ struct ChordSeq : Module {
 		}
 
 		// Outputs
-		outputs[GATES_OUTPUT].value =_root_cv;
+		outputs[GATES_OUTPUT].value = _root_cv;
 	    outputs[ROW1_OUTPUT].value = _third_cv;
 	    outputs[ROW2_OUTPUT].value = _fifth_cv;
 	    outputs[ROW3_OUTPUT].value = _seventh_cv;
@@ -410,8 +410,6 @@ struct ChordSeqWidget : ModuleWidget {
 
 		SmallStringDisplayWidget *display = new SmallStringDisplayWidget();
 		for (int i = 0; i < 8; i++) {
-			//addParam(ParamWidget::create<RoundBlackKnob>(Vec(portX[i]-2, 157), module, ChordSeq::ROW1_PARAM + i, 0.0f, 10.0f, 0.0f));
-			
 		    display = new SmallStringDisplayWidget();
 		    display->box.pos = Vec(portX[i]-10, 157);
 		    display->box.size = Vec(45, 30);

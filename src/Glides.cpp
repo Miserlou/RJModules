@@ -70,10 +70,10 @@ void Glides::step() {
     for (int i = 0; i < NUM_CHANNELS; i++) {
         in = inputs[IN_INPUT + i].value;
         if (in > state[i]){
-            out = state[i] + (.000005 * (10 - (params[GLIDE_PARAM + i].value)));
+            out = state[i] + (.00001 * (10 - (params[GLIDE_PARAM + i].value)));
             state[i] = out;
         } else {
-            out = state[i] - (.000005 * (10 - (params[GLIDE_PARAM + i].value)));
+            out = state[i] - (.00001 * (10 - (params[GLIDE_PARAM + i].value)));
             state[i] = out;            
         }
 

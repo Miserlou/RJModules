@@ -36,8 +36,8 @@ struct RandomFilter: Module {
     void step() override;
 };
 
-struct BigLEDButton : SVGSwitch, MomentarySwitch {
-        BigLEDButton() {
+struct BigAssLEDButton : SVGSwitch, MomentarySwitch {
+        BigAssLEDButton() {
                 addFrame(SVG::load(assetPlugin(plugin, "res/BigLEDButton.svg")));
         }
 };
@@ -106,7 +106,7 @@ RandomFilterWidget::RandomFilterWidget(RandomFilter *module) : ModuleWidget(modu
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<BigLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
+    addParam(ParamWidget::create<BigAssLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM, 0.0, 1.0, 1.0));
 
     addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, RandomFilter::BUTTON_CV_INPUT));

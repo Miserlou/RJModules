@@ -14,10 +14,9 @@ void init(rack::Plugin *p) {
     p->addModel(modelTwinLFO);
     p->addModel(modelNoise);
     p->addModel(modelRangeLFO);
-    p->addModel(modelRiser);
+    // p->addModel(modelRiser);
     p->addModel(modelChord);
-    p->addModel(modelThreeXOSC);
-    p->addModel(modelGlides);
+    // p->addModel(modelThreeXOSC);
 
     // FX
     p->addModel(modelBitCrush);
@@ -25,6 +24,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelFilterDelay);
     p->addModel(modelSidechain);
     p->addModel(modelStutter);
+    p->addModel(modelGlides);
 
     // Filters
     p->addModel(modelFilter);
@@ -62,5 +62,3 @@ void init(rack::Plugin *p) {
     p->addModel(modelChordSeq);    
 
 }
-
-
