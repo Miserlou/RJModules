@@ -49,6 +49,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelBPM);
     p->addModel(modelButton);
     p->addModel(modelButtons);
+    p->addModel(modelMetaKnob);
 
     // Util
     p->addModel(modelSplitter);
