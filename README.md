@@ -209,6 +209,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Memory - Record a signal to a buffer, loop/trigger it back. Integrated knob. 4 banks.
   * XYFX - Kaos Pad-inspired multi-FX rack.
   * OscPhrase - Phrase generation based on a slow LFO
+  * LFOArp - Arp with LFO for controlling speed
 
 ## Building
 
