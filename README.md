@@ -210,6 +210,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * XYFX - Kaos Pad-inspired multi-FX rack.
   * OscPhrase - Phrase generation based on a slow LFO
   * LFOArp - Arp with LFO for controlling speed
+  * Band Splitter - Split into L/M/H bands
 
 ## Building
 
