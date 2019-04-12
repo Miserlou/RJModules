@@ -213,6 +213,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Cycle Gate - Only allow through a controlable number of cycles. Ex, if set to 3, allows 3 cycles of wave (until a value repeats) until the signal is gated.
   * Keyboard Keyboard - Keyboard that allows you to send CV with the computer keyboard in the same configuration as the one in Ableton.
   * Kielbasa Thickener - Sausage Fattener clone
+  * Replay Knob - Knob that records and loops
 
 ## Building
 
