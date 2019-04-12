@@ -204,13 +204,15 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Wobbler - Selectable classic wobble automation shapes
   * 3xOSC - The classic, RJ style
   * MIDI Recorder - record MIDI notes to a MIDI file
-  * Metaknob - One Knob To Rule Them All
   * Wubber - Integrated LCA + LFO with adjustable pulse width and clock divider
   * Memory - Record a signal to a buffer, loop/trigger it back. Integrated knob. 4 banks.
   * XYFX - Kaos Pad-inspired multi-FX rack.
   * OscPhrase - Phrase generation based on a slow LFO
   * LFOArp - Arp with LFO for controlling speed
   * Band Splitter - Split into L/M/H bands
+  * Cycle Gate - Only allow through a controlable number of cycles. Ex, if set to 3, allows 3 cycles of wave (until a value repeats) until the signal is gated.
+  * Keyboard Keyboard - Keyboard that allows you to send CV with the computer keyboard in the same configuration as the one in Ableton.
+  * Kielbasa Thickener - Sausage Fattener clone
 
 ## Building
 
