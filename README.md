@@ -215,6 +215,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Kielbasa Thickener - Sausage Fattener clone
   * Replay Knob - Knob that records and loops
   * Divide Delay - Delay with an integrated clock divider. Also has an integrated send/return for the wet signal. 
+  * Mixixix - 4 channel mixer with send/return chains and integrated sidechain.
+  * Shitty - Makes a signal sound shitty. Lofi. So hot right now.
+  * Loop Station - 8 track loop station clone. Integrated Trim.
 
 ## Building
 
