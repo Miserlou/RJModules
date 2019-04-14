@@ -214,6 +214,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Keyboard Keyboard - Keyboard that allows you to send CV with the computer keyboard in the same configuration as the one in Ableton.
   * Kielbasa Thickener - Sausage Fattener clone
   * Replay Knob - Knob that records and loops
+  * Divide Delay - Delay with an integrated clock divider. Also has an integrated send/return for the wet signal. 
 
 ## Building
 
