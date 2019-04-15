@@ -218,6 +218,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Mixixix - 4 channel mixer with send/return chains and integrated sidechain.
   * Shitty - Makes a signal sound shitty. Lofi. So hot right now.
   * Loop Station - 8 track loop station clone. Integrated Trim.
+  * The Beast - Chord, Arp, 3xLFO+Filter, Sync, ADSR, VCO, Quantizer, Keyboard, Master Out. All in one panel.
 
 ## Building
 
