@@ -20,6 +20,7 @@ struct ReplayKnob : Module {
         NUM_PARAMS
     };
     enum InputIds {
+        BIG_CV_INPUT,
         REC_CV_INPUT,
         NUM_INPUTS
     };
@@ -69,6 +70,7 @@ void ReplayKnob::step() {
         // Clear vector
         if(!isRecording and hasRecorded){
             replayVector.clear();
+            tapeHead = 0;
         }
 
         isRecording = !isRecording;
@@ -76,7 +78,6 @@ void ReplayKnob::step() {
         if(!hasRecorded and !isRecording){
             hasRecorded = true;
         }
-
     }
 
     if(isRecording){
@@ -91,7 +92,6 @@ void ReplayKnob::step() {
         }
         outputs[OUT_OUTPUT].value = replayVector.at(tapeHead);
         tapeHead++;
-
     }
 
     // Lights
@@ -124,9 +124,13 @@ ReplayKnobWidget::ReplayKnobWidget(ReplayKnob *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, ReplayKnob::BIG_PARAM, -12.0, 12.0, 0.0));
-    addInput(Port::create<PJ301MPort>(Vec(17, 60), Port::INPUT, module, ReplayKnob::REC_CV_INPUT));
-    addParam(ParamWidget::create<LilLEDButton>(Vec(18, 110), module, ReplayKnob::REC_PARAM, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(22.4, 114.4), module, ReplayKnob::REC_LIGHT));
+    addInput(Port::create<PJ301MPort>(Vec(17, 50), Port::INPUT, module, ReplayKnob::BIG_CV_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(17, 80), Port::INPUT, module, ReplayKnob::REC_CV_INPUT));
+
+    float buttonx = 20;
+    float buttony = 114;
+    addParam(ParamWidget::create<LilLEDButton>(Vec(buttonx, buttony), module, ReplayKnob::REC_PARAM, 0.0, 1.0, 0.0));
+    addChild(ModuleLightWidget::create<MediumLight<RedLight>>(Vec(buttonx+4.4, buttony+4.4), module, ReplayKnob::REC_LIGHT));
 
     // addInput(Port::create<PJ301MPort>(Vec(22, 65), Port::INPUT, module, ReplayKnob::TIME_INPUT));
     addOutput(Port::create<PJ301MPort>(Vec(110, 136), Port::OUTPUT, module, ReplayKnob::OUT_OUTPUT));
