@@ -41,3 +41,4 @@ extern Model *modelChordSeq;
 // extern Model *modelThreeXOSC;
 extern Model *modelGlides;
 extern Model *modelMetaKnob;
+extern Model *modelReplayKnob;

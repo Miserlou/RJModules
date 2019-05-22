@@ -50,6 +50,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelButton);
     p->addModel(modelButtons);
     p->addModel(modelMetaKnob);
+    p->addModel(modelReplayKnob);
 
     // Util
     p->addModel(modelSplitter);
@@ -60,6 +61,6 @@ void init(rack::Plugin *p) {
     p->addModel(modelBuffers);
 
     // Sequencer
-    p->addModel(modelChordSeq);    
+    p->addModel(modelChordSeq);
 
 }
