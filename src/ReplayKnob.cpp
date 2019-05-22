@@ -4,10 +4,12 @@
 #include "dsp/ringbuffer.hpp"
 #include "dsp/filter.hpp"
 #include "dsp/digital.hpp"
+
 #include <iostream>
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
 #define HISTORY_SIZE (1<<21)
 
@@ -30,36 +32,73 @@ struct ReplayKnob : Module {
         NUM_LIGHTS
     };
 
+    SchmittTrigger recTrigger;
     DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-    DoubleRingBuffer<float, 16> outBuffer;
     SampleRateConverter<1> src;
+
+    std::vector<float> replayVector;
+    int tapeHead = 0;
 
     bool isRecording = false;
     bool hasRecorded = false;
 
-    ReplayKnob() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+    ReplayKnob() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
 
     void step() override;
+};
+
+struct LilLEDButton : SVGSwitch, MomentarySwitch {
+        LilLEDButton() {
+                addFrame(SVG::load(assetPlugin(plugin, "res/LilLEDButton.svg")));
+        }
 };
 
 
 void ReplayKnob::step() {
 
-    SchmittTrigger recordTrigger;
     float param = params[BIG_PARAM].value;
 
     // If we've never recorded anything, or we're recording right now, pass the knob value through.
     outputs[OUT_OUTPUT].value = param;
 
     // Flip the recording state
-    if (params[REC_PARAM].value > 0 || inputs[REC_CV_INPUT].value > 0) {
+    if (recTrigger.process(params[REC_PARAM].value)){
+
+        fprintf( stderr, "I'm recording!" );
+
+        // Clear vector
+        if(!isRecording and hasRecorded){
+            replayVector.clear();
+        }
+
         isRecording = !isRecording;
+
+        if(!hasRecorded and !isRecording){
+            hasRecorded = true;
+        }
+
     }
 
     if(isRecording){
-        lights[REC_LIGHT].value = -10.0 / engineGetSampleRate();
+        replayVector.push_back(param);
+        fprintf( stderr, "I'm recording!" );
+    }
+    else if (hasRecorded){
+        fprintf( stderr, "I've recorded!" );
+
+        if (tapeHead >= replayVector.size()){
+            tapeHead = 0;
+        }
+        outputs[OUT_OUTPUT].value = replayVector.at(tapeHead);
+        tapeHead++;
+
+    }
+
+    // Lights
+    if(isRecording){
+        lights[REC_LIGHT].value = 10.0;
     } else{
-        lights[REC_LIGHT].value = 0.0 / engineGetSampleRate();
+        lights[REC_LIGHT].value = -10.0;
     }
 
 }
@@ -86,8 +125,8 @@ ReplayKnobWidget::ReplayKnobWidget(ReplayKnob *module) : ModuleWidget(module) {
 
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, ReplayKnob::BIG_PARAM, -12.0, 12.0, 0.0));
     addInput(Port::create<PJ301MPort>(Vec(17, 60), Port::INPUT, module, ReplayKnob::REC_CV_INPUT));
-    addParam(ParamWidget::create<LEDButton>(Vec(18, 110), module, ReplayKnob::REC_PARAM, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MediumLight<RedLight>>(Vec(18, 110), module, ReplayKnob::REC_LIGHT));
+    addParam(ParamWidget::create<LilLEDButton>(Vec(18, 110), module, ReplayKnob::REC_PARAM, 0.0, 1.0, 0.0));
+    addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(22.4, 114.4), module, ReplayKnob::REC_LIGHT));
 
     // addInput(Port::create<PJ301MPort>(Vec(22, 65), Port::INPUT, module, ReplayKnob::TIME_INPUT));
     addOutput(Port::create<PJ301MPort>(Vec(110, 136), Port::OUTPUT, module, ReplayKnob::OUT_OUTPUT));
