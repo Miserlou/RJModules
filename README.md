@@ -37,6 +37,8 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
     - [BPM](#bpm)
     - [Button](#button)
     - [Buttons](#buttons)
+    - [Metaknob](#metaknob)
+    - [ReplayKnob](#replayknob)
   - [Utilities](#utilities)
     - [Splitter](#splitter)
     - [Splitters](#splitters)
