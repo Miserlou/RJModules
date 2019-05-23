@@ -165,6 +165,14 @@ They're arranged a drum pad, so it's fun and easy to make a playable drum pad si
 
 <img src='https://i.imgur.com/qdBbvFD.jpg' width="100%" />
 
+#### Metaknob
+<img src="https://i.imgur.com/S7caSTN.png" width="25%" />
+It's a really big knob! Unipolar, bipolar and range-controlled modes.
+
+#### ReplayKnob
+<img src="https://i.imgur.com/5z6xiwB.png" width="25%" />
+Replay Knob is a knob with an integratd recorder and looper. Has a reset button, start/end controls, comes in unipolar and bipolar modes, and can be used as a looper for arbitrary inputs. Great for looping human-sounding controls.
+
 ### Utilities
 
 #### Splitter
@@ -213,7 +221,6 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Cycle Gate - Only allow through a controlable number of cycles. Ex, if set to 3, allows 3 cycles of wave (until a value repeats) until the signal is gated.
   * Keyboard Keyboard - Keyboard that allows you to send CV with the computer keyboard in the same configuration as the one in Ableton.
   * Kielbasa Thickener - Sausage Fattener clone
-  * Replay Knob - Knob that records and loops
   * Divide Delay - Delay with an integrated clock divider. Also has an integrated send/return for the wet signal.
   * Mixixix - 4 channel mixer with send/return chains and integrated sidechain.
   * Shitty - Makes a signal sound shitty. Lofi. So hot right now.
