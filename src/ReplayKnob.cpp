@@ -47,6 +47,7 @@ struct ReplayKnob : Module {
     SampleRateConverter<1> src;
 
     std::vector<float> replayVector;
+    float param;
     int tapeHead = 0;
 
     bool isRecording = false;
@@ -69,15 +70,16 @@ struct LilLEDButton : SVGSwitch, MomentarySwitch {
 
 void ReplayKnob::step() {
 
-    float param = params[BIG_PARAM].value;
-
     // If we've never recorded anything, or we're recording right now, pass the knob value through.
+    if (inputs[BIG_CV_INPUT].active){
+        param = inputs[BIG_CV_INPUT].value;
+    } else {
+        param = params[BIG_PARAM].value;
+    }
     outputs[OUT_OUTPUT].value = param;
 
     // Flip the recording state
     if (recTrigger.process(params[REC_PARAM].value) || recTriggerCV.process(inputs[REC_CV_INPUT].value)){
-
-        // fprintf( stderr, "I'm recording!" );
 
         // Clear vector
         if(!isRecording and hasRecorded){
@@ -94,11 +96,8 @@ void ReplayKnob::step() {
 
     if(isRecording){
         replayVector.push_back(param);
-        // fprintf( stderr, "I'm recording!" );
     }
     else if (hasRecorded){
-        // fprintf( stderr, "I've recorded!" );
-
         // Get start and end values
         float startParam = params[START_PARAM].value;
         float endParam = params[END_PARAM].value;
