@@ -171,6 +171,8 @@ They're arranged a drum pad, so it's fun and easy to make a playable drum pad si
 <img src="https://i.imgur.com/S7caSTN.png" width="25%" />
 It's a really big knob! Unipolar, bipolar and range-controlled modes.
 
+[Demo here](https://www.youtube.com/watch?v=hWrgh6OjMlU)!
+
 #### ReplayKnob
 <img src="https://i.imgur.com/5z6xiwB.png" width="25%" />
 Replay Knob is a knob with an integratd recorder and looper. Has a reset button, start/end controls, comes in unipolar and bipolar modes, and can be used as a looper for arbitrary inputs. Great for looping human-sounding controls.
