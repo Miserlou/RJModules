@@ -152,7 +152,7 @@ Panners is a bank of 5 panners. Each takes a stereo input and a stereo output. P
 ### Musical
 
 #### uQuant
-<img src='https://i.imgur.com/E2mbiRr.png' width="10%">
+<img src='https://i.imgur.com/E2mbiRr.png' width="5%">
 
 uQuant is a very skinny micro quantizer. Includes key, scale, octave, transpose, trigger and output.
 
