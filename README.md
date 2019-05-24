@@ -33,6 +33,8 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
     - [Volumes](#volumes)
     - [Panner](#panner)
     - [Panners](#panners)
+  - [Musical](#musical)
+    - [uQuant](#uquant)
   - [Live](#live)
     - [BPM](#bpm)
     - [Button](#button)
@@ -146,6 +148,15 @@ Panner is a voltage controlled panner. Without CV, it pans a mono signal into le
 #### Panners
 <img src="https://i.imgur.com/Z53pj0S.png" width="25%" />
 Panners is a bank of 5 panners. Each takes a stereo input and a stereo output. Pretty simple but handy for placing lots of elements around a stereo space.
+
+### Musical
+
+#### uQuant
+<img src='https://i.imgur.com/E2mbiRr.png' width="25%">
+
+uQuant is a very skinny micro quantizer. Includes key, scale, octave, transpose, trigger and output.
+
+uQuant is really just a bastard skin of [Scale Quantizer mkII](https://github.com/jhoar/AmalgamatedHarmonics) by [AmalgamatedHarmonics](https://github.com/jhoar/AmalgamatedHarmonics) - so all credit goes to them!
 
 ### Live
 

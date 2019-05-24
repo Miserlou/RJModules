@@ -36,14 +36,14 @@ struct TinyStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
-    nvgFontSize(vg, 13);
+    nvgFontSize(vg, 15);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2);
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
 
-    Vec textPos = Vec(4.0f, 20.0f);
+    Vec textPos = Vec(2.0f, 17.0f);
     NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
     nvgFillColor(vg, textColor);
     nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
@@ -94,7 +94,10 @@ struct uQuant : AHModule {
     PulseGenerator triggerPulse[8];
 
     std::string keys[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-    std::string scales[12] = {"C", "Io", "Do", "Ph", "Ly", "Mi", "Ae", "Lo", "5M", "5m", "Hm", "B"};
+    std::string scales[12] = {"Ch", "Io", "Do", "Ph", "Ly", "Mi", "Ae", "Lo", "5M", "5m", "Hm", "Bl"};
+
+    std::string keyValue[1] = {"C"};
+    std::string scaleValue[1] = {"C"};
 
     int currScale = 0;
     int currRoot = 0;
@@ -179,25 +182,8 @@ void uQuant::step() {
 
     }
 
-    // std::cout << "Currscale\n";
-    // std::cout << scales[currScale];
-
-    // std::cout << "Curroot\n";
-    // std::cout << keys[currRoot];
-
-    if (lastScale != currScale || firstStep) {
-        for (int i = 0; i < Core::NUM_NOTES; i++) {
-            lights[SCALE_LIGHT + i].value = 0.0f;
-        }
-        lights[SCALE_LIGHT + currScale].value = 1.0f;
-    }
-
-    if (lastRoot != currRoot || firstStep) {
-        for (int i = 0; i < Core::NUM_NOTES; i++) {
-            lights[KEY_LIGHT + i].value = 0.0f;
-        }
-        lights[KEY_LIGHT + currRoot].value = 1.0f;
-    }
+    keyValue[0] = std::string(keys[currRoot]);
+    scaleValue[0] = std::string(scales[currScale]);
 
     firstStep = false;
 
@@ -210,8 +196,6 @@ struct uQuantWidget : ModuleWidget {
 uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
 
     UI ui;
-
-    //box.size = Vec(35, 380);
     box.size = Vec(30, 380);
 
     {
@@ -221,25 +205,11 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
         addChild(panel);
     }
 
-    //addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 0, 5, true, false), Port::INPUT, module, uQuant::KEY_INPUT));
-    //addParam(ParamWidget::create<AHKnobSnap>(ui.getPosition(UI::PORT, 0, 0, true, false), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-    // addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 3, 5, true, false), Port::INPUT, module, uQuant::SCALE_INPUT));
-    // addParam(ParamWidget::create<AHKnobSnap>(ui.getPosition(UI::PORT, 4, 5, true, false), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-
     float xOffset = 18.0;
     float xSpace = 21.0;
     float xPos = 0.0;
     float yPos = 0.0;
     int scale = 0;
-
-    // for (int i = 0; i < 12; i++) {
-    //     addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(xOffset + i * 18.0f, 280.0f), module, uQuant::SCALE_LIGHT + i));
-
-    //     ui.calculateKeyboard(i, xSpace, xOffset, 230.0f, &xPos, &yPos, &scale);
-    //     addChild(ModuleLightWidget::create<SmallLight<GreenLight>>(Vec(xPos, yPos), module, uQuant::KEY_LIGHT + scale));
-
-    // }
-
     int leftPad = 3;
     int knobLeftPad = 6;
 
@@ -249,8 +219,7 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     displayKey = new TinyStringDisplayWidget();
     displayKey->box.pos = Vec(leftPad, 71);
     displayKey->box.size = Vec(25, 25);
-    //displayKey->value = &module->keys[currRoot];
-    displayKey->value = &module->keys[1];
+    displayKey->value = &module->keyValue[0];
     addChild(displayKey);
     addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
     addInput(Port::create<PJ301MPort>(Vec(leftPad, 125), Port::INPUT, module, uQuant::KEY_INPUT));
@@ -259,9 +228,9 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     displayScale = new TinyStringDisplayWidget();
     displayScale->box.pos = Vec(leftPad, 155);
     displayScale->box.size = Vec(25, 25);
-    displayScale->value = &module->scales[1];
+    displayScale->value = &module->scaleValue[0];
     addChild(displayScale);
-    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
     addInput(Port::create<PJ301MPort>(Vec(leftPad, 209), Port::INPUT, module, uQuant::SCALE_INPUT));
 
     // Octave
