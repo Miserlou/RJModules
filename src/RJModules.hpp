@@ -42,3 +42,4 @@ extern Model *modelChordSeq;
 extern Model *modelGlides;
 extern Model *modelMetaKnob;
 extern Model *modelReplayKnob;
+extern Model *modeluQuant;

@@ -63,4 +63,7 @@ void init(rack::Plugin *p) {
     // Sequencer
     p->addModel(modelChordSeq);
 
+    // Quantizer
+    p->addModel(modeluQuant);
+
 }
