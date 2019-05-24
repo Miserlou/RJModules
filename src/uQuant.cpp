@@ -212,7 +212,7 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     UI ui;
 
     //box.size = Vec(35, 380);
-    box.size = Vec(300, 380);
+    box.size = Vec(30, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
@@ -221,23 +221,10 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
         addChild(panel);
     }
 
-    addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 0, 5, true, false), Port::INPUT, module, uQuant::KEY_INPUT));
+    //addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 0, 5, true, false), Port::INPUT, module, uQuant::KEY_INPUT));
     //addParam(ParamWidget::create<AHKnobSnap>(ui.getPosition(UI::PORT, 0, 0, true, false), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(9, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-
-    addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 3, 5, true, false), Port::INPUT, module, uQuant::SCALE_INPUT));
-    addParam(ParamWidget::create<AHKnobSnap>(ui.getPosition(UI::PORT, 4, 5, true, false), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-
-    addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 6, 5, true, false), Port::INPUT, module, uQuant::TRANS_INPUT));
-    addParam(ParamWidget::create<AHKnobSnap>(ui.getPosition(UI::PORT, 7, 5, true, false), module, uQuant::TRANS_PARAM, -11.0f, 11.0f, 0.0f)); // 12 notes
-
-    for (int i = 0; i < 8; i++) {
-        addInput(Port::create<PJ301MPort>(Vec(6 + i * 29, 41), Port::INPUT, module, uQuant::IN_INPUT + i));
-        //addParam(ParamWidget::create<AHTrimpotSnap>(Vec(9 + i * 29.1, 101), module, uQuant::SHIFT_PARAM + i, -3.0f, 3.0f, 0.0f));
-        addOutput(Port::create<PJ301MPort>(Vec(6 + i * 29, 125), Port::OUTPUT, module, uQuant::OUT_OUTPUT + i));
-        //addInput(Port::create<PJ301MPort>(Vec(6 + i * 29, 71), Port::INPUT, module, uQuant::HOLD_INPUT + i));
-        addOutput(Port::create<PJ301MPort>(Vec(6 + i * 29, 155), Port::OUTPUT, module, uQuant::TRIG_OUTPUT + i));
-    }
+    // addInput(Port::create<PJ301MPort>(ui.getPosition(UI::PORT, 3, 5, true, false), Port::INPUT, module, uQuant::SCALE_INPUT));
+    // addParam(ParamWidget::create<AHKnobSnap>(ui.getPosition(UI::PORT, 4, 5, true, false), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
 
     float xOffset = 18.0;
     float xSpace = 21.0;
@@ -253,13 +240,40 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
 
     // }
 
+    int leftPad = 3;
+    int knobLeftPad = 6;
+
+    addInput(Port::create<PJ301MPort>(Vec(leftPad, 41), Port::INPUT, module, uQuant::IN_INPUT));
+
     TinyStringDisplayWidget *displayKey = new TinyStringDisplayWidget();
     displayKey = new TinyStringDisplayWidget();
-    displayKey->box.pos = Vec(6, 71);
+    displayKey->box.pos = Vec(leftPad, 71);
     displayKey->box.size = Vec(25, 25);
     //displayKey->value = &module->keys[currRoot];
     displayKey->value = &module->keys[1];
     addChild(displayKey);
+    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+    addInput(Port::create<PJ301MPort>(Vec(leftPad, 125), Port::INPUT, module, uQuant::KEY_INPUT));
+
+    TinyStringDisplayWidget *displayScale = new TinyStringDisplayWidget();
+    displayScale = new TinyStringDisplayWidget();
+    displayScale->box.pos = Vec(leftPad, 155);
+    displayScale->box.size = Vec(25, 25);
+    displayScale->value = &module->scales[1];
+    addChild(displayScale);
+    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+    addInput(Port::create<PJ301MPort>(Vec(leftPad, 209), Port::INPUT, module, uQuant::SCALE_INPUT));
+
+    // Octave
+    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 240), module, uQuant::SHIFT_PARAM, -3.0f, 3.0f, 0.0f));
+
+    // Transpose
+    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad,265), module, uQuant::TRANS_PARAM, -11.0f, 11.0f, 0.0f)); // 12 notes
+    addInput(Port::create<PJ301MPort>(Vec(leftPad, 290), Port::INPUT, module, uQuant::TRANS_INPUT));
+
+    // Outputs
+    addOutput(Port::create<PJ301MPort>(Vec(leftPad, 320), Port::OUTPUT, module, uQuant::TRIG_OUTPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(leftPad, 350), Port::OUTPUT, module, uQuant::OUT_OUTPUT));
 
 }
 
