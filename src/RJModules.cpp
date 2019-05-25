@@ -18,6 +18,9 @@ void init(rack::Plugin *p) {
     p->addModel(modelChord);
     // p->addModel(modelThreeXOSC);
 
+    // VCA
+    p->addModel(modelPluck);
+
     // FX
     p->addModel(modelBitCrush);
     p->addModel(modelWidener);

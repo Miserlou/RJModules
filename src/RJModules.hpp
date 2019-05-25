@@ -43,3 +43,4 @@ extern Model *modelGlides;
 extern Model *modelMetaKnob;
 extern Model *modelReplayKnob;
 extern Model *modeluQuant;
+extern Model *modelPluck;
