@@ -52,9 +52,13 @@ struct Pluck : Module {
     void step() override {
 
         /* ADSR */
-        float attack = clamp(params[ATTACK_PARAM].value + inputs[ATTACK_INPUT].value / 10.0f, 0.0f, 1.0f);
-        float decay = clamp(params[DECAY_PARAM].value + inputs[DECAY_INPUT].value / 10.0f, 0.0f, 1.0f);
-        float sustain = clamp(params[SUSTAIN_PARAM].value + inputs[SUSTAIN_INPUT].value / 10.0f, 0.0f, 1.0f);
+        // float attack = clamp(params[ATTACK_PARAM].value + inputs[ATTACK_INPUT].value / 10.0f, 0.0f, 1.0f);
+        // float decay = clamp(params[DECAY_PARAM].value + inputs[DECAY_INPUT].value / 10.0f, 0.0f, 1.0f);
+        // float sustain = clamp(params[SUSTAIN_PARAM].value + inputs[SUSTAIN_INPUT].value / 10.0f, 0.0f, 1.0f);
+
+        float attack = 0.0f;
+        float decay = 1.0f;
+        float sustain = 1.0f;
         float release = clamp(params[RELEASE_PARAM].value + inputs[RELEASE_INPUT].value / 10.0f, 0.0f, 1.0f);
 
         // Gate and trigger
@@ -103,13 +107,13 @@ struct Pluck : Module {
         bool sustaining = isNear(env, sustain, 1e-3);
         bool resting = isNear(env, 0.0f, 1e-3);
 
-        //outputs[ENVELOPE_OUTPUT].value = 10.0f * env;
+        float env_output = 10.0f * env;
 
         // Lights
-        lights[ATTACK_LIGHT].value = (gated && !decaying) ? 1.0f : 0.0f;
-        lights[DECAY_LIGHT].value = (gated && decaying && !sustaining) ? 1.0f : 0.0f;
-        lights[SUSTAIN_LIGHT].value = (gated && decaying && sustaining) ? 1.0f : 0.0f;
-        lights[RELEASE_LIGHT].value = (!gated && !resting) ? 1.0f : 0.0f;
+        // lights[ATTACK_LIGHT].value = (gated && !decaying) ? 1.0f : 0.0f;
+        // lights[DECAY_LIGHT].value = (gated && decaying && !sustaining) ? 1.0f : 0.0f;
+        // lights[SUSTAIN_LIGHT].value = (gated && decaying && sustaining) ? 1.0f : 0.0f;
+        // lights[RELEASE_LIGHT].value = (!gated && !resting) ? 1.0f : 0.0f;
 
         /* VCA */
         float cv = 1.f;
@@ -172,11 +176,15 @@ struct PluckWidget : ModuleWidget {
         addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
         addParam(ParamWidget::create<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM, 0.0, 1.0, 1.0));
-        addParam(ParamWidget::create<CKSS>(mm2px(Vec(5.24619, 79.9593)), module, Pluck::EXP_PARAM, 0.0, 1.0, 1.0));
+        // addParam(ParamWidget::create<CKSS>(mm2px(Vec(5.24619, 79.9593)), module, Pluck::EXP_PARAM, 0.0, 1.0, 1.0));
 
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51261, 60.4008)), Port::INPUT, module, Pluck::CV_INPUT));
+
+        // addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51261, 60.4008)), Port::INPUT, module, Pluck::CV_INPUT));
+
+        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 60.9593)), module, Pluck::RELEASE_PARAM, 0.0, 10.0f, 5.0f));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), Port::INPUT, module, Pluck::RELEASE_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), Port::INPUT, module, Pluck::GATE_INPUT));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), Port::INPUT, module, Pluck::IN_INPUT));
-
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), Port::OUTPUT, module, Pluck::OUT_OUTPUT));
     }
 };
