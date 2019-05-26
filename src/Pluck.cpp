@@ -184,10 +184,10 @@ struct PluckWidget : ModuleWidget {
 
         // addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51261, 60.4008)), Port::INPUT, module, Pluck::CV_INPUT));
 
-        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 37.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.8f, 0.50f));
+        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 37.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.4f, 0.50f));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), Port::INPUT, module, Pluck::RELEASE_INPUT));
 
-        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 60.9593)), module, Pluck::EXP_PARAM, 1.0f, 1.1f, 20.0f));
+        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 60.9593)), module, Pluck::EXP_PARAM, 0.0001f, 1.0f, 6.0f));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), Port::INPUT, module, Pluck::EXP_INPUT));
 
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), Port::INPUT, module, Pluck::GATE_INPUT));
