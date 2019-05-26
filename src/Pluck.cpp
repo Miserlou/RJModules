@@ -8,12 +8,12 @@ Pluck is an integrated VCA + "ADSR". Hacked up from Fundamental.
 struct Pluck : Module {
     enum ParamIds {
         LEVEL_PARAM,
-        EXP_PARAM,
 
         ATTACK_PARAM,
         DECAY_PARAM,
         SUSTAIN_PARAM,
         RELEASE_PARAM,
+        EXP_PARAM,
 
         NUM_PARAMS
     };
@@ -27,6 +27,7 @@ struct Pluck : Module {
         RELEASE_INPUT,
         GATE_INPUT,
         TRIG_INPUT,
+        EXP_INPUT,
 
         NUM_INPUTS
     };
@@ -57,9 +58,10 @@ struct Pluck : Module {
         // float sustain = clamp(params[SUSTAIN_PARAM].value + inputs[SUSTAIN_INPUT].value / 10.0f, 0.0f, 1.0f);
 
         float attack = 0.0f;
-        float decay = 1.0f;
-        float sustain = 1.0f;
-        float release = clamp(params[RELEASE_PARAM].value + inputs[RELEASE_INPUT].value / 10.0f, 0.0f, 1.0f);
+        float decay = 10.0f;
+        float sustain = 10.0f;
+        //float release = clamp(params[RELEASE_PARAM].value + inputs[RELEASE_INPUT].value / 10.0f, 0.0f, 1.0f);
+        float release = params[RELEASE_PARAM].value;
 
         // Gate and trigger
         bool gated = inputs[GATE_INPUT].value >= 1.0f;
@@ -106,7 +108,6 @@ struct Pluck : Module {
 
         bool sustaining = isNear(env, sustain, 1e-3);
         bool resting = isNear(env, 0.0f, 1e-3);
-
         float env_output = 10.0f * env;
 
         // Lights
@@ -116,14 +117,16 @@ struct Pluck : Module {
         // lights[RELEASE_LIGHT].value = (!gated && !resting) ? 1.0f : 0.0f;
 
         /* VCA */
-        float cv = 1.f;
-        if (inputs[CV_INPUT].active)
-            cv = fmaxf(inputs[CV_INPUT].value / 10.f, 0.f);
-        if ((int) params[EXP_PARAM].value == 0)
-            cv = powf(cv, 4.f);
-        lastCv = cv;
-        outputs[OUT_OUTPUT].value = inputs[IN_INPUT].value * params[LEVEL_PARAM].value * cv;
+        //float cv = 1.f;
+        float cv = fmaxf(env_output / 10.f, 0.f);
+        //float exp_val = params[EXP_PARAM].value * clamp(inputs[EXP_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
+        float exp_val = params[EXP_PARAM].value;
 
+        cv = powf(cv, exp_val);
+        //if ((int) params[EXP_PARAM].value == 0)
+
+        lastCv = cv;
+        outputs[OUT_OUTPUT].value = inputs[IN_INPUT].value * cv;
 
     }
 };
@@ -131,7 +134,7 @@ struct Pluck : Module {
 
 struct PluckVUKnob : Knob {
     PluckVUKnob() {
-        box.size = mm2px(Vec(10, 46));
+        box.size = mm2px(Vec(10, 20));
     }
 
     void draw(NVGcontext *vg) override {
@@ -181,8 +184,12 @@ struct PluckWidget : ModuleWidget {
 
         // addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51261, 60.4008)), Port::INPUT, module, Pluck::CV_INPUT));
 
-        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 60.9593)), module, Pluck::RELEASE_PARAM, 0.0, 10.0f, 5.0f));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), Port::INPUT, module, Pluck::RELEASE_INPUT));
+        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 37.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.8f, 0.50f));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), Port::INPUT, module, Pluck::RELEASE_INPUT));
+
+        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 60.9593)), module, Pluck::EXP_PARAM, 1.0f, 1.1f, 20.0f));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), Port::INPUT, module, Pluck::EXP_INPUT));
+
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), Port::INPUT, module, Pluck::GATE_INPUT));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), Port::INPUT, module, Pluck::IN_INPUT));
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), Port::OUTPUT, module, Pluck::OUT_OUTPUT));
