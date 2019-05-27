@@ -53,15 +53,11 @@ struct Pluck : Module {
     void step() override {
 
         /* ADSR */
-        // float attack = clamp(params[ATTACK_PARAM].value + inputs[ATTACK_INPUT].value / 10.0f, 0.0f, 1.0f);
-        // float decay = clamp(params[DECAY_PARAM].value + inputs[DECAY_INPUT].value / 10.0f, 0.0f, 1.0f);
-        // float sustain = clamp(params[SUSTAIN_PARAM].value + inputs[SUSTAIN_INPUT].value / 10.0f, 0.0f, 1.0f);
-
         float attack = 0.00001f;
         float decay = 10.0f;
         float sustain = 10.0f;
-        //float release = clamp(params[RELEASE_PARAM].value + inputs[RELEASE_INPUT].value / 10.0f, 0.0f, 1.0f);
-        float release = params[RELEASE_PARAM].value;
+        float release = clamp(params[RELEASE_PARAM].value + inputs[RELEASE_INPUT].value / 10.0f, 0.0f, 1.0f);
+        // float release = params[RELEASE_PARAM].value;
 
         // Gate and trigger
         bool gated = inputs[GATE_INPUT].value >= 1.0f;
@@ -179,15 +175,11 @@ struct PluckWidget : ModuleWidget {
         addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
         addParam(ParamWidget::create<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM, 0.0, 1.0, 1.0));
-        // addParam(ParamWidget::create<CKSS>(mm2px(Vec(5.24619, 79.9593)), module, Pluck::EXP_PARAM, 0.0, 1.0, 1.0));
-
-
-        // addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51261, 60.4008)), Port::INPUT, module, Pluck::CV_INPUT));
 
         addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.4f, 0.50f));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), Port::INPUT, module, Pluck::RELEASE_INPUT));
 
-        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM, 0.0001f, 1.0f, 6.0f));
+        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM, 0.0001f, .2f, 4.0f));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), Port::INPUT, module, Pluck::EXP_INPUT));
 
         addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), Port::INPUT, module, Pluck::GATE_INPUT));

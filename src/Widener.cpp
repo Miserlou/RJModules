@@ -98,7 +98,6 @@ void Widener::step(){
       wet = outBuffer.shift();
   }
 
-
   // filter the wet
   lpFilter->setFilterType(0);
   hpFilter->setFilterType(2);
@@ -155,7 +154,7 @@ WidenerWidget::WidenerWidget(Widener *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    // addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
+    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM, 0.0, 1.0, 1.0));
     addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM, 0.0, 1.0, 0.5));
 
