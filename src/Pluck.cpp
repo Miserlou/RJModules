@@ -53,11 +53,10 @@ struct Pluck : Module {
     void step() override {
 
         /* ADSR */
-        float attack = 0.00001f;
+        float attack = 0.005f;
         float decay = 10.0f;
         float sustain = 10.0f;
         float release = clamp(params[RELEASE_PARAM].value + inputs[RELEASE_INPUT].value / 10.0f, 0.0f, 1.0f);
-        // float release = params[RELEASE_PARAM].value;
 
         // Gate and trigger
         bool gated = inputs[GATE_INPUT].value >= 1.0f;
@@ -106,21 +105,11 @@ struct Pluck : Module {
         bool resting = isNear(env, 0.0f, 1e-3);
         float env_output = 10.0f * env;
 
-        // Lights
-        // lights[ATTACK_LIGHT].value = (gated && !decaying) ? 1.0f : 0.0f;
-        // lights[DECAY_LIGHT].value = (gated && decaying && !sustaining) ? 1.0f : 0.0f;
-        // lights[SUSTAIN_LIGHT].value = (gated && decaying && sustaining) ? 1.0f : 0.0f;
-        // lights[RELEASE_LIGHT].value = (!gated && !resting) ? 1.0f : 0.0f;
-
         /* VCA */
-        //float cv = 1.f;
         float cv = fmaxf(env_output / 10.f, 0.f);
-        //float exp_val = params[EXP_PARAM].value * clamp(inputs[EXP_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
-        float exp_val = params[EXP_PARAM].value;
+        float exp_val =  clamp(params[EXP_PARAM].value + inputs[EXP_PARAM].value / 10.0f, 0.0f, 1.0f);
 
         cv = powf(cv, exp_val);
-        //if ((int) params[EXP_PARAM].value == 0)
-
         lastCv = cv;
         outputs[OUT_OUTPUT].value = inputs[IN_INPUT].value * cv;
 
