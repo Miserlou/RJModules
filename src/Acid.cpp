@@ -229,22 +229,58 @@ struct Acid : Module {
             Envelope
         */
         float shape = params[ENV_SHAPE_PARAM].value;
-        float minTime = 1e-3;
+        float minTime = 1e-1;
 
         // Trigger
-        // if (env_trigger.process(inputs[GATE_INPUT].value)) {
-        if (inputs[TRIG_INPUT].value != 0.0f) {
+        // if (env_trigger.process(inputs[TRIG_INPUT].value)) {
+        if (inputs[TRIG_INPUT].value >= 1.0f) {
             env_gate = true;
+            // std::cout << "TRIGGING\n";
+        } else {
+            // std::cout << "NO TRIGGING \n";
         }
         if (env_gate) {
             env_in = 10.0;
+        } else{
+            env_in = 0.0;
         }
-        float delta = env_in - env_out;
-        float fallCv = params[ENV_REL_PARAM].value / 10.0;
-        fallCv = clamp(fallCv, 0.0, 1.0);
-        float fall = minTime * powf(2.0, fallCv * 10.0);
-        env_out = shapeDelta(delta, fall, shape) / engineGetSampleRate();
 
+        bool rising = false;
+        bool falling = false;
+        float delta = env_in - env_out;
+        if (delta > 0) {
+            // std::cout << "RISING!\n" << delta;
+            // Rise
+            // float riseCv = params[RISE_PARAM].value + inputs[RISE_INPUT].value / 10.0;
+            // float riseCv = params[RISE_PARAM].value;
+            float riseCv = 0.0;
+            riseCv = clamp(riseCv, 0.0, 1.0);
+            float rise = minTime * powf(2.0, riseCv * 10.0);
+            env_out += shapeDelta(delta, rise, shape) / engineGetSampleRate();
+            rising = (env_in - env_out > 1e-3);
+            if (!rising) {
+                env_gate = false;
+            }
+        }
+        else if (delta < 0) {
+            //std::cout << "Falling!\n";
+            // Fall
+            //float fallCv = params[FALL_PARAM].value + inputs[FALL_INPUT].value / 10.0;
+            float fallCv = params[ENV_REL_PARAM].value;
+            //fallCv = clamp(fallCv, 0.0, 1.0);
+            float fall = minTime * powf(2.0, fallCv);
+            env_out += shapeDelta(delta, fall, shape) / engineGetSampleRate();
+            falling = (env_in - env_out < -1e-3);
+        }
+        else {
+            env_gate = false;
+        }
+
+        if (!rising && !falling) {
+            env_out = env_in;
+        }
+
+        //outputs[OUT_OUTPUT].value = env_out;
         /*
             VCA
             via https://github.com/VCVRack/AudibleInstruments/blob/dd25b1785c2e67f19824fad97527c97c5d779685/src/Veils.cpp
@@ -308,17 +344,18 @@ struct AcidWidget : ModuleWidget {
         // Envelope
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_REL_PARAM, 0.0, 1.0, 0.5));
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 1.0));
+        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0));
 
         /*
             Right Side
         */
+
         // Filter
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20)), module, Acid::FILTER_CUT_PARAM, 0.0, 1.0f, 0.90f));
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35)), module, Acid::FILTER_FM_1_PARAM, -1.0, 1.0f, 0.0f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35)), module, Acid::FILTER_Q_PARAM, 0.1f, 1.0f, 0.3f));
+        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35)), module, Acid::FILTER_Q_PARAM, 0.1f, 1.5f, 0.3f));
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50)), module, Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.0f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 4.0f));
+        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 5.0f));
 
         // Pluck
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::PLUCK_REL_PARAM, 0.2, 0.4f, 0.50f));
