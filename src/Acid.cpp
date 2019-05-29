@@ -267,7 +267,7 @@ struct Acid : Module {
             // Fall
             //float fallCv = params[FALL_PARAM].value + inputs[FALL_INPUT].value / 10.0;
             float fallCv = params[ENV_REL_PARAM].value;
-            //fallCv = clamp(fallCv, 0.0, 1.0);
+            fallCv = clamp(fallCv, 0.0, 1.0);
             float fall = minTime * powf(2.0, fallCv);
             env_out += shapeDelta(delta, fall, shape) / engineGetSampleRate();
             falling = (env_in - env_out < -1e-3);
@@ -293,7 +293,7 @@ struct Acid : Module {
 
         // Stage 1
         //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
-        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
+        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
         float q = 10.0f * clamp(params[FILTER_Q_PARAM].value, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
