@@ -44,3 +44,4 @@ extern Model *modelMetaKnob;
 extern Model *modelReplayKnob;
 extern Model *modeluQuant;
 extern Model *modelPluck;
+extern Model *modelAcid;

@@ -14,8 +14,9 @@ void init(rack::Plugin *p) {
     p->addModel(modelTwinLFO);
     p->addModel(modelNoise);
     p->addModel(modelRangeLFO);
+    p->addModel(modelAcid);
+
     // p->addModel(modelRiser);
-    p->addModel(modelChord);
     // p->addModel(modelThreeXOSC);
 
     // VCA
@@ -62,6 +63,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRange);
     p->addModel(modelOctaves);
     p->addModel(modelBuffers);
+    p->addModel(modelChord);
 
     // Sequencer
     p->addModel(modelChordSeq);
