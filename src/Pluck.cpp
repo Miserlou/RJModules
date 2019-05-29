@@ -108,7 +108,6 @@ struct Pluck : Module {
         /* VCA */
         float cv = fmaxf(env_output / 10.f, 0.f);
         float exp_val =  clamp(params[EXP_PARAM].value + inputs[EXP_PARAM].value / 10.0f, 0.0f, 1.0f);
-
         cv = powf(cv, exp_val);
         lastCv = cv;
         outputs[OUT_OUTPUT].value = inputs[IN_INPUT].value * cv;
