@@ -254,11 +254,26 @@ struct Acid : Module {
         /*
             Filter
         */
-        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
+
+        // Stage 1
+        //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
+        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
-        float q = 10.0f * clamp(params[FILTER_Q_PARAM].value/ 5.0f, 0.1f, 1.0f);
+        float q = 10.0f * clamp(params[FILTER_Q_PARAM].value, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
-        float in = vca_out * params[VOLA_PARAM].value / 5.0f;
+        float in = vca_out / 5.0f;
+
+        // Stage 2
+        in = clamp(in, -5.0f, 5.0f) * 0.2f;
+        float a_shape = params[FILTER_DRIVE_PARAM].value;
+        a_shape = clamp(a_shape, -5.0f, 5.0f) * 0.2f;
+        a_shape *= 0.99f;
+        const float a_shapeB = (1.0 - a_shape) / (1.0 + a_shape);
+        const float a_shapeA = (4.0 * a_shape) / ((1.0 - a_shape) * (1.0 + a_shape));
+        float a_outputd = in * (a_shapeA + a_shapeB);
+        a_outputd = a_outputd / ((std::abs(in) * a_shapeA) + a_shapeB);
+        filter.calcOutput(a_outputd);
+        float filter_out = filter.lp * 3.0f;
 
         /*
             Pluck
@@ -268,7 +283,7 @@ struct Acid : Module {
             Outputs
         */
 
-        outputs[OUT_OUTPUT].value = wave_mixed;
+        outputs[OUT_OUTPUT].value = filter_out;
 
     }
 };

@@ -2304,8 +2304,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="153.88228"
-     inkscape:cy="137.95283"
+     inkscape:cx="194.28838"
+     inkscape:cy="339.98334"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -2323,7 +2323,8 @@
      inkscape:bbox-nodes="true"
      inkscape:snap-others="false"
      units="px"
-     inkscape:snap-page="true" />
+     inkscape:snap-page="true"
+     showguides="false" />
   <metadata
      id="metadata53802">
     <rdf:RDF>
@@ -2467,5 +2468,27 @@
        id="path861"
        inkscape:connector-curvature="0"
        transform="matrix(0.26458333,0,0,0.26458333,49.844312,108.77415)" />
+    <g
+       aria-label="ACID"
+       transform="matrix(0.26458333,0,0,0.26458333,49.844312,108.77415)"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none"
+       id="flowRoot1695">
+      <path
+         d="m 120.50781,36.288135 h -12.91015 l -3.35938,7.324218 h -4.902343 l 14.921873,-32.050781 14.39453,32.050781 h -4.98046 z m -1.85547,-4.277344 -4.47265,-10.253906 -4.6875,10.253906 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Futura;-inkscape-font-specification:Futura"
+         id="path1703" />
+      <path
+         d="m 153.28125,15.077197 v 5.390625 q -3.94531,-3.300781 -8.16406,-3.300781 -4.64844,0 -7.83203,3.339844 -3.20313,3.320312 -3.20313,8.125 0,4.746093 3.20313,8.007812 3.20312,3.261719 7.85156,3.261719 2.40234,0 4.08203,-0.78125 0.9375,-0.390625 1.93359,-1.054688 1.01563,-0.664062 2.12891,-1.601562 v 5.488281 q -3.90625,2.207031 -8.20313,2.207031 -6.46484,0 -11.03515,-4.511718 -4.55078,-4.550782 -4.55078,-10.976563 0,-5.761719 3.80859,-10.273437 4.6875,-5.527344 12.12891,-5.527344 4.0625,0 7.85156,2.207031 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Futura;-inkscape-font-specification:Futura"
+         id="path1705" />
+      <path
+         d="m 163.59375,13.456103 v 30.15625 h -4.55078 v -30.15625 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Futura;-inkscape-font-specification:Futura"
+         id="path1707" />
+      <path
+         d="m 170.83984,43.612353 v -30.15625 h 6.32813 q 4.55078,0 7.1875,0.898438 2.83203,0.878906 5.13672,2.988281 4.66797,4.257813 4.66797,11.191406 0,6.953125 -4.86329,11.25 -2.4414,2.148438 -5.11718,2.988282 -2.5,0.839843 -7.08985,0.839843 z m 4.55078,-4.277343 h 2.05079 q 3.0664,0 5.09765,-0.644532 2.03125,-0.683593 3.67188,-2.167968 3.35937,-3.066407 3.35937,-7.988282 0,-4.960937 -3.32031,-8.046875 -2.98828,-2.753906 -8.80859,-2.753906 h -2.05079 z"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Futura;-inkscape-font-specification:Futura"
+         id="path1709" />
+    </g>
   </g>
 </svg>
