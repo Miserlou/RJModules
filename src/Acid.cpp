@@ -16,6 +16,8 @@ Elements pinched from Lindenberg + dBiZ
 #include "Oscillator.hpp"
 #include "dsp/digital.hpp"
 
+#include <math.h>
+
 using dsp::DSPBLOscillator;
 #define pi 3.14159265359
 
@@ -119,6 +121,7 @@ struct Acid : Module {
     };
     enum OutputIds {
         OUT_OUTPUT,
+        ENV_OUTPUT,
         NUM_OUTPUTS
     };
     enum LightIds {
@@ -135,9 +138,9 @@ struct Acid : Module {
 
     // Env
     SchmittTrigger env_trigger;
-    float env_out = 0.f;
-    float env_gate = 0.f;
-    float env_in = 0.f;
+    float env_out = 0.0f;
+    float env_gate = 0.0f;
+    float env_in = 0.0f;
 
     // VCA
     float vca_out;
@@ -229,20 +232,23 @@ struct Acid : Module {
             Envelope
         */
         float shape = params[ENV_SHAPE_PARAM].value;
-        float minTime = 1e-1;
+        float minTime = 1e-2;
+        env_in = 0.0f;
 
         // Trigger
         // if (env_trigger.process(inputs[TRIG_INPUT].value)) {
         if (inputs[TRIG_INPUT].value >= 1.0f) {
             env_gate = true;
             // std::cout << "TRIGGING\n";
-        } else {
-            // std::cout << "NO TRIGGING \n";
+        // } else {
+        //     env_gate = false;
+        //     // std::cout << "NO TRIGGING \n";
+        // }
         }
         if (env_gate) {
             env_in = 10.0;
         } else{
-            env_in = 0.0;
+            // env_in = 0.0;
         }
 
         bool rising = false;
@@ -254,7 +260,8 @@ struct Acid : Module {
             // float riseCv = params[RISE_PARAM].value + inputs[RISE_INPUT].value / 10.0;
             // float riseCv = params[RISE_PARAM].value;
             float riseCv = 0.0;
-            riseCv = clamp(riseCv, 0.0, 1.0);
+            //riseCv = clamp(riseCv, 0.0, 1.0);
+            // riseCv = 1.0;
             float rise = minTime * powf(2.0, riseCv * 10.0);
             env_out += shapeDelta(delta, rise, shape) / engineGetSampleRate();
             rising = (env_in - env_out > 1e-3);
@@ -266,9 +273,9 @@ struct Acid : Module {
             //std::cout << "Falling!\n";
             // Fall
             //float fallCv = params[FALL_PARAM].value + inputs[FALL_INPUT].value / 10.0;
-            float fallCv = params[ENV_REL_PARAM].value;
+            float fallCv = params[ENV_REL_PARAM].value + 0.0 / 10.0;
             fallCv = clamp(fallCv, 0.0, 1.0);
-            float fall = minTime * powf(2.0, fallCv);
+            float fall = minTime * powf(2.0, fallCv * 10.0);
             env_out += shapeDelta(delta, fall, shape) / engineGetSampleRate();
             falling = (env_in - env_out < -1e-3);
         }
@@ -280,7 +287,8 @@ struct Acid : Module {
             env_out = env_in;
         }
 
-        //outputs[OUT_OUTPUT].value = env_out;
+        outputs[ENV_OUTPUT].value = env_out;
+
         /*
             VCA
             via https://github.com/VCVRack/AudibleInstruments/blob/dd25b1785c2e67f19824fad97527c97c5d779685/src/Veils.cpp
@@ -294,8 +302,9 @@ struct Acid : Module {
         // Stage 1
         //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
         float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
+
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
-        float q = 10.0f * clamp(params[FILTER_Q_PARAM].value, 0.1f, 1.0f);
+        float q = 10.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
         float in = vca_out / 5.0f;
 
@@ -342,7 +351,7 @@ struct AcidWidget : ModuleWidget {
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35)), module, Acid::WAVE_MIX_PARAM, 0.0, 1.0f, 0.0f));
 
         // Envelope
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_REL_PARAM, 0.0, 1.0, 0.5));
+        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_REL_PARAM, 0.0, 1.0, 0.0));
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0));
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0));
 
@@ -366,6 +375,7 @@ struct AcidWidget : ModuleWidget {
         */
         addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT_INPUT));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(20 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::TRIG_INPUT));
+        addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER - 15, 115)), Port::OUTPUT, module, Acid::ENV_OUTPUT));
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER, 115)), Port::OUTPUT, module, Acid::OUT_OUTPUT));
     }
 };
