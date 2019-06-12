@@ -12,11 +12,45 @@
 
 using namespace std;
 
+//
+static tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+
 /*
 Display
 */
 
-static tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+struct SmallStringDisplayWidget : TransparentWidget {
+
+  std::string *value;
+  std::shared_ptr<Font> font;
+
+  SmallStringDisplayWidget() {
+    font = Font::load(assetPlugin(plugin, "res/Pokemon.ttf"));
+  };
+
+  void draw(NVGcontext *vg) override
+  {
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0xC0, 0xC0, 0xC0);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(vg, backgroundColor);
+    nvgFill(vg);
+
+    // text
+    nvgFontSize(vg, 24);
+    nvgFontFaceId(vg, font->handle);
+    nvgTextLetterSpacing(vg, 2.5);
+
+    std::stringstream to_display;
+    to_display << std::setw(3) << *value;
+
+    Vec textPos = Vec(16.0f, 33.0f);
+    NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
+    nvgFillColor(vg, textColor);
+    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
+  }
+};
 
 /*
 Widget
@@ -53,6 +87,10 @@ struct EssEff : Module {
     bool output_set = false;
     float frame[1000000];
     int head = -1;
+    int current;
+
+    std::string file_name = "Hello!";
+    std::string preset_name = "Hello!";
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
@@ -62,12 +100,16 @@ struct EssEff : Module {
 void EssEff::step() {
 
     if(!output_set){
-
-        tsf_set_output(tee_ess_eff, TSF_MONO, 44100, 0.0); //sample rate
+        tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0); //sample rate
         output_set = true;
 
     } else{
 
+        // Display
+        int ps_count = tsf_get_presetcount(tee_ess_eff);
+        preset_name = tsf_get_presetname(tee_ess_eff, 0);
+
+        // Render
         if (inputs[GATE_INPUT].value >= 1.0f) {
 
 
@@ -82,7 +124,7 @@ void EssEff::step() {
             head = -1;
         }
 
-        if ( head < 0 || head>=1000000 ){
+        if ( head < 0 || head >= 1000000 ){
             head = 0;
             tsf_render_float(tee_ess_eff, frame, 1000000, 0);
         } else{
@@ -104,7 +146,7 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/RangeLFO.svg")));
+        panel->setBackground(SVG::load(assetPlugin(plugin, "res/EssEff.svg")));
         addChild(panel);
     }
 
@@ -112,6 +154,19 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+
+    // Displays
+    SmallStringDisplayWidget *fileDisplay = new SmallStringDisplayWidget();
+    fileDisplay->box.pos = Vec(28, 70);
+    fileDisplay->box.size = Vec(100, 40);
+    fileDisplay->value = &module->file_name;
+    addChild(fileDisplay);
+
+    SmallStringDisplayWidget *presetDisplay = new SmallStringDisplayWidget();
+    presetDisplay->box.pos = Vec(28, 170);
+    presetDisplay->box.size = Vec(100, 40);
+    presetDisplay->value = &module->preset_name;
+    addChild(presetDisplay);
 
     // Inputs and Knobs
     addInput(Port::create<PJ301MPort>(Vec(11, 100), Port::INPUT, module, EssEff::VOCT_INPUT));
