@@ -293,7 +293,7 @@ struct Acid : Module {
             VCA
             via https://github.com/VCVRack/AudibleInstruments/blob/dd25b1785c2e67f19824fad97527c97c5d779685/src/Veils.cpp
         */
-        float vca_out = wave_mixed * env_out * params[ENV_AMT_PARAM].value;
+        float vca_out = env_out * params[ENV_AMT_PARAM].value;
 
         /*
             Filter
@@ -306,7 +306,7 @@ struct Acid : Module {
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
         float q = 10.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
-        float in = vca_out / 5.0f;
+        float in = wave_mixed / 5.0f;
 
         // Stage 2
         in = clamp(in, -5.0f, 5.0f) * 0.2f;

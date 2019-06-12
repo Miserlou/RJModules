@@ -10,6 +10,8 @@
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
 
+using namespace std;
+
 /*
 Display
 */
@@ -34,13 +36,8 @@ struct EssEff : Module {
         CH2_PARAM,
     };
     enum InputIds {
-        FM1_INPUT,
-        FM2_INPUT,
-        RESET_INPUT,
-        PW_INPUT,
-        RATE_CV_INPUT,
-        FROM_CV_INPUT,
-        TO_CV_INPUT,
+        VOCT_INPUT,
+        GATE_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -54,7 +51,7 @@ struct EssEff : Module {
     };
 
     bool output_set = false;
-    float frame[10000]; // 1k ticks
+    float frame[1000000];
     int head = -1;
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
@@ -65,16 +62,33 @@ struct EssEff : Module {
 void EssEff::step() {
 
     if(!output_set){
+
         tsf_set_output(tee_ess_eff, TSF_MONO, 44100, 0.0); //sample rate
         output_set = true;
+
     } else{
-        if( head < 0 || head>=10000 ){
+
+        if (inputs[GATE_INPUT].value >= 1.0f) {
+
+
+            int note;
+            if (inputs[VOCT_INPUT].active){
+                note = (int) std::round(inputs[VOCT_INPUT].value * 12.f + 60.f);
+                note = clamp(note, 0, 127);
+            } else{
+                note = 60;
+            }
+            tsf_note_on(tee_ess_eff, 0, note, 1.0f);
+            head = -1;
+        }
+
+        if ( head < 0 || head>=1000000 ){
             head = 0;
-            tsf_note_on(tee_ess_eff, 0, 60, 1.0f); //preset 0, middle C
-            tsf_render_float(tee_ess_eff, frame, 10000, 0);
-        }else{
+            tsf_render_float(tee_ess_eff, frame, 1000000, 0);
+        } else{
             head++;
         }
+
         outputs[MAIN_OUTPUT].value  = frame[head];
     }
 }
@@ -98,6 +112,10 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+
+    // Inputs and Knobs
+    addInput(Port::create<PJ301MPort>(Vec(11, 100), Port::INPUT, module, EssEff::VOCT_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(11, 200), Port::INPUT, module, EssEff::GATE_INPUT));
 
     addOutput(Port::create<PJ301MPort>(Vec(11, 320), Port::OUTPUT, module, EssEff::MAIN_OUTPUT));
 }
