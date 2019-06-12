@@ -6,13 +6,18 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <unistd.h>
+#include <mutex>
+
 
 using namespace std;
 
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
+static tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+// tsf* tee_ess_eff;// = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
 
-tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+static mutex loadMutex;
 
 /*
 Display
@@ -83,7 +88,10 @@ struct EssEff : Module {
         NUM_LIGHTS
     };
 
+    bool output_setting = false;
     bool output_set = false;
+
+    bool loading = false;
     bool loaded = false;
 
     float frame[1000000];
@@ -94,6 +102,8 @@ struct EssEff : Module {
     std::string preset_name = "Hello!";
     std::string last_path = "";
 
+    // tsf* tee_ess_eff; //= tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
     void loadFile(std::string path);
@@ -102,27 +112,52 @@ struct EssEff : Module {
 
 void EssEff::loadFile(std::string path){
     // tee_ess_eff = tsf_load_filename(path);
+
+    // std::cout << "LOADING\n";
+    // loadMutex.lock();
+    // tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+    // std::cout << "LOADED\n";
+    // std::cout << "LOADED\n";
+    // std::cout << "LOADED\n";
+    // //this->loaded = true;
+
+    // // usleep(200000);
+    // tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
+    // std::cout << "OUTSET\n";
+    // std::cout << "OUTSET\n";
+    // std::cout << "OUTSET\n";
+    // //this->output_set = true;
+    // loadMutex.unlock();
+
 }
 
 void EssEff::step() {
 
-    if (!loaded){
+    // if (!loaded && !loading ){
 
-        // tsf_close(tee_ess_eff);
-        //tee_ess_eff = tsfh.load_filename("soundfonts/Wii_Grand_Piano.sf2");
-        // tee_ess_eff
-        // file_name = "soundfonts/Wii_Grand_Piano.sf2";
-        // tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-        // loaded = true;
+    //     loading = true;
+    //     std::cout << "LOADING!\n";
+    //     tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+    //     std::cout << "LOADED!\n";
+    //     loaded = true;
+    //     // tsf_close(tee_ess_eff);
+    //     //tee_ess_eff = tsfh.load_filename("soundfonts/Wii_Grand_Piano.sf2");
+    //     // tee_ess_eff
+    //     // file_name = "soundfonts/Wii_Grand_Piano.sf2";
+    //     //
+    //     // loaded = true;
+    //     return;
+    // }
+
+    if (!output_setting && !output_set ){
+        output_setting = true;
+        std::cout << "SETTING!\n";
+        tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
+        std::cout << "SET!\n";
+        output_set = true;
         // return;
     }
-
-    if(!output_set){
-        tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0); //sample rate
-        output_set = true;
-
-    } else{
-
+    if(output_set){
         // Display
         int ps_count = tsf_get_presetcount(tee_ess_eff);
         preset_name = tsf_get_presetname(tee_ess_eff, 0);
