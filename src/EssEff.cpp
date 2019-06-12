@@ -1,19 +1,18 @@
 #include "RJModules.hpp"
 #include "dsp/digital.hpp"
-
+#include "osdialog.h"
 #include "common.hpp"
 #include <iostream>
 #include <cmath>
 #include <sstream>
 #include <iomanip>
 
+using namespace std;
+
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
 
-using namespace std;
-
-//
-static tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
 
 /*
 Display
@@ -38,7 +37,7 @@ struct SmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
-    nvgFontSize(vg, 24);
+    nvgFontSize(vg, 32);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
 
@@ -85,19 +84,38 @@ struct EssEff : Module {
     };
 
     bool output_set = false;
+    bool loaded = false;
+
     float frame[1000000];
     int head = -1;
     int current;
 
     std::string file_name = "Hello!";
     std::string preset_name = "Hello!";
+    std::string last_path = "";
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
+    void loadFile(std::string path);
 
 };
 
+void EssEff::loadFile(std::string path){
+    // tee_ess_eff = tsf_load_filename(path);
+}
+
 void EssEff::step() {
+
+    if (!loaded){
+
+        // tsf_close(tee_ess_eff);
+        //tee_ess_eff = tsfh.load_filename("soundfonts/Wii_Grand_Piano.sf2");
+        // tee_ess_eff
+        // file_name = "soundfonts/Wii_Grand_Piano.sf2";
+        // tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+        // loaded = true;
+        // return;
+    }
 
     if(!output_set){
         tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0); //sample rate
@@ -108,10 +126,10 @@ void EssEff::step() {
         // Display
         int ps_count = tsf_get_presetcount(tee_ess_eff);
         preset_name = tsf_get_presetname(tee_ess_eff, 0);
+        // std::cout << ps_count << "\n";
 
         // Render
         if (inputs[GATE_INPUT].value >= 1.0f) {
-
 
             int note;
             if (inputs[VOCT_INPUT].active){
@@ -138,6 +156,7 @@ void EssEff::step() {
 
 struct EssEffWidget: ModuleWidget {
     EssEffWidget(EssEff *module);
+    Menu *createContextMenu() override;
 };
 
 EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
@@ -173,6 +192,37 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addInput(Port::create<PJ301MPort>(Vec(11, 200), Port::INPUT, module, EssEff::GATE_INPUT));
 
     addOutput(Port::create<PJ301MPort>(Vec(11, 320), Port::OUTPUT, module, EssEff::MAIN_OUTPUT));
+}
+
+struct EssEffItem : MenuItem {
+    EssEff *player;
+    void onAction(EventAction &e) override {
+
+        std::string dir = player->last_path.empty() ? assetLocal("") : stringDirectory(player->last_path);
+        char *path = osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, NULL);
+        if (path) {
+            player->loadFile(path);
+            player->last_path = path;
+            free(path);
+        }
+    }
+};
+
+Menu *EssEffWidget::createContextMenu() {
+    Menu *menu = ModuleWidget::createContextMenu();
+
+    MenuLabel *spacerLabel = new MenuLabel();
+    menu->addChild(spacerLabel);
+
+    EssEff *player = dynamic_cast<EssEff*>(module);
+    assert(player);
+
+    EssEffItem *sampleItem = new EssEffItem();
+    sampleItem->text = "Load file";
+    sampleItem->player = player;
+    menu->addChild(sampleItem);
+
+    return menu;
 }
 
 Model *modelEssEff = Model::create<EssEff, EssEffWidget>("RJModules", "EssEff", "[GEN] EssEff", LFO_TAG);
