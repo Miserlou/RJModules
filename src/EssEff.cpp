@@ -14,10 +14,8 @@ using namespace std;
 
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
-static tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
 // tsf* tee_ess_eff;// = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-
-static mutex loadMutex;
 
 /*
 Display
@@ -103,6 +101,7 @@ struct EssEff : Module {
     std::string last_path = "";
 
     // tsf* tee_ess_eff; //= tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+    // tsf* tee_ess_eff;// = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
@@ -113,21 +112,27 @@ struct EssEff : Module {
 void EssEff::loadFile(std::string path){
     // tee_ess_eff = tsf_load_filename(path);
 
-    // std::cout << "LOADING\n";
-    // loadMutex.lock();
-    // tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-    // std::cout << "LOADED\n";
-    // std::cout << "LOADED\n";
-    // std::cout << "LOADED\n";
-    // //this->loaded = true;
+    // tsf_close(tee_ess_eff);
 
-    // // usleep(200000);
-    // tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
-    // std::cout << "OUTSET\n";
-    // std::cout << "OUTSET\n";
-    // std::cout << "OUTSET\n";
-    // //this->output_set = true;
-    // loadMutex.unlock();
+    std::cout << "LOADING\n";
+    this->loaded = false;
+    // tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+    std::cout << "LOADED\n";
+    std::cout << "LOADED\n";
+    std::cout << "LOADED\n";
+    std::cout << tee_ess_eff << "\n";
+    //
+
+    // usleep(200000);
+    std::cout << "output_setting\n";
+    tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
+
+    this->loaded = true;
+    this->output_set = false;
+    std::cout << "OUTSET\n";
+    std::cout << "OUTSET\n";
+    std::cout << "OUTSET\n";
+    this->output_set = true;
 
 }
 
@@ -149,15 +154,17 @@ void EssEff::step() {
     //     return;
     // }
 
-    if (!output_setting && !output_set ){
-        output_setting = true;
-        std::cout << "SETTING!\n";
-        tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
-        std::cout << "SET!\n";
-        output_set = true;
+    // std::cout << "STEP\n";
+
+    if (!output_set){
+        // std::cout << "SETTING\n";
+        // output_setting = true;
+        // tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
+        // output_set = true;
         // return;
-    }
-    if(output_set){
+    } else {
+
+        // std::cout << "REND\n";
         // Display
         int ps_count = tsf_get_presetcount(tee_ess_eff);
         preset_name = tsf_get_presetname(tee_ess_eff, 0);
