@@ -15,8 +15,9 @@ using namespace std;
 #include "tsf.h"
 
 // It is suprisingly annoying to cross platform list files, do it manually. Boo.
-int num_files = 2;
-string soundfont_files[2] = {
+int num_files = 3;
+string soundfont_files[3] = {
+    "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/FluidR3GM.sf2",
     "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/Wii_Grand_Piano.sf2",
     "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/pyrex.sf2",
 };
@@ -94,6 +95,8 @@ struct EssEff : Module {
     bool loaded = false;
     bool file_chosen = false;
     int last_file = -1;
+    int last_note = -1;
+    int last_preset_sel = -1;
 
     float frame[1000000];
     int head = -1;
@@ -113,9 +116,13 @@ struct EssEff : Module {
 
 void EssEff::loadFile(std::string path){
     this->loaded = false;
+    this->output_set = false;
 
     char cstr[path.size() + 1];
     strcpy(cstr, path.c_str());
+
+    TSF_FREE(tee_ess_eff);
+    memset(frame, 0, sizeof(frame));
 
     tee_ess_eff = tsf_load_filename(cstr);
     if(tee_ess_eff == TSF_NULL){
@@ -125,50 +132,28 @@ void EssEff::loadFile(std::string path){
     std::cout << tee_ess_eff << "\n";
     std::cout << "output_setting\n";
     tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
+    std::cout << "output_set woo\n";
 
     this->loaded = true;
-    this->output_set = false;
+    this->loading = false;
     this->output_set = true;
     this->file_name = path;
 }
 
 void EssEff::step() {
 
-    if(!file_chosen){
+    if(!file_chosen && !loading){
         int cur_file = params[FILE_PARAM].value;
         if(cur_file != last_file){
+            this->loading = true;
             this->loadFile(soundfont_files[cur_file]);
             last_file = cur_file;
         }
     }
 
-    // if (!loaded && !loading ){
-
-    //     loading = true;
-    //     std::cout << "LOADING!\n";
-    //     tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-    //     std::cout << "LOADED!\n";
-    //     loaded = true;
-    //     // tsf_close(tee_ess_eff);
-    //     //tee_ess_eff = tsfh.load_filename("soundfonts/Wii_Grand_Piano.sf2");
-    //     // tee_ess_eff
-    //     // file_name = "soundfonts/Wii_Grand_Piano.sf2";
-    //     //
-    //     // loaded = true;
-    //     return;
-    // }
-
-    // std::cout << "STEP\n";
-
-    if (!output_set){
-        // std::cout << "SETTING\n";
-        // output_setting = true;
-        // tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
-        // output_set = true;
-        // return;
+    if (!output_set || !loaded){
     } else {
 
-        // std::cout << "REND\n";
         // Display
         int ps_count = tsf_get_presetcount(tee_ess_eff);
         int preset_sel = params[PRESET_PARAM].value;
@@ -176,11 +161,10 @@ void EssEff::step() {
             preset_sel = ps_count - 1;
         }
         preset_name = tsf_get_presetname(tee_ess_eff, preset_sel);
-        // std::cout << ps_count << "\n";
 
         // Render
         if (inputs[GATE_INPUT].value >= 1.0f) {
-
+            memset(frame, 0.0, sizeof(frame));
             int note;
             if (inputs[VOCT_INPUT].active){
                 note = (int) std::round(inputs[VOCT_INPUT].value * 12.f + 60.f);
@@ -188,7 +172,18 @@ void EssEff::step() {
             } else{
                 note = 60;
             }
-            tsf_note_on(tee_ess_eff, 0, note, 1.0f);
+
+            // make sure the last note is off
+            if (last_note != -1 && last_preset_sel != -1){
+                //tsf_note_off(tee_ess_eff, preset_sel, note);
+                tsf_reset(tee_ess_eff);
+            }
+
+            // new note on
+            tsf_note_on(tee_ess_eff, preset_sel, note, 1.0f);
+            last_note = note;
+            last_preset_sel = preset_sel;
+
             head = -1;
         }
 
