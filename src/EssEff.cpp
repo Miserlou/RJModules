@@ -221,10 +221,9 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addChild(presetDisplay);
 
     // Inputs and Knobs
-    addInput(Port::create<PJ301MPort>(Vec(11, 100), Port::INPUT, module, EssEff::VOCT_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(11, 200), Port::INPUT, module, EssEff::GATE_INPUT));
-
-    addOutput(Port::create<PJ301MPort>(Vec(11, 320), Port::OUTPUT, module, EssEff::MAIN_OUTPUT));
+    addInput(Port::create<PJ301MPort>(Vec(16, 320), Port::INPUT, module, EssEff::VOCT_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(53, 320), Port::INPUT, module, EssEff::GATE_INPUT));
+    addOutput(Port::create<PJ301MPort>(Vec(112.5, 320), Port::OUTPUT, module, EssEff::MAIN_OUTPUT));
 }
 
 struct EssEffItem : MenuItem {
@@ -251,7 +250,7 @@ Menu *EssEffWidget::createContextMenu() {
     assert(player);
 
     EssEffItem *sampleItem = new EssEffItem();
-    sampleItem->text = "Load file";
+    sampleItem->text = "Load .sf2 file";
     sampleItem->player = player;
     menu->addChild(sampleItem);
 
