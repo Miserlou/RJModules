@@ -15,7 +15,11 @@ using namespace std;
 #include "tsf.h"
 
 // It is suprisingly annoying to cross platform list files, do it manually. Boo.
-string soundfont_files[1] = {"soundfonts/Wii_Grand_Piano.sf2"};
+int num_files = 2;
+string soundfont_files[2] = {
+    "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/Wii_Grand_Piano.sf2",
+    "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/pyrex.sf2",
+};
 
 /*
 Display
@@ -88,6 +92,8 @@ struct EssEff : Module {
 
     bool loading = false;
     bool loaded = false;
+    bool file_chosen = false;
+    int last_file = -1;
 
     float frame[1000000];
     int head = -1;
@@ -123,10 +129,18 @@ void EssEff::loadFile(std::string path){
     this->loaded = true;
     this->output_set = false;
     this->output_set = true;
-
+    this->file_name = path;
 }
 
 void EssEff::step() {
+
+    if(!file_chosen){
+        int cur_file = params[FILE_PARAM].value;
+        if(cur_file != last_file){
+            this->loadFile(soundfont_files[cur_file]);
+            last_file = cur_file;
+        }
+    }
 
     // if (!loaded && !loading ){
 
@@ -157,7 +171,11 @@ void EssEff::step() {
         // std::cout << "REND\n";
         // Display
         int ps_count = tsf_get_presetcount(tee_ess_eff);
-        preset_name = tsf_get_presetname(tee_ess_eff, 0);
+        int preset_sel = params[PRESET_PARAM].value;
+        if (preset_sel >= ps_count){
+            preset_sel = ps_count - 1;
+        }
+        preset_name = tsf_get_presetname(tee_ess_eff, preset_sel);
         // std::cout << ps_count << "\n";
 
         // Render
@@ -220,8 +238,8 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addChild(presetDisplay);
 
     // Knobs
-    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0.0, 1.0, 0.165));
-    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM, 0.0, 1.0, 0.165));
+    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0, num_files - 1, 0));
+    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM, 0, 320, 0));
     addInput(Port::create<PJ301MPort>(Vec(37, 117.5), Port::INPUT, module, EssEff::FILE_INPUT));
     addInput(Port::create<PJ301MPort>(Vec(37, 217.5), Port::INPUT, module, EssEff::PRESET_INPUT));
 
@@ -243,6 +261,7 @@ struct EssEffItem : MenuItem {
         if (path) {
             player->loadFile(path);
             player->last_path = path;
+            player->file_chosen = true;
             free(path);
         }
     }
