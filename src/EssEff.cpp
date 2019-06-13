@@ -14,8 +14,6 @@ using namespace std;
 
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
-tsf* tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-// tsf* tee_ess_eff;// = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
 
 /*
 Display
@@ -100,8 +98,7 @@ struct EssEff : Module {
     std::string preset_name = "Hello!";
     std::string last_path = "";
 
-    // tsf* tee_ess_eff; //= tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-    // tsf* tee_ess_eff;// = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
+    tsf* tee_ess_eff;
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
@@ -110,28 +107,22 @@ struct EssEff : Module {
 };
 
 void EssEff::loadFile(std::string path){
-    // tee_ess_eff = tsf_load_filename(path);
-
-    // tsf_close(tee_ess_eff);
-
-    std::cout << "LOADING\n";
     this->loaded = false;
-    // tee_ess_eff = tsf_load_filename("soundfonts/Wii_Grand_Piano.sf2");
-    std::cout << "LOADED\n";
-    std::cout << "LOADED\n";
-    std::cout << "LOADED\n";
-    std::cout << tee_ess_eff << "\n";
-    //
 
-    // usleep(200000);
+    char cstr[path.size() + 1];
+    strcpy(cstr, path.c_str());
+
+    tee_ess_eff = tsf_load_filename(cstr);
+    if(tee_ess_eff == TSF_NULL){
+        return;
+    }
+
+    std::cout << tee_ess_eff << "\n";
     std::cout << "output_setting\n";
     tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
 
     this->loaded = true;
     this->output_set = false;
-    std::cout << "OUTSET\n";
-    std::cout << "OUTSET\n";
-    std::cout << "OUTSET\n";
     this->output_set = true;
 
 }
