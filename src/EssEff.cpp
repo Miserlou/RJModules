@@ -9,11 +9,13 @@
 #include <unistd.h>
 #include <mutex>
 
-
 using namespace std;
 
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
+
+// It is suprisingly annoying to cross platform list files, do it manually. Boo.
+string soundfont_files[1] = {"soundfonts/Wii_Grand_Piano.sf2"};
 
 /*
 Display
@@ -58,20 +60,17 @@ Widget
 
 struct EssEff : Module {
     enum ParamIds {
-        OFFSET_PARAM,
-        INVERT_PARAM,
-        FREQ_PARAM,
-        FM1_PARAM,
-        FM2_PARAM,
-        PW_PARAM,
-        PWM_PARAM,
-        NUM_PARAMS,
-        CH1_PARAM,
-        CH2_PARAM,
+        FILE_PARAM,
+        PRESET_PARAM,
+        MOD_PARAM,
+        BEND_PARAM,
+        NUM_PARAMS
     };
     enum InputIds {
         VOCT_INPUT,
         GATE_INPUT,
+        FILE_INPUT,
+        PRESET_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -219,6 +218,15 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     presetDisplay->box.size = Vec(100, 40);
     presetDisplay->value = &module->preset_name;
     addChild(presetDisplay);
+
+    // Knobs
+    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0.0, 1.0, 0.165));
+    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM, 0.0, 1.0, 0.165));
+    addInput(Port::create<PJ301MPort>(Vec(37, 117.5), Port::INPUT, module, EssEff::FILE_INPUT));
+    addInput(Port::create<PJ301MPort>(Vec(37, 217.5), Port::INPUT, module, EssEff::PRESET_INPUT));
+
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(37, 262), module, EssEff::MOD_PARAM, 0.0, 1.0, 0.0));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM, -1.0, 1.0, 0.0));
 
     // Inputs and Knobs
     addInput(Port::create<PJ301MPort>(Vec(16, 320), Port::INPUT, module, EssEff::VOCT_INPUT));
