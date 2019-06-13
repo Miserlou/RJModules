@@ -106,6 +106,7 @@ struct EssEff : Module {
     std::string preset_name = "Hello!";
     std::string last_path = "";
 
+    SchmittTrigger gateTrigger;
     tsf* tee_ess_eff;
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
@@ -128,11 +129,7 @@ void EssEff::loadFile(std::string path){
     if(tee_ess_eff == TSF_NULL){
         return;
     }
-
-    std::cout << tee_ess_eff << "\n";
-    std::cout << "output_setting\n";
     tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
-    std::cout << "output_set woo\n";
 
     this->loaded = true;
     this->loading = false;
@@ -163,7 +160,7 @@ void EssEff::step() {
         preset_name = tsf_get_presetname(tee_ess_eff, preset_sel);
 
         // Render
-        if (inputs[GATE_INPUT].value >= 1.0f) {
+        if (gateTrigger.process(inputs[GATE_INPUT].value)) {
             memset(frame, 0.0, sizeof(frame));
             int note;
             if (inputs[VOCT_INPUT].active){
