@@ -76,6 +76,7 @@ struct EssEff : Module {
         GATE_INPUT,
         FILE_INPUT,
         PRESET_INPUT,
+        BEND_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -99,8 +100,10 @@ struct EssEff : Module {
     int last_preset_sel = -1;
 
     float frame[1000000];
+    float last_frame = 0.0;
     int head = -1;
     int current;
+    bool crossfade = false;
 
     std::string file_name = "Hello!";
     std::string preset_name = "Hello!";
@@ -134,13 +137,28 @@ void EssEff::loadFile(std::string path){
     this->loaded = true;
     this->loading = false;
     this->output_set = true;
-    this->file_name = path;
+
+    std::string path_str(path);
+    path_str = path_str.substr(path_str.length()-14, path_str.length()-1);
+    this->file_name = path_str;
+
 }
 
 void EssEff::step() {
 
     if(!file_chosen && !loading){
-        int cur_file = params[FILE_PARAM].value;
+        int cur_file;
+        if(!inputs[FILE_PARAM].active){
+            cur_file = params[FILE_PARAM].value;
+        } else{
+            cur_file = (int) inputs[FILE_INPUT].value;
+            if(cur_file >= num_files){
+                cur_file = num_files - 1;
+            }
+            if(cur_file < 0){
+                cur_file = 0;
+            }
+        }
         if(cur_file != last_file){
             this->loading = true;
             this->loadFile(soundfont_files[cur_file]);
@@ -153,11 +171,23 @@ void EssEff::step() {
 
         // Display
         int ps_count = tsf_get_presetcount(tee_ess_eff);
-        int preset_sel = params[PRESET_PARAM].value;
+        int preset_sel;
+
+        if(!inputs[PRESET_INPUT].active){
+            preset_sel = params[PRESET_PARAM].value;
+        } else{
+            preset_sel = (int) inputs[PRESET_INPUT].value;
+        }
+
         if (preset_sel >= ps_count){
             preset_sel = ps_count - 1;
         }
-        preset_name = tsf_get_presetname(tee_ess_eff, preset_sel);
+        if(preset_sel < 0){
+            preset_sel = 0;
+        }
+
+        std::string preset_name_str(tsf_get_presetname(tee_ess_eff, preset_sel));
+        preset_name = preset_name_str.substr(0, 14);
 
         // Render
         if (gateTrigger.process(inputs[GATE_INPUT].value)) {
@@ -174,14 +204,26 @@ void EssEff::step() {
             if (last_note != -1 && last_preset_sel != -1){
                 //tsf_note_off(tee_ess_eff, preset_sel, note);
                 tsf_reset(tee_ess_eff);
+                crossfade = true;
             }
 
             // new note on
+            int bend;
+            if(inputs[BEND_INPUT].active){
+                bend = params[BEND_PARAM].value * clamp(inputs[BEND_INPUT].normalize(10.0f) / 10.0f, 0.0f, 16383.0f);
+            } else{
+                bend = params[BEND_PARAM].value;
+            }
+
+            tsf_channel_set_pitchwheel(tee_ess_eff, preset_sel, bend);
             tsf_note_on(tee_ess_eff, preset_sel, note, 1.0f);
+
             last_note = note;
             last_preset_sel = preset_sel;
 
             head = -1;
+        }else{
+            crossfade = false;
         }
 
         if ( head < 0 || head >= 1000000 ){
@@ -191,7 +233,13 @@ void EssEff::step() {
             head++;
         }
 
-        outputs[MAIN_OUTPUT].value  = frame[head];
+
+        float out_frame = frame[head];
+        if(crossfade){
+            out_frame = (out_frame + last_frame) / 2.0;
+        }
+        outputs[MAIN_OUTPUT].value  = out_frame * 3.f;
+        last_frame = frame[head];
     }
 }
 
@@ -235,8 +283,8 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addInput(Port::create<PJ301MPort>(Vec(37, 117.5), Port::INPUT, module, EssEff::FILE_INPUT));
     addInput(Port::create<PJ301MPort>(Vec(37, 217.5), Port::INPUT, module, EssEff::PRESET_INPUT));
 
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(37, 262), module, EssEff::MOD_PARAM, 0.0, 1.0, 0.0));
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM, -1.0, 1.0, 0.0));
+    addParam(ParamWidget::create<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM, 0, 16383, 8192));
+    addInput(Port::create<PJ301MPort>(Vec(37, 264.5), Port::INPUT, module, EssEff::BEND_INPUT));
 
     // Inputs and Knobs
     addInput(Port::create<PJ301MPort>(Vec(16, 320), Port::INPUT, module, EssEff::VOCT_INPUT));

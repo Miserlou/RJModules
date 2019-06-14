@@ -301,27 +301,21 @@ static int tsf_stream_stdio_read(FILE* f, void* ptr, unsigned int size) { return
 static int tsf_stream_stdio_skip(FILE* f, unsigned int count) { return !fseek(f, count, SEEK_CUR); }
 TSFDEF tsf* tsf_load_filename(const char* filename)
 {
-    std::cout << "tsf_load_filename\n";
 	tsf* res;
 	struct tsf_stream stream = { TSF_NULL, (int(*)(void*,void*,unsigned int))&tsf_stream_stdio_read, (int(*)(void*,unsigned int))&tsf_stream_stdio_skip };
 	#if __STDC_WANT_SECURE_LIB__
-    std::cout << "sec\n";
 	FILE* f = TSF_NULL; fopen_s(&f, filename, "rb");
 	#else
-    std::cout << "nosex\n";
 	FILE* f = fopen(filename, "rb");
 	#endif
 	if (!f)
 	{
-        std::cout << "NULL\n";
 		//if (e) *e = TSF_FILENOTFOUND;
 		return TSF_NULL;
 	}
 	stream.data = f;
-    std::cout << "loading\n";
 	res = tsf_load(&stream);
 	fclose(f);
-    std::cout << "ret\n";
 	return res;
 }
 #endif
@@ -1098,7 +1092,6 @@ static void tsf_voice_render(tsf* f, struct tsf_voice* v, float* outputBuffer, i
 
 TSFDEF tsf* tsf_load(struct tsf_stream* stream)
 {
-    std::cout << "load\n";
 	tsf* res = TSF_NULL;
 	struct tsf_riffchunk chunkHead;
 	struct tsf_riffchunk chunkList;
@@ -1108,7 +1101,6 @@ TSFDEF tsf* tsf_load(struct tsf_stream* stream)
 
 	if (!tsf_riffchunk_read(TSF_NULL, &chunkHead, stream) || !TSF_FourCCEquals(chunkHead.id, "sfbk"))
 	{
-        std::cout << "nochunk\n";
 		//if (e) *e = TSF_INVALID_NOSF2HEADER;
 		return res;
 	}
@@ -1165,7 +1157,6 @@ TSFDEF tsf* tsf_load(struct tsf_stream* stream)
 	}
 	else
 	{
-        std::cout << "WE ALLOCATIN\n";
 		res = (tsf*)TSF_MALLOC(sizeof(tsf));
 		TSF_MEMSET(res, 0, sizeof(tsf));
 		res->presetNum = hydra.phdrNum - 1;
