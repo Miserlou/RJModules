@@ -324,4 +324,4 @@ Menu *EssEffWidget::createContextMenu() {
     return menu;
 }
 
-Model *modelEssEff = Model::create<EssEff, EssEffWidget>("RJModules", "EssEff", "[GEN] EssEff", LFO_TAG);
+Model *modelEssEff = Model::create<EssEff, EssEffWidget>("RJModules", "EssEff", "[GEN] EssEff - SoundFont Player", LFO_TAG);
