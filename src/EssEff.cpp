@@ -148,7 +148,7 @@ void EssEff::step() {
 
     if(!file_chosen && !loading){
         int cur_file;
-        if(!inputs[FILE_PARAM].active){
+        if(!inputs[FILE_INPUT].active){
             cur_file = params[FILE_PARAM].value;
         } else{
             cur_file = (int) inputs[FILE_INPUT].value;
