@@ -17,12 +17,14 @@ Elements pinched from Lindenberg + dBiZ
 #include "dsp/digital.hpp"
 
 #include <math.h>
-
+#include <dirent.h>
 #define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
 
 using dsp::DSPBLOscillator;
 #define pi 3.14159265359
+
+using namespace std;
 
 
 /*
@@ -138,6 +140,25 @@ struct Acid : Module {
     // Wave
     DSPBLOscillator *osc1 = new DSPBLOscillator(engineGetSampleRate());
     DSPBLOscillator *osc2 = new DSPBLOscillator(engineGetSampleRate());
+
+    // Sample
+    unsigned int channels;
+    unsigned int sampleRate;
+    drwav_uint64 totalSampleCount;
+    vector<vector<float>> playBuffer;
+    bool loading = false;
+    bool play = false;
+    string lastPath = "";
+    float samplePos = 0;
+    float startPos = 0;
+    string fileDesc;
+    bool fileLoaded = false;
+    vector <string> fichier;
+    int sampnumber = 0;
+    int retard = 0;
+    bool reload = false ;
+    bool oscState = false ;
+    vector<double> displayBuff; // unused
 
     // Env
     SchmittTrigger env_trigger;
@@ -333,6 +354,78 @@ struct Acid : Module {
 
         outputs[OUT_OUTPUT].value = filter_out;
 
+    }
+
+    void loadSample(std::string path) {
+        //from cF PLAYER.CPP
+
+        loading = true;
+        unsigned int c;
+        unsigned int sr;
+        drwav_uint64 sc;
+        float* pSampleData;
+        pSampleData = drwav_open_and_read_file_f32(path.c_str(), &c, &sr, &sc);
+
+        if (pSampleData != NULL) {
+            channels = c;
+            sampleRate = sr;
+            playBuffer[0].clear();
+            playBuffer[1].clear();
+            for (unsigned int i=0; i < sc; i = i + c) {
+                playBuffer[0].push_back(pSampleData[i]);
+                if (channels == 2)
+                    playBuffer[1].push_back((float)pSampleData[i+1]);
+
+            }
+            totalSampleCount = playBuffer[0].size();
+            drwav_free(pSampleData);
+            loading = false;
+
+            fileLoaded = true;
+            vector<double>().swap(displayBuff);
+            for (int i=0; i < floor(totalSampleCount); i = i + floor(totalSampleCount/130)) {
+                displayBuff.push_back(playBuffer[0][i]);
+            }
+            fileDesc = stringFilename(path)+ "\n";
+            fileDesc += std::to_string(sampleRate)+ " Hz" + "\n";
+            fileDesc += std::to_string(channels)+ " channel(s)" + "\n";
+
+            if (reload) {
+                DIR* rep = NULL;
+                struct dirent* dirp = NULL;
+                std::string dir = path.empty() ? assetLocal("") : stringDirectory(path);
+
+                rep = opendir(dir.c_str());
+                int i = 0;
+                fichier.clear();
+                while ((dirp = readdir(rep)) != NULL) {
+                    std::string name = dirp->d_name;
+
+                    std::size_t found = name.find(".wav",name.length()-5);
+                    if (found==std::string::npos) found = name.find(".WAV",name.length()-5);
+
+                    if (found!=std::string::npos) {
+                        fichier.push_back(name);
+                        if ((dir + "/" + name)==path) {sampnumber = i;}
+                        i=i+1;
+                        }
+
+                    }
+            sort(fichier.begin(), fichier.end());  // Linux needs this to get files in right order
+                for (int o=0;o<int(fichier.size()-1); o++) {
+                    if ((dir + "/" + fichier[o])==path) {
+                        sampnumber = o;
+                    }
+                }
+                closedir(rep);
+                reload = false;
+            }
+                lastPath = path;
+        }
+        else {
+
+            fileLoaded = false;
+        }
     }
 };
 
