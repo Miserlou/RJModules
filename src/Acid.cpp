@@ -18,6 +18,9 @@ Elements pinched from Lindenberg + dBiZ
 
 #include <math.h>
 
+#define DR_WAV_IMPLEMENTATION
+#include "dr_wav.h"
+
 using dsp::DSPBLOscillator;
 #define pi 3.14159265359
 
