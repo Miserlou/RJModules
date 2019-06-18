@@ -242,6 +242,8 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Loop Station - 8 track loop station clone. Integrated Trim.
   * The Beast - Chord, Arp, 3xLFO+Filter, Sync, ADSR, VCO, Quantizer, Keyboard, Master Out. All in one panel.
   * Feedback - Self-feeding reverb. Size, decay, damp, mix, drive, bypass. 
+  * DJ Suite: Player, Mixer, Library
+  * 42VCO: 4xOSC -> 2 Mix -> 1 Mix
 
 ## Building
 
