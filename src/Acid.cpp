@@ -115,6 +115,7 @@ struct Acid : Module {
     };
     enum InputIds {
         VOCT_INPUT,
+        VOCT2_INPUT,
         GATE_INPUT,
 
         ATTACK_INPUT,
@@ -191,7 +192,7 @@ struct Acid : Module {
     void step() override {
 
         if(!fileLoaded){
-            loadSample("/Users/rjones/Sources/Rack/plugins/RJModules/samples/303_wavetable_alt.wav");
+            loadSample("/Users/rjones/Sources/Rack/plugins/RJModules/samples/303_wavetable_c.wav");
             std::cout << "loaded!" << fileLoaded <<" \n";
             return;
         }
@@ -200,6 +201,10 @@ struct Acid : Module {
             Inputs
         */
         float voct = inputs[VOCT_INPUT].value;
+        float voct2 = inputs[VOCT_INPUT].value;
+        if(inputs[VOCT2_INPUT].active){
+            voct2 = inputs[VOCT2_INPUT].value;
+        }
 
         /*
             Wave
@@ -239,14 +244,14 @@ struct Acid : Module {
         }
 
         // Sampler moves regardless
-        samplePos = samplePos + (voct);
+        samplePos = samplePos + powf(2.0, voct); // 3 octaves higher because i made the sample wrong
         if (floor(samplePos) >= totalSampleCount){
             samplePos = 0;
         }
 
         // OSC2
         float wave2 = params[WAVE_2_PARAM].value;
-        osc2->setInputs(voct, 0.0, 0.0, 0.f, -2.f);
+        osc2->setInputs(voct2, 0.0, 0.0, 0.f, -2.f);
         osc2->process();
         float osc2_out;
         switch(int(wave2)){
@@ -505,7 +510,8 @@ struct AcidWidget : ModuleWidget {
             Bottom
         */
         addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(20 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::TRIG_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(20 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT2_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(40 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::TRIG_INPUT));
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER - 15, 115)), Port::OUTPUT, module, Acid::ENV_OUTPUT));
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER, 115)), Port::OUTPUT, module, Acid::OUT_OUTPUT));
     }
