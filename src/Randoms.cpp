@@ -59,6 +59,8 @@ void Randoms::step() {
     }
     std::uniform_real_distribution<> distr3(mapped_ch3v1, mapped_ch3v2);
     outputs[CH1_OUTPUT].value = distr1(eng);
+    outputs[CH2_OUTPUT].value = distr2(eng);
+    outputs[CH3_OUTPUT].value = distr3(eng);
 }
 
 struct RandomsWidget: ModuleWidget {
