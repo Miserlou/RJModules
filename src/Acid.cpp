@@ -17,9 +17,12 @@ Elements pinched from Lindenberg + dBiZ
 #include "dsp/digital.hpp"
 
 #include <math.h>
-#include <dirent.h>
 #define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
+#include <vector>
+#include "cmath"
+#include <dirent.h>
+#include <algorithm> //----added by Joakim Lindbom
 
 using dsp::DSPBLOscillator;
 #define pi 3.14159265359
@@ -160,6 +163,7 @@ struct Acid : Module {
     bool oscState = false ;
     vector<double> displayBuff; // unused
 
+
     // Env
     SchmittTrigger env_trigger;
     float env_out = 0.0f;
@@ -178,9 +182,19 @@ struct Acid : Module {
     bool decaying = false;
     float env = 0.0f;
 
-    Acid() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Acid() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+        playBuffer.resize(2);
+        playBuffer[0].resize(0);
+        playBuffer[1].resize(0);
+    }
 
     void step() override {
+
+        if(!fileLoaded){
+            loadSample("/Users/rjones/Sources/Rack/plugins/RJModules/samples/303_wavetable_alt.wav");
+            std::cout << "loaded!" << fileLoaded <<" \n";
+            return;
+        }
 
         /*
             Inputs
@@ -218,6 +232,16 @@ struct Acid : Module {
             case 4:
                 osc1_out = osc1->getNoise();
                 break;
+            // Sample
+            case 5:
+                osc1_out = 5 * playBuffer[0][floor(samplePos)];
+                break;
+        }
+
+        // Sampler moves regardless
+        samplePos = samplePos + (voct);
+        if (floor(samplePos) >= totalSampleCount){
+            samplePos = 0;
         }
 
         // OSC2
@@ -367,21 +391,31 @@ struct Acid : Module {
         pSampleData = drwav_open_and_read_file_f32(path.c_str(), &c, &sr, &sc);
 
         if (pSampleData != NULL) {
+            std::cout << "hey\n";
+
             channels = c;
             sampleRate = sr;
+
+            std::cout << "1\n";
             playBuffer[0].clear();
             playBuffer[1].clear();
+
+            std::cout << "2\n";
             for (unsigned int i=0; i < sc; i = i + c) {
                 playBuffer[0].push_back(pSampleData[i]);
                 if (channels == 2)
                     playBuffer[1].push_back((float)pSampleData[i+1]);
 
             }
+
+            std::cout << "3\n";
             totalSampleCount = playBuffer[0].size();
+
+            std::cout << "4\n";
             drwav_free(pSampleData);
             loading = false;
-
             fileLoaded = true;
+            std::cout << "loaded\n";
             vector<double>().swap(displayBuff);
             for (int i=0; i < floor(totalSampleCount); i = i + floor(totalSampleCount/130)) {
                 displayBuff.push_back(playBuffer[0][i]);
@@ -389,7 +423,6 @@ struct Acid : Module {
             fileDesc = stringFilename(path)+ "\n";
             fileDesc += std::to_string(sampleRate)+ " Hz" + "\n";
             fileDesc += std::to_string(channels)+ " channel(s)" + "\n";
-
             if (reload) {
                 DIR* rep = NULL;
                 struct dirent* dirp = NULL;
@@ -423,9 +456,11 @@ struct Acid : Module {
                 lastPath = path;
         }
         else {
-
+            std::cout << "notloaded\n";
             fileLoaded = false;
         }
+
+        std::cout << "fileLoaded\n";
     }
 };
 
@@ -442,7 +477,7 @@ struct AcidWidget : ModuleWidget {
         */
 
         // Wave
-        addParam(ParamWidget::create<RoundLargeBlackSnapKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20)), module, Acid::WAVE_1_PARAM, 0.0, 4.0, 0.0));
+        addParam(ParamWidget::create<RoundLargeBlackSnapKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20)), module, Acid::WAVE_1_PARAM, 0.0, 5.0, 0.0));
         addParam(ParamWidget::create<RoundLargeBlackSnapKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20)), module, Acid::WAVE_2_PARAM, 0.0, 4.0, 0.0));
         addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35)), module, Acid::WAVE_MIX_PARAM, 0.0, 1.0f, 0.0f));
 
