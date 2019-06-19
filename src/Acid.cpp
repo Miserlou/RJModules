@@ -357,7 +357,7 @@ struct Acid : Module {
         float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
 
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
-        float q = 10.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
+        float q = 30.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
         float in = wave_mixed / 5.0f;
 
