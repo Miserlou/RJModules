@@ -143,6 +143,7 @@ struct Acid : Module {
 
         TRIG_INPUT,
         EXP_INPUT,
+        FOLD_INPUT,
 
         NUM_INPUTS
     };
@@ -393,6 +394,17 @@ struct Acid : Module {
         float filter_out = filter.lp * 3.0f;
 
         /*
+            Fold!
+            from Lindenberg
+        */
+        float x = clamp(filter_out * 0.1f, -1.f, 1.f);
+        float cv = inputs[FOLD_INPUT].value;
+        float a = clamp(params[FOLD_PARAM].value + cv, 1.f, 50.f);
+        // do the acid!
+        float fold_out = x * (fabs(x) + a) / (x * x + (a - 1) * fabs(x) + 1);
+        fold_out = fold_out * 5.0f;
+
+        /*
             Pluck
         */
 
@@ -400,7 +412,7 @@ struct Acid : Module {
             Outputs
         */
 
-        outputs[OUT_OUTPUT].value = filter_out;
+        outputs[OUT_OUTPUT].value = fold_out;
 
     }
 
@@ -506,7 +518,7 @@ struct AcidWidget : ModuleWidget {
         /*
             Secret
         */
-        addParam(ParamWidget::create<AcidRoundLargeHappyKnob>(mm2px(Vec(18 + LEFT_BUFFER + RIGHT_BUFFER, 2)), module, Acid::FOLD_PARAM, 0.0, 1.0, 0.5));
+        addParam(ParamWidget::create<AcidRoundLargeHappyKnob>(mm2px(Vec(18 + LEFT_BUFFER + RIGHT_BUFFER, 2)), module, Acid::FOLD_PARAM, 1.f, 50.f, 25.f));
 
         /*
             Left Side
