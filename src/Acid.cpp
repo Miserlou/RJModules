@@ -40,6 +40,12 @@ struct AcidRoundLargeBlackKnob : RoundLargeBlackKnob {
     }
 };
 
+struct AcidRoundLargeHappyKnob : RoundLargeBlackKnob {
+    AcidRoundLargeHappyKnob() {
+        setSVG(SVG::load(assetPlugin(plugin, "res/AcidRoundLargeHappyKnob.svg")));
+    }
+};
+
 struct AcidRoundLargeBlackSnapKnob : AcidRoundLargeBlackKnob
 {
     AcidRoundLargeBlackSnapKnob()
@@ -119,6 +125,9 @@ struct Acid : Module {
         // Pluck
         PLUCK_REL_PARAM,
         PLUCK_EXP_PARAM,
+
+        // Folder
+        FOLD_PARAM,
 
         NUM_PARAMS
     };
@@ -364,9 +373,10 @@ struct Acid : Module {
         // Stage 1
         //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
         float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
-
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
-        float q = 30.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
+
+        // TODO: Find best values for these
+        float q = 40.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
         float in = wave_mixed / 5.0f;
 
@@ -492,6 +502,11 @@ struct AcidWidget : ModuleWidget {
         int BOTTOM_OFFSET = 50;
         int LEFT_BUFFER = 2;
         int RIGHT_BUFFER = 50;
+
+        /*
+            Secret
+        */
+        addParam(ParamWidget::create<AcidRoundLargeHappyKnob>(mm2px(Vec(18 + LEFT_BUFFER + RIGHT_BUFFER, 2)), module, Acid::FOLD_PARAM, 0.0, 1.0, 0.5));
 
         /*
             Left Side
