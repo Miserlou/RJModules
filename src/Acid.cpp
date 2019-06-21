@@ -134,17 +134,31 @@ struct Acid : Module {
     enum InputIds {
         VOCT_INPUT,
         VOCT2_INPUT,
-        GATE_INPUT,
-
-        ATTACK_INPUT,
-        DECAY_INPUT,
-        SUSTAIN_INPUT,
-        RELEASE_INPUT,
-
         TRIG_INPUT,
+
+        // Wave
+        WAVE_1_INPUT,
+        WAVE_2_INPUT,
+        WAVE_MIX_INPUT,
+
+        // Env
+        ENV_REL_INPUT,
+        ENV_SHAPE_INPUT,
+        ENV_AMT_INPUT,
+
+        // Filter
+        FILTER_CUT_INPUT,
+        FILTER_FM_1_INPUT,
+        FILTER_FM_2_INPUT,
+        FILTER_Q_INPUT,
+        FILTER_DRIVE_INPUT,
+
+        // Pluck
+        PLUCK_REL_INPUT,
+        PLUCK_EXP_INPUT,
+
         EXP_INPUT,
         FOLD_INPUT,
-
         NUM_INPUTS
     };
     enum OutputIds {
@@ -183,7 +197,6 @@ struct Acid : Module {
     bool oscState = false ;
     vector<double> displayBuff; // unused
 
-
     // Env
     SchmittTrigger env_trigger;
     float env_out = 0.0f;
@@ -201,6 +214,7 @@ struct Acid : Module {
     float lastCv = 0.f;
     bool decaying = false;
     float env = 0.0f;
+    SchmittTrigger trigger;
 
     Acid() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
         playBuffer.resize(2);
@@ -407,12 +421,76 @@ struct Acid : Module {
         /*
             Pluck
         */
+        float pluck_out = fold_out;
+
+        if(inputs[TRIG_INPUT].active){
+
+            /* ADSR */
+            float attack = 0.005f;
+            float decay = 10.0f;
+            float sustain = 10.0f;
+            float release = clamp(params[PLUCK_REL_PARAM].value + inputs[PLUCK_REL_INPUT].value / 10.0f, 0.0f, 1.0f);
+
+            // Gate and trigger
+            bool gated = inputs[TRIG_INPUT].value >= 1.0f;
+            if (trigger.process(inputs[TRIG_INPUT].value))
+                decaying = false;
+
+            const float base = 20000.0f;
+            const float maxTime = 20.0f;
+            if (gated) {
+                if (decaying) {
+                    // Decay
+                    if (decay < 1e-4) {
+                        env = sustain;
+                    }
+                    else {
+                        env += powf(base, 1 - decay) / maxTime * (sustain - env) * engineGetSampleTime();
+                    }
+                }
+                else {
+                    // Attack
+                    // Skip ahead if attack is all the way down (infinitely fast)
+                    if (attack < 1e-4) {
+                        env = 1.0f;
+                    }
+                    else {
+                        env += powf(base, 1 - attack) / maxTime * (1.01f - env) * engineGetSampleTime();
+                    }
+                    if (env >= 1.0f) {
+                        env = 1.0f;
+                        decaying = true;
+                    }
+                }
+            }
+            else {
+                // Release
+                if (release < 1e-4) {
+                    env = 0.0f;
+                }
+                else {
+                    env += powf(base, 1 - release) / maxTime * (0.0f - env) * engineGetSampleTime();
+                }
+                decaying = false;
+            }
+
+            bool sustaining = isNear(env, sustain, 1e-3);
+            bool resting = isNear(env, 0.0f, 1e-3);
+            float env_output = 10.0f * env;
+
+            /* VCA */
+            float vca_cv = fmaxf(env_output / 10.f, 0.f);
+            float exp_val =  clamp(params[PLUCK_EXP_PARAM].value + inputs[PLUCK_EXP_INPUT].value / 10.0f, 0.0f, 1.0f);
+            vca_cv = powf(vca_cv, exp_val);
+            lastCv = vca_cv;
+            pluck_out = fold_out * vca_cv;
+
+        }
 
         /*
             Outputs
         */
-
-        outputs[OUT_OUTPUT].value = fold_out;
+        outputs[OUT_OUTPUT].value = pluck_out;
 
     }
 
@@ -515,6 +593,9 @@ struct AcidWidget : ModuleWidget {
         int LEFT_BUFFER = 2;
         int RIGHT_BUFFER = 50;
 
+        int CV_SIZE = 2;
+        int CV_DIST = 15;
+
         /*
             Secret
         */
@@ -529,10 +610,18 @@ struct AcidWidget : ModuleWidget {
         addParam(ParamWidget::create<AcidRoundLargeBlackSnapKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + TOP_BUFFER)), module, Acid::WAVE_2_PARAM, 0.0, 4.0, 0.0));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + TOP_BUFFER)), module, Acid::WAVE_MIX_PARAM, 0.0, 1.0f, 0.0f));
 
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::WAVE_1_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::WAVE_2_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::WAVE_MIX_INPUT));
+
         // Envelope
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_REL_PARAM, 0.0, 1.0, 0.0));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0));
+
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::WAVE_1_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::WAVE_2_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::WAVE_MIX_INPUT));
 
         /*
             Right Side
@@ -547,7 +636,7 @@ struct AcidWidget : ModuleWidget {
 
         // Pluck
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_REL_PARAM, 0.2, 0.4f, 0.50f));
-        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.2, 0.4f, 0.50f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.0001f, .2f, 4.0f));
 
         /*
             Bottom
