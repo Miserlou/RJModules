@@ -33,15 +33,24 @@ using namespace std;
 /*
     UI
 */
-struct RoundLargeBlackSnapKnob : RoundLargeBlackKnob
+
+struct AcidRoundLargeBlackKnob : RoundLargeBlackKnob {
+    AcidRoundLargeBlackKnob() {
+        setSVG(SVG::load(assetPlugin(plugin, "res/AcidRoundLargeBlackKnob.svg")));
+    }
+};
+
+struct AcidRoundLargeBlackSnapKnob : AcidRoundLargeBlackKnob
 {
-    RoundLargeBlackSnapKnob()
+    AcidRoundLargeBlackSnapKnob()
     {
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
     }
 };
+
+
 
 /*
     Static Functions and Structions
@@ -473,6 +482,13 @@ struct AcidWidget : ModuleWidget {
     AcidWidget(Acid *module) : ModuleWidget(module) {
         setPanel(SVG::load(assetPlugin(plugin, "res/Acid.svg")));
 
+        /* Bullshit */
+        addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
+        addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
+        addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
+        addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+
+        int TOP_BUFFER = 6;
         int BOTTOM_OFFSET = 50;
         int LEFT_BUFFER = 2;
         int RIGHT_BUFFER = 50;
@@ -482,36 +498,36 @@ struct AcidWidget : ModuleWidget {
         */
 
         // Wave
-        addParam(ParamWidget::create<RoundLargeBlackSnapKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20)), module, Acid::WAVE_1_PARAM, 0.0, 5.0, 0.0));
-        addParam(ParamWidget::create<RoundLargeBlackSnapKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20)), module, Acid::WAVE_2_PARAM, 0.0, 4.0, 0.0));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35)), module, Acid::WAVE_MIX_PARAM, 0.0, 1.0f, 0.0f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackSnapKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + TOP_BUFFER)), module, Acid::WAVE_1_PARAM, 0.0, 5.0, 0.0));
+        addParam(ParamWidget::create<AcidRoundLargeBlackSnapKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + TOP_BUFFER)), module, Acid::WAVE_2_PARAM, 0.0, 4.0, 0.0));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + TOP_BUFFER)), module, Acid::WAVE_MIX_PARAM, 0.0, 1.0f, 0.0f));
 
         // Envelope
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_REL_PARAM, 0.0, 1.0, 0.0));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET)), module, Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_REL_PARAM, 0.0, 1.0, 0.0));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0));
 
         /*
             Right Side
         */
 
         // Filter
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20)), module, Acid::FILTER_CUT_PARAM, 0.0, 1.0f, 0.90f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35)), module, Acid::FILTER_FM_1_PARAM, -1.0, 1.0f, 0.0f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35)), module, Acid::FILTER_Q_PARAM, 0.1f, 1.5f, 0.3f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50)), module, Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.0f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 5.0f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20 + TOP_BUFFER)), module, Acid::FILTER_CUT_PARAM, 0.0, 1.0f, 0.90f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + TOP_BUFFER)), module, Acid::FILTER_FM_1_PARAM, -1.0, 1.0f, 0.0f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + TOP_BUFFER)), module, Acid::FILTER_Q_PARAM, 0.1f, 1.5f, 0.3f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.0f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 5.0f));
 
         // Pluck
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::PLUCK_REL_PARAM, 0.2, 0.4f, 0.50f));
-        addParam(ParamWidget::create<RoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET)), module, Acid::PLUCK_EXP_PARAM, 0.2, 0.4f, 0.50f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_REL_PARAM, 0.2, 0.4f, 0.50f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.2, 0.4f, 0.50f));
 
         /*
             Bottom
         */
         addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT_INPUT));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(20 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT2_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(40 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::TRIG_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::TRIG_INPUT));
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER - 15, 115)), Port::OUTPUT, module, Acid::ENV_OUTPUT));
         addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER, 115)), Port::OUTPUT, module, Acid::OUT_OUTPUT));
     }
