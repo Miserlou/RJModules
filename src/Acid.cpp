@@ -123,6 +123,7 @@ struct Acid : Module {
         FILTER_DRIVE_PARAM,
 
         // Pluck
+        PLUCK_ATTACK_PARAM,
         PLUCK_REL_PARAM,
         PLUCK_EXP_PARAM,
 
@@ -589,12 +590,13 @@ struct AcidWidget : ModuleWidget {
         addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
 
         int TOP_BUFFER = 6;
-        int BOTTOM_OFFSET = 50;
+        int BOTTOM_OFFSET = 45;
         int LEFT_BUFFER = 2;
         int RIGHT_BUFFER = 50;
 
         int CV_SIZE = 2;
         int CV_DIST = 15;
+        int CV_NEG_DIST = 10;
 
         /*
             Secret
@@ -634,18 +636,31 @@ struct AcidWidget : ModuleWidget {
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.0f));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 5.0f));
 
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::FILTER_CUT_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), Port::INPUT, module, Acid::FILTER_FM_1_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), Port::INPUT, module, Acid::FILTER_Q_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::FILTER_FM_2_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::FILTER_DRIVE_INPUT));
+
+
         // Pluck
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_REL_PARAM, 0.2, 0.4f, 0.50f));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.0001f, .2f, 4.0f));
+        // addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_ATTACK_PARAM, 0.0, 1.0f, 0.90f));
+
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::PLUCK_REL_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::PLUCK_EXP_INPUT));
 
         /*
             Bottom
         */
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(20 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::VOCT2_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER, 115)), Port::INPUT, module, Acid::TRIG_INPUT));
-        addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER - 15, 115)), Port::OUTPUT, module, Acid::ENV_OUTPUT));
-        addOutput(Port::create<PJ301MPort>(mm2px(Vec(35 + LEFT_BUFFER + RIGHT_BUFFER, 115)), Port::OUTPUT, module, Acid::OUT_OUTPUT));
+        float OUTLINE = 117.5f;
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), Port::INPUT, module, Acid::VOCT_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), Port::INPUT, module, Acid::VOCT2_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + CV_SIZE, OUTLINE)), Port::INPUT, module, Acid::TRIG_INPUT));
+
+        addOutput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), Port::OUTPUT, module, Acid::ENV_OUTPUT));
+        addOutput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), Port::OUTPUT, module, Acid::OUT_OUTPUT));
     }
 };
 
