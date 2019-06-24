@@ -388,8 +388,11 @@ struct Acid : Module {
 
         // Stage 1
         //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
-        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
+        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f)) ;
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
+
+        // I don't love this, but okay..
+        //cutoff = cutoff + (2000 * clamp(inputs[FILTER_CUT_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
 
         // TODO: Find best values for these
         float q = 40.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
@@ -634,7 +637,7 @@ struct AcidWidget : ModuleWidget {
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + TOP_BUFFER)), module, Acid::FILTER_FM_1_PARAM, -1.0, 1.0f, 0.0f));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + TOP_BUFFER)), module, Acid::FILTER_Q_PARAM, 0.1f, 1.5f, 0.3f));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.0f));
-        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 5.0f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 1.0f));
 
         addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), Port::INPUT, module, Acid::FILTER_CUT_INPUT));
         addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), Port::INPUT, module, Acid::FILTER_FM_1_INPUT));
@@ -644,7 +647,7 @@ struct AcidWidget : ModuleWidget {
 
 
         // Pluck
-        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_REL_PARAM, 0.2, 0.4f, 0.50f));
+        addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_REL_PARAM, 0.2f, 0.4f, 0.2f));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.0001f, .2f, 4.0f));
         // addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_ATTACK_PARAM, 0.0, 1.0f, 0.90f));
 
