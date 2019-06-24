@@ -245,35 +245,34 @@ struct Acid : Module {
         */
 
         // OSC1
-        float wave1 = params[WAVE_1_PARAM].value;
+        float wave1 = params[WAVE_1_PARAM].value * clamp(inputs[WAVE_1_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
         osc1->setInputs(voct, 0.0, 0.0, 0.f, -2.f);
         osc1->process();
         float osc1_out;
         switch(int(wave1)){
-
-            // Sin
+            // Sample
             case 0:
+                osc1_out = 5 * playBuffer[0][floor(samplePos)];
+                break;
+            // Sin
+            case 1:
                 osc1_out = osc1->getSineWave();
                 break;
             // Saw
-            case 1:
+            case 2:
                 osc1_out = osc1->getSawWave();
                 break;
             // Pulse
-            case 2:
+            case 3:
                 osc1_out = osc1->getPulseWave();
                 break;
             // Tri
-            case 3:
+            case 4:
                 osc1_out = osc1->getTriWave();
                 break;
             // Noise
-            case 4:
-                osc1_out = osc1->getNoise();
-                break;
-            // Sample
             case 5:
-                osc1_out = 5 * playBuffer[0][floor(samplePos)];
+                osc1_out = osc1->getNoise();
                 break;
         }
 
@@ -284,7 +283,7 @@ struct Acid : Module {
         }
 
         // OSC2
-        float wave2 = params[WAVE_2_PARAM].value;
+        float wave2 = params[WAVE_2_PARAM].value * clamp(inputs[WAVE_2_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
         osc2->setInputs(voct2, 0.0, 0.0, 0.f, -2.f);
         osc2->process();
         float osc2_out;
@@ -313,42 +312,29 @@ struct Acid : Module {
         }
 
         // Mix
-        float wave_mixed = ((1 - params[WAVE_MIX_PARAM].value) * osc1_out) + ((params[WAVE_MIX_PARAM].value) * osc2_out);
+        float wave_mixed = ((1 - params[WAVE_MIX_PARAM].value * clamp(inputs[WAVE_MIX_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)) * osc1_out) + ((params[WAVE_MIX_PARAM].value * clamp(inputs[WAVE_MIX_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)) * osc2_out);
 
         /*
             Envelope
         */
-        float shape = params[ENV_SHAPE_PARAM].value;
+        float shape = params[ENV_SHAPE_PARAM].value * clamp(inputs[ENV_SHAPE_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
         float minTime = 1e-2;
         env_in = 0.0f;
 
         // Trigger
-        // if (env_trigger.process(inputs[TRIG_INPUT].value)) {
         if (inputs[TRIG_INPUT].value >= 1.0f) {
             env_gate = true;
-            // std::cout << "TRIGGING\n";
-        // } else {
-        //     env_gate = false;
-        //     // std::cout << "NO TRIGGING \n";
-        // }
         }
         if (env_gate) {
             env_in = 10.0;
         } else{
-            // env_in = 0.0;
         }
 
         bool rising = false;
         bool falling = false;
         float delta = env_in - env_out;
         if (delta > 0) {
-            // std::cout << "RISING!\n" << delta;
-            // Rise
-            // float riseCv = params[RISE_PARAM].value + inputs[RISE_INPUT].value / 10.0;
-            // float riseCv = params[RISE_PARAM].value;
             float riseCv = 0.0;
-            //riseCv = clamp(riseCv, 0.0, 1.0);
-            // riseCv = 1.0;
             float rise = minTime * powf(2.0, riseCv * 10.0);
             env_out += shapeDelta(delta, rise, shape) / engineGetSampleRate();
             rising = (env_in - env_out > 1e-3);
@@ -357,10 +343,7 @@ struct Acid : Module {
             }
         }
         else if (delta < 0) {
-            //std::cout << "Falling!\n";
-            // Fall
-            //float fallCv = params[FALL_PARAM].value + inputs[FALL_INPUT].value / 10.0;
-            float fallCv = params[ENV_REL_PARAM].value + 0.0 / 10.0;
+            float fallCv = params[ENV_REL_PARAM].value * clamp(inputs[ENV_REL_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) + 0.0 / 10.0;
             fallCv = clamp(fallCv, 0.0, 1.0);
             float fall = minTime * powf(2.0, fallCv * 10.0);
             env_out += shapeDelta(delta, fall, shape) / engineGetSampleRate();
@@ -369,18 +352,16 @@ struct Acid : Module {
         else {
             env_gate = false;
         }
-
         if (!rising && !falling) {
             env_out = env_in;
         }
-
-        outputs[ENV_OUTPUT].value = env_out;
 
         /*
             VCA
             via https://github.com/VCVRack/AudibleInstruments/blob/dd25b1785c2e67f19824fad97527c97c5d779685/src/Veils.cpp
         */
-        float vca_out = env_out * params[ENV_AMT_PARAM].value;
+        float vca_out = env_out * params[ENV_AMT_PARAM].value * clamp(inputs[ENV_AMT_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
+        outputs[ENV_OUTPUT].value = vca_out;
 
         /*
             Filter
@@ -388,20 +369,20 @@ struct Acid : Module {
 
         // Stage 1
         //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
-        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f)) ;
+        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value * clamp(inputs[FILTER_CUT_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) + quadraticBipolar(params[FILTER_FM_2_PARAM].value * clamp(inputs[FILTER_FM_2_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)  ) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value * clamp(inputs[FILTER_FM_1_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) ) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f)) ;
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
 
         // I don't love this, but okay..
         //cutoff = cutoff + (2000 * clamp(inputs[FILTER_CUT_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
 
         // TODO: Find best values for these
-        float q = 40.0f * clamp(params[FILTER_Q_PARAM].value / 5.0f, 0.1f, 1.0f);
+        float q = 40.0f * clamp(params[FILTER_Q_PARAM].value * clamp(inputs[FILTER_Q_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) / 5.0f, 0.1f, 1.0f);
         filter.setParams(cutoff, q, engineGetSampleRate());
         float in = wave_mixed / 5.0f;
 
         // Stage 2
         in = clamp(in, -5.0f, 5.0f) * 0.2f;
-        float a_shape = params[FILTER_DRIVE_PARAM].value;
+        float a_shape = params[FILTER_DRIVE_PARAM].value * clamp(inputs[FILTER_DRIVE_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
         a_shape = clamp(a_shape, -5.0f, 5.0f) * 0.2f;
         a_shape *= 0.99f;
         const float a_shapeB = (1.0 - a_shape) / (1.0 + a_shape);
@@ -624,9 +605,9 @@ struct AcidWidget : ModuleWidget {
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0));
         addParam(ParamWidget::create<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0));
 
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::WAVE_1_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::WAVE_2_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::WAVE_MIX_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::ENV_REL_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::ENV_AMT_INPUT));
+        addInput(Port::create<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), Port::INPUT, module, Acid::ENV_SHAPE_INPUT));
 
         /*
             Right Side
