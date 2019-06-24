@@ -490,31 +490,21 @@ struct Acid : Module {
         pSampleData = drwav_open_and_read_file_f32(path.c_str(), &c, &sr, &sc);
 
         if (pSampleData != NULL) {
-            std::cout << "hey\n";
-
             channels = c;
             sampleRate = sr;
-
-            std::cout << "1\n";
             playBuffer[0].clear();
             playBuffer[1].clear();
 
-            std::cout << "2\n";
             for (unsigned int i=0; i < sc; i = i + c) {
                 playBuffer[0].push_back(pSampleData[i]);
                 if (channels == 2)
                     playBuffer[1].push_back((float)pSampleData[i+1]);
 
             }
-
-            std::cout << "3\n";
             totalSampleCount = playBuffer[0].size();
-
-            std::cout << "4\n";
             drwav_free(pSampleData);
             loading = false;
             fileLoaded = true;
-            std::cout << "loaded\n";
             vector<double>().swap(displayBuff);
             for (int i=0; i < floor(totalSampleCount); i = i + floor(totalSampleCount/130)) {
                 displayBuff.push_back(playBuffer[0][i]);
@@ -535,7 +525,6 @@ struct Acid : Module {
 
                     std::size_t found = name.find(".wav",name.length()-5);
                     if (found==std::string::npos) found = name.find(".WAV",name.length()-5);
-
                     if (found!=std::string::npos) {
                         fichier.push_back(name);
                         if ((dir + "/" + name)==path) {sampnumber = i;}
@@ -555,11 +544,8 @@ struct Acid : Module {
                 lastPath = path;
         }
         else {
-            std::cout << "notloaded\n";
             fileLoaded = false;
         }
-
-        std::cout << "fileLoaded\n";
     }
 };
 
