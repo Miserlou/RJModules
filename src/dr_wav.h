@@ -1366,23 +1366,18 @@ drwav* drwav_open_memory_write_sequential(void** ppData, size_t* pDataSize, cons
 drwav_bool32 drwav_init(drwav* pWav, drwav_read_proc onRead, drwav_seek_proc onSeek, void* pUserData)
 {
 
-    std::cout << "1\n";
     if (onRead == NULL || onSeek == NULL) {
         return DRWAV_FALSE;
     }
 
-    std::cout << "2\n";
     drwav_zero_memory(pWav, sizeof(*pWav));
 
-
-    std::cout << "3\n";
     // The first 4 bytes should be the RIFF identifier.
     unsigned char riff[4];
     if (onRead(pUserData, riff, sizeof(riff)) != sizeof(riff)) {
         return DRWAV_FALSE;    // Failed to read data.
     }
 
-    std::cout << "4\n";
     // The first 4 bytes can be used to identify the container. For RIFF files it will start with "RIFF" and for
     // w64 it will start with "riff".
     if (drwav__fourcc_equal(riff, "RIFF")) {
@@ -1402,11 +1397,9 @@ drwav_bool32 drwav_init(drwav* pWav, drwav_read_proc onRead, drwav_seek_proc onS
             }
         }
     } else {
-        std::cout << "5\n";
         return DRWAV_FALSE;   // Unknown or unsupported container.
     }
 
-    std::cout << "6\n";
     if (pWav->container == drwav_container_riff) {
         // RIFF/WAVE
         unsigned char chunkSizeBytes[4];
@@ -1452,15 +1445,12 @@ drwav_bool32 drwav_init(drwav* pWav, drwav_read_proc onRead, drwav_seek_proc onS
         pWav->dataChunkDataPos = 16 + sizeof(chunkSize) + sizeof(wave);
     }
 
-
-    std::cout << "7\n";
     // The next bytes should be the "fmt " chunk.
     drwav_fmt fmt;
     if (!drwav__read_fmt(onRead, onSeek, pUserData, pWav->container, &pWav->dataChunkDataPos, &fmt)) {
         return DRWAV_FALSE;    // Failed to read the "fmt " chunk.
     }
 
-    std::cout << "8\n";
     // Basic validation.
     if (fmt.sampleRate == 0 || fmt.channels == 0 || fmt.bitsPerSample == 0 || fmt.blockAlign == 0) {
         return DRWAV_FALSE; // Invalid channel count. Probably an invalid WAV file.
@@ -1595,7 +1585,6 @@ drwav_bool32 drwav_init(drwav* pWav, drwav_read_proc onRead, drwav_seek_proc onS
     }
 #endif
 
-    std::cout << "last\n";
     return DRWAV_TRUE;
 }
 

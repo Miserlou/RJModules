@@ -225,9 +225,11 @@ struct Acid : Module {
 
     void step() override {
 
+        /*
+        Load up our 303 samples
+        */
         if(!fileLoaded){
-            loadSample("/Users/rjones/Sources/Rack/plugins/RJModules/samples/303_wavetable_c.wav");
-            std::cout << "loaded!" << fileLoaded <<" \n";
+            loadSample(assetPlugin(plugin, "samples/303_wavetable_c.wav"));
             return;
         }
 

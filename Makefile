@@ -13,7 +13,7 @@ LDFLAGS +=
 # Add .cpp and .c files to the build
 SOURCES += $(wildcard src/*.cpp)
 
-DISTRIBUTABLES += $(wildcard LICENSE*) res soundfonts
+DISTRIBUTABLES += $(wildcard LICENSE*) res soundfonts samples
 
 RACK_DIR ?= ../..
 include $(RACK_DIR)/plugin.mk
