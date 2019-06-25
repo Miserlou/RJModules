@@ -14,12 +14,10 @@ using namespace std;
 #define TSF_IMPLEMENTATION
 #include "tsf.h"
 
-// It is suprisingly annoying to cross platform list files, do it manually. Boo.
-int num_files = 3;
-string soundfont_files[3] = {
-    "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/FluidR3GM.sf2",
-    "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/Wii_Grand_Piano.sf2",
-    "/Users/rjones/Sources/Rack/plugins/RJModules/soundfonts/pyrex.sf2",
+int num_files = 2;
+string soundfont_files[2] = {
+    "soundfonts/FluidR3GM.sf2",
+    "soundfonts/Grand_Piano.sf2"
 };
 
 /*
@@ -114,9 +112,26 @@ struct EssEff : Module {
 
     EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
     void step() override;
+    std::string getAbsolutePath(std::string path);
     void loadFile(std::string path);
 
 };
+
+std::string EssEff::getAbsolutePath(std::string path){
+    #if defined ARCH_LIN || defined ARCH_MAC
+        char buf[PATH_MAX];
+        char *absPathC = realpath(path.c_str(), buf);
+        if (absPathC)
+            return absPathC;
+    #elif defined ARCH_WIN
+        std::wstring pathW = toWstring(path);
+        wchar_t buf[PATH_MAX];
+        wchar_t *absPathC = _wfullpath(buf, pathW.c_str(), PATH_MAX);
+        if (absPathC)
+            return fromWstring(absPathC);
+    #endif
+    return "";
+}
 
 void EssEff::loadFile(std::string path){
     this->loaded = false;
@@ -161,7 +176,7 @@ void EssEff::step() {
         }
         if(cur_file != last_file){
             this->loading = true;
-            this->loadFile(soundfont_files[cur_file]);
+            this->loadFile(getAbsolutePath(assetPlugin(plugin, soundfont_files[cur_file])));
             last_file = cur_file;
         }
     }
