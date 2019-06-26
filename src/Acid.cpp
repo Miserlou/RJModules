@@ -637,4 +637,4 @@ struct AcidWidget : ModuleWidget {
 };
 
 
-Model *modelAcid = Model::create<Acid, AcidWidget>("RJModules", "Acid", "[VCO] Acid", AMPLIFIER_TAG);
+Model *modelAcid = Model::create<Acid, AcidWidget>("RJModules", "Acid");
