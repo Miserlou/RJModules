@@ -22,7 +22,8 @@ struct Mono : Module {
         NUM_LIGHTS
     };
 
-    Mono() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Mono() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -40,29 +41,30 @@ struct MonoWidget: ModuleWidget {
     MonoWidget(Mono *module);
 };
 
-MonoWidget::MonoWidget(Mono *module) : ModuleWidget(module) {
+MonoWidget::MonoWidget(Mono *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Mono.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Mono.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 85), Port::INPUT, module, Mono::CH1_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(104, 85), Port::INPUT, module, Mono::CH2_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 85), PortWidget::INPUT, module, Mono::CH1_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(104, 85), PortWidget::INPUT, module, Mono::CH2_INPUT));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Mono::MONO_PARAM, 0.0, 1.0, 0.1));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Mono::MONO_PARAM, 0.0, 1.0, 0.1));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Mono::MONO_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Mono::MONO_CV_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(22, 255), Port::OUTPUT, module, Mono::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(104, 255), Port::OUTPUT, module, Mono::CH2_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(22, 255), PortWidget::OUTPUT, module, Mono::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(104, 255), PortWidget::OUTPUT, module, Mono::CH2_OUTPUT));
 }
-Model *modelMono = Model::create<Mono, MonoWidget>("RJModules", "Mono", "[MIX] Mono", UTILITY_TAG);
+Model *modelMono = createModel<Mono, MonoWidget>("RJModules", "Mono", "[MIX] Mono", UTILITY_TAG);

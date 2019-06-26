@@ -22,7 +22,8 @@ struct Floats: Module {
         NUM_OUTPUTS
     };
 
-    Floats() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+    Floats() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
     void step() override;
 };
 
@@ -49,32 +50,33 @@ struct FloatsWidget: ModuleWidget {
     FloatsWidget(Floats *module);
 };
 
-FloatsWidget::FloatsWidget(Floats *module) : ModuleWidget(module) {
+FloatsWidget::FloatsWidget(Floats *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Floats.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Floats.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 79), module, Floats::CH1_PARAM, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 159), module, Floats::CH2_PARAM, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 239), module, Floats::CH3_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, Floats::CH1_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Floats::CH2_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Floats::CH3_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Floats::CH1_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Floats::CH2_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Floats::CH3_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Floats::CH1_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Floats::CH2_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Floats::CH3_CV_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(110, 85), Port::OUTPUT, module, Floats::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(110, 165), Port::OUTPUT, module, Floats::CH2_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(110, 245), Port::OUTPUT, module, Floats::CH3_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 85), PortWidget::OUTPUT, module, Floats::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 165), PortWidget::OUTPUT, module, Floats::CH2_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Floats::CH3_OUTPUT));
 }
 
-Model *modelFloats = Model::create<Floats, FloatsWidget>("RJModules", "Floats", "[NUM] Floats", UTILITY_TAG);
+Model *modelFloats = createModel<Floats, FloatsWidget>("RJModules", "Floats", "[NUM] Floats", UTILITY_TAG);

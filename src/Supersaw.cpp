@@ -80,7 +80,8 @@ struct Supersaw : Module {
 
     float DETUNE_STEP = .075;
 
-    Supersaw() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Supersaw() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -123,36 +124,37 @@ struct SupersawWidget: ModuleWidget {
     SupersawWidget(Supersaw *module);
 };
 
-SupersawWidget::SupersawWidget(Supersaw *module) : ModuleWidget(module) {
+SupersawWidget::SupersawWidget(Supersaw *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Supersaw.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Supersaw.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<CKSS>(Vec(119, 100), module, Supersaw::OFFSET_PARAM, 0.0, 1.0, 1.0));
-    addParam(ParamWidget::create<CKSS>(Vec(119, 180), module, Supersaw::INVERT_PARAM, 0.0, 1.0, 1.0));
-    addParam(ParamWidget::create<CKSS>(Vec(119, 260), module, Supersaw::THREE_OSC_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 100), module, Supersaw::OFFSET_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 180), module, Supersaw::INVERT_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 260), module, Supersaw::THREE_OSC_PARAM, 0.0, 1.0, 1.0));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Supersaw::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.1));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Supersaw::FREQ_PARAM, 0.0, 8.0, 5.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.1));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Supersaw::FREQ_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Supersaw::DETUNE_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Supersaw::MIX_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(38, 310), Port::INPUT, module, Supersaw::RESET_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Supersaw::FREQ_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Supersaw::DETUNE_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Supersaw::MIX_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(38, 310), PortWidget::INPUT, module, Supersaw::RESET_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(100, 310), Port::OUTPUT, module, Supersaw::SAW_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Supersaw::SAW_OUTPUT));
 
-    addChild(ModuleLightWidget::create<SmallLight<GreenRedLight>>(Vec(99, 60), module, Supersaw::PHASE_POS_LIGHT));
+    addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Supersaw::PHASE_POS_LIGHT));
 }
-Model *modelSupersaw = Model::create<Supersaw, SupersawWidget>("RJModules", "Supersaw", "[GEN] Supersaw", LFO_TAG);
+Model *modelSupersaw = createModel<Supersaw, SupersawWidget>("RJModules", "Supersaw", "[GEN] Supersaw", LFO_TAG);

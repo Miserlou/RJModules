@@ -53,13 +53,14 @@ struct Buttons: Module {
     float resetLight8 = 0.0;
     float resetLight9 = 0.0;
 
-    Buttons() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Buttons() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
 struct MedLEDButton : SVGSwitch, MomentarySwitch {
         MedLEDButton() {
-                addFrame(SVG::load(assetPlugin(plugin, "res/MedLEDButton.svg")));
+                addFrame(SVG::load(assetPlugin(pluginInstance, "res/MedLEDButton.svg")));
         }
 };
 
@@ -158,61 +159,62 @@ struct ButtonsWidget: ModuleWidget {
     ButtonsWidget(Buttons *module);
 };
 
-ButtonsWidget::ButtonsWidget(Buttons *module) : ModuleWidget(module) {
+ButtonsWidget::ButtonsWidget(Buttons *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Buttons.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Buttons.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 223), Port::OUTPUT, module, Buttons::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 223), Port::OUTPUT, module, Buttons::CH2_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(105, 223), Port::OUTPUT, module, Buttons::CH3_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, Buttons::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, Buttons::CH2_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, Buttons::CH3_OUTPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 274), Port::OUTPUT, module, Buttons::CH4_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 274), Port::OUTPUT, module, Buttons::CH5_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(106, 274), Port::OUTPUT, module, Buttons::CH6_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, Buttons::CH4_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, Buttons::CH5_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, Buttons::CH6_OUTPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 324), Port::OUTPUT, module, Buttons::CH7_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 324), Port::OUTPUT, module, Buttons::CH8_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(106, 324), Port::OUTPUT, module, Buttons::CH9_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 324), PortWidget::OUTPUT, module, Buttons::CH7_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 324), PortWidget::OUTPUT, module, Buttons::CH8_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(106, 324), PortWidget::OUTPUT, module, Buttons::CH9_OUTPUT));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(15, 60), module, Buttons::RESET_PARAM, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(20, 65), module, Buttons::RESET_LIGHT));
+    addParam(createParam<MedLEDButton>(Vec(15, 60), module, Buttons::RESET_PARAM, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(20, 65), module, Buttons::RESET_LIGHT));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(55, 60), module, Buttons::RESET_PARAM2, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(60, 65), module, Buttons::RESET_LIGHT2));
+    addParam(createParam<MedLEDButton>(Vec(55, 60), module, Buttons::RESET_PARAM2, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(60, 65), module, Buttons::RESET_LIGHT2));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(95, 60), module, Buttons::RESET_PARAM3, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(100, 65), module, Buttons::RESET_LIGHT3));
+    addParam(createParam<MedLEDButton>(Vec(95, 60), module, Buttons::RESET_PARAM3, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(100, 65), module, Buttons::RESET_LIGHT3));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(15, 100), module, Buttons::RESET_PARAM4, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(20, 105), module, Buttons::RESET_LIGHT4));
+    addParam(createParam<MedLEDButton>(Vec(15, 100), module, Buttons::RESET_PARAM4, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(20, 105), module, Buttons::RESET_LIGHT4));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(55, 100), module, Buttons::RESET_PARAM5, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(60, 105), module, Buttons::RESET_LIGHT5));
+    addParam(createParam<MedLEDButton>(Vec(55, 100), module, Buttons::RESET_PARAM5, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(60, 105), module, Buttons::RESET_LIGHT5));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(95, 100), module, Buttons::RESET_PARAM6, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(100, 105), module, Buttons::RESET_LIGHT6));
+    addParam(createParam<MedLEDButton>(Vec(95, 100), module, Buttons::RESET_PARAM6, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(100, 105), module, Buttons::RESET_LIGHT6));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(15, 140), module, Buttons::RESET_PARAM7, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(20, 145), module, Buttons::RESET_LIGHT7));
+    addParam(createParam<MedLEDButton>(Vec(15, 140), module, Buttons::RESET_PARAM7, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(20, 145), module, Buttons::RESET_LIGHT7));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(55, 140), module, Buttons::RESET_PARAM8, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(60, 145), module, Buttons::RESET_LIGHT8));
+    addParam(createParam<MedLEDButton>(Vec(55, 140), module, Buttons::RESET_PARAM8, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(60, 145), module, Buttons::RESET_LIGHT8));
 
-    addParam(ParamWidget::create<MedLEDButton>(Vec(95, 140), module, Buttons::RESET_PARAM9, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MedLight<GreenLight>>(Vec(100, 145), module, Buttons::RESET_LIGHT9));
+    addParam(createParam<MedLEDButton>(Vec(95, 140), module, Buttons::RESET_PARAM9, 0.0, 1.0, 0.0));
+    addChild(createLight<MedLight<GreenLight>>(Vec(100, 145), module, Buttons::RESET_LIGHT9));
 
 
 }
 
-Model *modelButtons = Model::create<Buttons, ButtonsWidget>("RJModules", "Buttons", "[LIVE] Buttons", UTILITY_TAG);
+Model *modelButtons = createModel<Buttons, ButtonsWidget>("RJModules", "Buttons", "[LIVE] Buttons", UTILITY_TAG);

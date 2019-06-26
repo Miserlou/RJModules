@@ -22,7 +22,8 @@ struct Integers: Module {
         NUM_OUTPUTS
     };
 
-    Integers() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+    Integers() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
     void step() override;
 };
 
@@ -53,32 +54,33 @@ struct IntegersWidget: ModuleWidget {
     IntegersWidget(Integers *module);
 };
 
-IntegersWidget::IntegersWidget(Integers *module) : ModuleWidget(module) {
+IntegersWidget::IntegersWidget(Integers *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Integers.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Integers.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 79), module, Integers::CH1_PARAM, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 159), module, Integers::CH2_PARAM, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 239), module, Integers::CH3_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, Integers::CH1_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Integers::CH2_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Integers::CH3_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Integers::CH1_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Integers::CH2_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Integers::CH3_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Integers::CH1_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Integers::CH2_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Integers::CH3_CV_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(110, 85), Port::OUTPUT, module, Integers::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(110, 165), Port::OUTPUT, module, Integers::CH2_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(110, 245), Port::OUTPUT, module, Integers::CH3_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 85), PortWidget::OUTPUT, module, Integers::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 165), PortWidget::OUTPUT, module, Integers::CH2_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Integers::CH3_OUTPUT));
 }
 
-Model *modelIntegers = Model::create<Integers, IntegersWidget>("RJModules", "Integers", "[NUM] Integers", UTILITY_TAG);
+Model *modelIntegers = createModel<Integers, IntegersWidget>("RJModules", "Integers", "[NUM] Integers", UTILITY_TAG);

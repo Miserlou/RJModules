@@ -32,13 +32,14 @@ struct RandomFilter: Module {
     SchmittTrigger resetTrigger;
     VAStateVariableFilter *rFilter = new VAStateVariableFilter() ; // create a lpFilter;
 
-    RandomFilter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    RandomFilter() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
 struct BigAssLEDButton : SVGSwitch, MomentarySwitch {
         BigAssLEDButton() {
-                addFrame(SVG::load(assetPlugin(plugin, "res/BigLEDButton.svg")));
+                addFrame(SVG::load(assetPlugin(pluginInstance, "res/BigLEDButton.svg")));
         }
 };
 
@@ -91,31 +92,32 @@ struct RandomFilterWidget: ModuleWidget {
     RandomFilterWidget(RandomFilter *module);
 };
 
-RandomFilterWidget::RandomFilterWidget(RandomFilter *module) : ModuleWidget(module) {
+RandomFilterWidget::RandomFilterWidget(RandomFilter *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/RandomFilter.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/RandomFilter.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<BigAssLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<BigAssLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, RandomFilter::BUTTON_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, RandomFilter::MIX_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 310), Port::INPUT, module, RandomFilter::CH1_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, RandomFilter::BUTTON_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, RandomFilter::MIX_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, RandomFilter::CH1_INPUT));
 
-    addChild(ModuleLightWidget::create<GiantLight<GreenLight>>(Vec(25, 70), module, RandomFilter::RESET_LIGHT));
+    addChild(createLight<GiantLight<GreenLight>>(Vec(25, 70), module, RandomFilter::RESET_LIGHT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, RandomFilter::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, RandomFilter::CH1_OUTPUT));
 }
 
-Model *modelRandomFilter = Model::create<RandomFilter, RandomFilterWidget>("RJModules", "RandomFilter", "[FILT] RandomFilter", UTILITY_TAG);
+Model *modelRandomFilter = createModel<RandomFilter, RandomFilterWidget>("RJModules", "RandomFilter", "[FILT] RandomFilter", UTILITY_TAG);

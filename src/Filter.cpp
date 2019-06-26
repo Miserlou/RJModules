@@ -26,7 +26,8 @@ struct Filter: Module {
     VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
-    Filter() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+    Filter() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
     void step() override;
 };
 
@@ -84,31 +85,32 @@ struct FilterWidget: ModuleWidget {
     FilterWidget(Filter *module);
 };
 
-FilterWidget::FilterWidget(Filter *module) : ModuleWidget(module) {
+FilterWidget::FilterWidget(Filter *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Filter.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Filter.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Filter::FREQ_PARAM, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM,  0.0, 1.0, .8));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Filter::FREQ_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM,  0.0, 1.0, .8));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Filter::FREQ_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, Filter::RES_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 260), Port::INPUT, module, Filter::MIX_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 310), Port::INPUT, module, Filter::CH1_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Filter::FREQ_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Filter::RES_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Filter::MIX_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, Filter::CH1_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, Filter::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, Filter::CH1_OUTPUT));
 }
 
-Model *modelFilter = Model::create<Filter, FilterWidget>("RJModules", "Filter", "[FILT] Filter", UTILITY_TAG);
+Model *modelFilter = createModel<Filter, FilterWidget>("RJModules", "Filter", "[FILT] Filter", UTILITY_TAG);

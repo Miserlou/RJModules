@@ -34,7 +34,8 @@ struct Octaves : Module {
     bool state[NUM_CHANNELS];
     SchmittTrigger muteTrigger[NUM_CHANNELS];
 
-    Octaves() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+    Octaves() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         reset();
     }
     void step() override;
@@ -50,7 +51,7 @@ struct Octaves : Module {
         }
     }
 
-    json_t *toJson() override {
+    json_t *dataToJson() override {
         json_t *rootJ = json_object();
         // states
         json_t *statesJ = json_array();
@@ -61,7 +62,7 @@ struct Octaves : Module {
         json_object_set_new(rootJ, "states", statesJ);
         return rootJ;
     }
-    void fromJson(json_t *rootJ) override {
+    void dataFromJson(json_t *rootJ) override {
         // states
         json_t *statesJ = json_object_get(rootJ, "states");
         if (statesJ) {
@@ -93,46 +94,47 @@ struct OctavesWidget: ModuleWidget {
     OctavesWidget(Octaves *module);
 };
 
-OctavesWidget::OctavesWidget(Octaves *module) : ModuleWidget(module) {
-    setPanel(SVG::load(assetPlugin(plugin, "res/Octaves.svg")));
+OctavesWidget::OctavesWidget(Octaves *module) {
+		setModule(module);
+    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Octaves.svg")));
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 17.165)), module, Octaves::MUTE_PARAM + 0, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 27.164)), module, Octaves::MUTE_PARAM + 1, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 37.164)), module, Octaves::MUTE_PARAM + 2, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 47.165)), module, Octaves::MUTE_PARAM + 3, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 57.164)), module, Octaves::MUTE_PARAM + 4, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 67.165)), module, Octaves::MUTE_PARAM + 5, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 77.164)), module, Octaves::MUTE_PARAM + 6, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 87.164)), module, Octaves::MUTE_PARAM + 7, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 97.165)), module, Octaves::MUTE_PARAM + 8, -4.5, 4.5, 0.0));
-    addParam(ParamWidget::create<SnapKnob>(mm2px(Vec(16.57, 107.166)), module, Octaves::MUTE_PARAM + 9, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 17.165)), module, Octaves::MUTE_PARAM + 0, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 27.164)), module, Octaves::MUTE_PARAM + 1, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 37.164)), module, Octaves::MUTE_PARAM + 2, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 47.165)), module, Octaves::MUTE_PARAM + 3, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 57.164)), module, Octaves::MUTE_PARAM + 4, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 67.165)), module, Octaves::MUTE_PARAM + 5, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 77.164)), module, Octaves::MUTE_PARAM + 6, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 87.164)), module, Octaves::MUTE_PARAM + 7, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 97.165)), module, Octaves::MUTE_PARAM + 8, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 107.166)), module, Octaves::MUTE_PARAM + 9, -4.5, 4.5, 0.0));
 
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 17.81)), Port::INPUT, module, Octaves::IN_INPUT + 0));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 27.809)), Port::INPUT, module, Octaves::IN_INPUT + 1));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 37.809)), Port::INPUT, module, Octaves::IN_INPUT + 2));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 47.81)), Port::INPUT, module, Octaves::IN_INPUT + 3));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 57.81)), Port::INPUT, module, Octaves::IN_INPUT + 4));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 67.809)), Port::INPUT, module, Octaves::IN_INPUT + 5));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 77.81)), Port::INPUT, module, Octaves::IN_INPUT + 6));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 87.81)), Port::INPUT, module, Octaves::IN_INPUT + 7));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 97.809)), Port::INPUT, module, Octaves::IN_INPUT + 8));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 107.809)), Port::INPUT, module, Octaves::IN_INPUT + 9));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Octaves::IN_INPUT + 0));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Octaves::IN_INPUT + 1));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 37.809)), PortWidget::INPUT, module, Octaves::IN_INPUT + 2));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 47.81)), PortWidget::INPUT, module, Octaves::IN_INPUT + 3));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 57.81)), PortWidget::INPUT, module, Octaves::IN_INPUT + 4));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 67.809)), PortWidget::INPUT, module, Octaves::IN_INPUT + 5));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 77.81)), PortWidget::INPUT, module, Octaves::IN_INPUT + 6));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 87.81)), PortWidget::INPUT, module, Octaves::IN_INPUT + 7));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 97.809)), PortWidget::INPUT, module, Octaves::IN_INPUT + 8));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 107.809)), PortWidget::INPUT, module, Octaves::IN_INPUT + 9));
 
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 17.81)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 0));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 27.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 1));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 37.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 2));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 47.81)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 3));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 57.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 4));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 67.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 5));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 77.81)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 6));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 87.81)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 7));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 97.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 8));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 107.809)), Port::OUTPUT, module, Octaves::OUT_OUTPUT + 9));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 17.81)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 0));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 27.809)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 1));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 37.809)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 2));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 47.81)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 3));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 57.809)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 4));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 67.809)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 5));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 77.81)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 6));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 87.81)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 7));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 97.809)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 8));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Octaves::OUT_OUTPUT + 9));
 }
 
-Model *modelOctaves = Model::create<Octaves, OctavesWidget>("RJModules", "Octaves", "[UTIL] Octaves", UTILITY_TAG);
+Model *modelOctaves = createModel<Octaves, OctavesWidget>("RJModules", "Octaves", "[UTIL] Octaves", UTILITY_TAG);

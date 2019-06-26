@@ -92,7 +92,8 @@ struct Riser : Module {
 
     float r_step = .00003;
 
-    Riser() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Riser() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -140,36 +141,37 @@ struct RiserWidget: ModuleWidget {
     RiserWidget(Riser *module);
 };
 
-RiserWidget::RiserWidget(Riser *module) : ModuleWidget(module) {
+RiserWidget::RiserWidget(Riser *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Riser.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Riser.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<CKSS>(Vec(119, 100), module, Riser::OFFSET_PARAM, 0.0, 1.0, 1.0));
-    addParam(ParamWidget::create<CKSS>(Vec(119, 180), module, Riser::INVERT_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 100), module, Riser::OFFSET_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 180), module, Riser::INVERT_PARAM, 0.0, 1.0, 1.0));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Riser::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Riser::FREQ_PARAM_2, 0.0, 8.0, 0.5));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Riser::SHAPE_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Riser::FREQ_PARAM, 0.0, 8.0, 5.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Riser::FREQ_PARAM_2, 0.0, 8.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Riser::SHAPE_PARAM, 0.0, 1.0, 1.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Riser::FREQ_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Riser::FREQ_CV_INPUT_2));
-    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Riser::SHAPE_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(38, 310), Port::INPUT, module, Riser::RESET_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Riser::FREQ_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Riser::FREQ_CV_INPUT_2));
+    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Riser::SHAPE_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(38, 310), PortWidget::INPUT, module, Riser::RESET_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(100, 310), Port::OUTPUT, module, Riser::SAW_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Riser::SAW_OUTPUT));
 
-    addChild(ModuleLightWidget::create<SmallLight<GreenRedLight>>(Vec(99, 60), module, Riser::PHASE_POS_LIGHT));
-    addChild(ModuleLightWidget::create<SmallLight<GreenRedLight>>(Vec(99, 140), module, Riser::PHASE_POS_LIGHT2));
+    addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Riser::PHASE_POS_LIGHT));
+    addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 140), module, Riser::PHASE_POS_LIGHT2));
 }
-Model *modelRiser = Model::create<Riser, RiserWidget>("RJModules", "Riser", "[GEN] Riser", LFO_TAG);
+Model *modelRiser = createModel<Riser, RiserWidget>("RJModules", "Riser", "[GEN] Riser", LFO_TAG);

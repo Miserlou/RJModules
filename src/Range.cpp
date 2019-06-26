@@ -38,7 +38,8 @@ struct Range: Module {
     float display5_val;
     float display6_val;
 
-    Range() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Range() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -48,7 +49,7 @@ struct SmallNumberDisplayWidgeter : TransparentWidget {
   std::shared_ptr<Font> font;
 
   SmallNumberDisplayWidgeter() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -100,20 +101,21 @@ struct RangeWidget: ModuleWidget {
     RangeWidget(Range *module);
 };
 
-RangeWidget::RangeWidget(Range *module) : ModuleWidget(module) {
+RangeWidget::RangeWidget(Range *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Range.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Range.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
     SmallNumberDisplayWidgeter *display = new SmallNumberDisplayWidgeter();
@@ -121,28 +123,28 @@ RangeWidget::RangeWidget(Range *module) : ModuleWidget(module) {
     display->box.size = Vec(50, 40);
     display->value = &module->display1_val;
     addChild(display);
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(28, 105), module, Range::CH1_PARAM, -12.0, 12.0, -12.0));
+    addParam(createParam<RoundBlackKnob>(Vec(28, 105), module, Range::CH1_PARAM, -12.0, 12.0, -12.0));
 
     SmallNumberDisplayWidgeter *display2 = new SmallNumberDisplayWidgeter();
     display2->box.pos = Vec(83, 60);
     display2->box.size = Vec(50, 40);
     display2->value = &module->display2_val;
     addChild(display2);
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(88, 105), module, Range::CH2_PARAM, -12.0, 12.0, 12.0));
+    addParam(createParam<RoundBlackKnob>(Vec(88, 105), module, Range::CH2_PARAM, -12.0, 12.0, 12.0));
 
     SmallNumberDisplayWidgeter *display3 = new SmallNumberDisplayWidgeter();
     display3->box.pos = Vec(23, 160);
     display3->box.size = Vec(50, 40);
     display3->value = &module->display3_val;
     addChild(display3);
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(28, 205), module, Range::CH3_PARAM, -12.0, 12.0, -12.0));
+    addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, Range::CH3_PARAM, -12.0, 12.0, -12.0));
 
     SmallNumberDisplayWidgeter *display4 = new SmallNumberDisplayWidgeter();
     display4->box.pos = Vec(83, 160);
     display4->box.size = Vec(50, 40);
     display4->value = &module->display4_val;
     addChild(display4);
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(88, 205), module, Range::CH4_PARAM, -12.0, 12.0, 12.0));
+    addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, Range::CH4_PARAM, -12.0, 12.0, 12.0));
 
     SmallNumberDisplayWidgeter *display5 = new SmallNumberDisplayWidgeter();
     display5->box.pos = Vec(23, 260);
@@ -157,8 +159,8 @@ RangeWidget::RangeWidget(Range *module) : ModuleWidget(module) {
     addChild(display6);
 
 
-    // addInput(Port::create<PJ301MPort>(Vec(35, 123), Port::INPUT, module, Range::CH1_INPUT));
-    // addOutput(Port::create<PJ301MPort>(Vec(95, 123), Port::OUTPUT, module, Range::CH1_OUTPUT));
+    // addInput(createPort<PJ301MPort>(Vec(35, 123), PortWidget::INPUT, module, Range::CH1_INPUT));
+    // addOutput(createPort<PJ301MPort>(Vec(95, 123), PortWidget::OUTPUT, module, Range::CH1_OUTPUT));
 
     // SmallNumberDisplayWidgeter *display2 = new SmallNumberDisplayWidgeter();
     // display2->box.pos = Vec(28, 160);
@@ -166,8 +168,8 @@ RangeWidget::RangeWidget(Range *module) : ModuleWidget(module) {
     // display2->value = &module->display2_val;
     // addChild(display2);
 
-    // addInput(Port::create<PJ301MPort>(Vec(35, 223), Port::INPUT, module, Range::CH2_INPUT));
-    // addOutput(Port::create<PJ301MPort>(Vec(95, 223), Port::OUTPUT, module, Range::CH2_OUTPUT));
+    // addInput(createPort<PJ301MPort>(Vec(35, 223), PortWidget::INPUT, module, Range::CH2_INPUT));
+    // addOutput(createPort<PJ301MPort>(Vec(95, 223), PortWidget::OUTPUT, module, Range::CH2_OUTPUT));
 
     // SmallNumberDisplayWidgeter *display3 = new SmallNumberDisplayWidgeter();
     // display3->box.pos = Vec(28, 260);
@@ -175,9 +177,9 @@ RangeWidget::RangeWidget(Range *module) : ModuleWidget(module) {
     // display3->value = &module->display3_val;
     // addChild(display3);
 
-    addInput(Port::create<PJ301MPort>(Vec(35, 323), Port::INPUT, module, Range::CH1_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(95, 323), Port::OUTPUT, module, Range::CH1_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(35, 323), PortWidget::INPUT, module, Range::CH1_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(95, 323), PortWidget::OUTPUT, module, Range::CH1_OUTPUT));
 
 }
 
-Model *modelRange = Model::create<Range, RangeWidget>("RJModules", "Range", "[UTIL] Range", UTILITY_TAG);
+Model *modelRange = createModel<Range, RangeWidget>("RJModules", "Range", "[UTIL] Range", UTILITY_TAG);

@@ -23,7 +23,7 @@ struct TinyStringDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   TinyStringDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Pokemon.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -193,7 +193,8 @@ struct uQuantWidget : ModuleWidget {
     uQuantWidget(uQuant *module);
 };
 
-uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
+uQuantWidget::uQuantWidget(uQuant *module) {
+		setModule(module);
 
     UI ui;
     box.size = Vec(30, 380);
@@ -201,7 +202,7 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/uQuant.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/uQuant.svg")));
         addChild(panel);
     }
 
@@ -213,7 +214,7 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     int leftPad = 3;
     int knobLeftPad = 6;
 
-    addInput(Port::create<PJ301MPort>(Vec(leftPad, 41), Port::INPUT, module, uQuant::IN_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(leftPad, 41), PortWidget::INPUT, module, uQuant::IN_INPUT));
 
     TinyStringDisplayWidget *displayKey = new TinyStringDisplayWidget();
     displayKey = new TinyStringDisplayWidget();
@@ -221,8 +222,8 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     displayKey->box.size = Vec(25, 25);
     displayKey->value = &module->keyValue[0];
     addChild(displayKey);
-    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-    addInput(Port::create<PJ301MPort>(Vec(leftPad, 125), Port::INPUT, module, uQuant::KEY_INPUT));
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+    addInput(createPort<PJ301MPort>(Vec(leftPad, 125), PortWidget::INPUT, module, uQuant::KEY_INPUT));
 
     TinyStringDisplayWidget *displayScale = new TinyStringDisplayWidget();
     displayScale = new TinyStringDisplayWidget();
@@ -230,21 +231,21 @@ uQuantWidget::uQuantWidget(uQuant *module) : ModuleWidget(module) {
     displayScale->box.size = Vec(25, 25);
     displayScale->value = &module->scaleValue[0];
     addChild(displayScale);
-    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-    addInput(Port::create<PJ301MPort>(Vec(leftPad, 209), Port::INPUT, module, uQuant::SCALE_INPUT));
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+    addInput(createPort<PJ301MPort>(Vec(leftPad, 209), PortWidget::INPUT, module, uQuant::SCALE_INPUT));
 
     // Octave
-    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad, 240), module, uQuant::SHIFT_PARAM, -3.0f, 3.0f, 0.0f));
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 240), module, uQuant::SHIFT_PARAM, -3.0f, 3.0f, 0.0f));
 
     // Transpose
-    addParam(ParamWidget::create<AHTrimpotSnap>(Vec(knobLeftPad,265), module, uQuant::TRANS_PARAM, -11.0f, 11.0f, 0.0f)); // 12 notes
-    addInput(Port::create<PJ301MPort>(Vec(leftPad, 290), Port::INPUT, module, uQuant::TRANS_INPUT));
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad,265), module, uQuant::TRANS_PARAM, -11.0f, 11.0f, 0.0f)); // 12 notes
+    addInput(createPort<PJ301MPort>(Vec(leftPad, 290), PortWidget::INPUT, module, uQuant::TRANS_INPUT));
 
     // Outputs
-    addOutput(Port::create<PJ301MPort>(Vec(leftPad, 320), Port::OUTPUT, module, uQuant::TRIG_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(leftPad, 350), Port::OUTPUT, module, uQuant::OUT_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(leftPad, 320), PortWidget::OUTPUT, module, uQuant::TRIG_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(leftPad, 350), PortWidget::OUTPUT, module, uQuant::OUT_OUTPUT));
 
 }
 
-Model *modeluQuant = Model::create<uQuant, uQuantWidget>( "RJModules", "uQuant", "[MUS] uQuant", QUANTIZER_TAG);
+Model *modeluQuant = createModel<uQuant, uQuantWidget>( "RJModules", "uQuant", "[MUS] uQuant", QUANTIZER_TAG);
 

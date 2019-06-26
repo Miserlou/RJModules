@@ -70,7 +70,7 @@ struct StateDisplay : TransparentWidget {
 	std::shared_ptr<Font> font;
 
 	StateDisplay() {
-		font = Font::load(assetPlugin(plugin, "res/EurostileBold.ttf"));
+		font = Font::load(assetPlugin(pluginInstance, "res/EurostileBold.ttf"));
 	}
 
 	void draw(NVGcontext *vg) override {
@@ -112,7 +112,7 @@ struct AHParamWidget { // it's a mix-in
 // Not going to monitor buttons
 struct AHButton : SVGSwitch, MomentarySwitch {
 	AHButton() {
-		addFrame(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHButton.svg")));
+		addFrame(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHButton.svg")));
 	}
 };
 
@@ -130,42 +130,42 @@ struct AHKnob : RoundKnob, AHParamWidget {
 struct AHKnobSnap : AHKnob {
 	AHKnobSnap() {
 		snap = true;
-		setSVG(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHKnob.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHKnob.svg")));
 	}
 };
 
 struct AHKnobNoSnap : AHKnob {
 	AHKnobNoSnap() {
 		snap = false;
-		setSVG(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHKnob.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHKnob.svg")));
 	}
 };
 
 struct AHBigKnobNoSnap : AHKnob {
 	AHBigKnobNoSnap() {
 		snap = false;
-		setSVG(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHBigKnob.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHBigKnob.svg")));
 	}
 };
 
 struct AHBigKnobSnap : AHKnob {
 	AHBigKnobSnap() {
 		snap = true;
-		setSVG(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHBigKnob.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHBigKnob.svg")));
 	}
 };
 
 struct AHTrimpotSnap : AHKnob {
 	AHTrimpotSnap() {
 		snap = true;
-		setSVG(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHTrimpot.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHTrimpot.svg")));
 	}
 };
 
 struct AHTrimpotNoSnap : AHKnob {
 	AHTrimpotNoSnap() {
 		snap = false;
-		setSVG(SVG::load(assetPlugin(plugin,"res/ComponentLibrary/AHTrimpot.svg")));
+		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHTrimpot.svg")));
 	}
 };
 

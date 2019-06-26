@@ -35,7 +35,8 @@ struct Displays: Module {
     float display2_val;
     float display3_val;
 
-    Displays() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Displays() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -45,7 +46,7 @@ struct NumberDisplayWidgeter : TransparentWidget {
   std::shared_ptr<Font> font;
 
   NumberDisplayWidgeter() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -93,20 +94,21 @@ struct DisplaysWidget: ModuleWidget {
     DisplaysWidget(Displays *module);
 };
 
-DisplaysWidget::DisplaysWidget(Displays *module) : ModuleWidget(module) {
+DisplaysWidget::DisplaysWidget(Displays *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Displays.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Displays.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
     NumberDisplayWidgeter *display = new NumberDisplayWidgeter();
@@ -115,8 +117,8 @@ DisplaysWidget::DisplaysWidget(Displays *module) : ModuleWidget(module) {
     display->value = &module->display1_val;
     addChild(display);
 
-    addInput(Port::create<PJ301MPort>(Vec(35, 123), Port::INPUT, module, Displays::CH1_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(95, 123), Port::OUTPUT, module, Displays::CH1_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(35, 123), PortWidget::INPUT, module, Displays::CH1_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(95, 123), PortWidget::OUTPUT, module, Displays::CH1_OUTPUT));
 
     NumberDisplayWidgeter *display2 = new NumberDisplayWidgeter();
     display2->box.pos = Vec(28, 160);
@@ -124,8 +126,8 @@ DisplaysWidget::DisplaysWidget(Displays *module) : ModuleWidget(module) {
     display2->value = &module->display2_val;
     addChild(display2);
 
-    addInput(Port::create<PJ301MPort>(Vec(35, 223), Port::INPUT, module, Displays::CH2_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(95, 223), Port::OUTPUT, module, Displays::CH2_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(35, 223), PortWidget::INPUT, module, Displays::CH2_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(95, 223), PortWidget::OUTPUT, module, Displays::CH2_OUTPUT));
 
     NumberDisplayWidgeter *display3 = new NumberDisplayWidgeter();
     display3->box.pos = Vec(28, 260);
@@ -133,9 +135,9 @@ DisplaysWidget::DisplaysWidget(Displays *module) : ModuleWidget(module) {
     display3->value = &module->display3_val;
     addChild(display3);
 
-    addInput(Port::create<PJ301MPort>(Vec(35, 323), Port::INPUT, module, Displays::CH3_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(95, 323), Port::OUTPUT, module, Displays::CH3_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(35, 323), PortWidget::INPUT, module, Displays::CH3_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(95, 323), PortWidget::OUTPUT, module, Displays::CH3_OUTPUT));
 
 }
 
-Model *modelDisplays = Model::create<Displays, DisplaysWidget>("RJModules", "Displays", "[UTIL] Displays", UTILITY_TAG);
+Model *modelDisplays = createModel<Displays, DisplaysWidget>("RJModules", "Displays", "[UTIL] Displays", UTILITY_TAG);

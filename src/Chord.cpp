@@ -15,7 +15,7 @@ struct StringDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   StringDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Pokemon.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -110,7 +110,8 @@ struct Chord : Module {
         return frequencyToCV(semitoneToFrequency(semitone));
     }
 
-    Chord() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Chord() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -247,31 +248,32 @@ struct ChordWidget: ModuleWidget {
     ChordWidget(Chord *module);
 };
 
-ChordWidget::ChordWidget(Chord *module) : ModuleWidget(module) {
+ChordWidget::ChordWidget(Chord *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Chord.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Chord.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 59.0, 24.0));
-    addParam(ParamWidget::create<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 3.0, 0.0));
+    addParam(createParam<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 59.0, 24.0));
+    addParam(createParam<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 3.0, 0.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Chord::CHORD_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Chord::SHAPE_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Chord::CHORD_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Chord::SHAPE_CV_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(16, 319), Port::OUTPUT, module, Chord::ROOT_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(48, 319), Port::OUTPUT, module, Chord::THREE_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(81, 319), Port::OUTPUT, module, Chord::FIVE_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(114, 319), Port::OUTPUT, module, Chord::SEVEN_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(16, 319), PortWidget::OUTPUT, module, Chord::ROOT_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(48, 319), PortWidget::OUTPUT, module, Chord::THREE_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(81, 319), PortWidget::OUTPUT, module, Chord::FIVE_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(114, 319), PortWidget::OUTPUT, module, Chord::SEVEN_OUTPUT));
 
     StringDisplayWidget *display = new StringDisplayWidget();
     display->box.pos = Vec(28, 70);
@@ -280,4 +282,4 @@ ChordWidget::ChordWidget(Chord *module) : ModuleWidget(module) {
     addChild(display);
 
 }
-Model *modelChord = Model::create<Chord, ChordWidget>("RJModules", "Chord", "[GEN] Chord", LFO_TAG);
+Model *modelChord = createModel<Chord, ChordWidget>("RJModules", "Chord", "[GEN] Chord", LFO_TAG);

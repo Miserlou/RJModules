@@ -48,7 +48,8 @@ struct Pluck : Module {
     float env = 0.0f;
     SchmittTrigger trigger;
 
-    Pluck() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Pluck() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
 
     void step() override {
 
@@ -154,27 +155,28 @@ struct PluckVUKnob : Knob {
 
 
 struct PluckWidget : ModuleWidget {
-    PluckWidget(Pluck *module) : ModuleWidget(module) {
-        setPanel(SVG::load(assetPlugin(plugin, "res/Pluck.svg")));
+    PluckWidget(Pluck *module) {
+		setModule(module);
+        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Pluck.svg")));
 
-        addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
-        addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
-        addChild(Widget::create<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
-        addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+        addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
+        addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
+        addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
+        addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-        addParam(ParamWidget::create<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM, 0.0, 1.0, 1.0));
+        addParam(createParam<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM, 0.0, 1.0, 1.0));
 
-        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.4f, 0.50f));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), Port::INPUT, module, Pluck::RELEASE_INPUT));
+        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.4f, 0.50f));
+        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), PortWidget::INPUT, module, Pluck::RELEASE_INPUT));
 
-        addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM, 0.0001f, .2f, 4.0f));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), Port::INPUT, module, Pluck::EXP_INPUT));
+        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM, 0.0001f, .2f, 4.0f));
+        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), PortWidget::INPUT, module, Pluck::EXP_INPUT));
 
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), Port::INPUT, module, Pluck::GATE_INPUT));
-        addInput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), Port::INPUT, module, Pluck::IN_INPUT));
-        addOutput(Port::create<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), Port::OUTPUT, module, Pluck::OUT_OUTPUT));
+        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), PortWidget::INPUT, module, Pluck::GATE_INPUT));
+        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), PortWidget::INPUT, module, Pluck::IN_INPUT));
+        addOutput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), PortWidget::OUTPUT, module, Pluck::OUT_OUTPUT));
     }
 };
 
 
-Model *modelPluck = Model::create<Pluck, PluckWidget>("RJModules", "Pluck", "[VCA] Pluck", AMPLIFIER_TAG);
+Model *modelPluck = createModel<Pluck, PluckWidget>("RJModules", "Pluck", "[VCA] Pluck", AMPLIFIER_TAG);

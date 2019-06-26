@@ -79,7 +79,7 @@ struct SmallIntegerDisplayWidgeter : TransparentWidget {
   std::shared_ptr<Font> font;
 
   SmallIntegerDisplayWidgeter() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -162,7 +162,8 @@ struct RangeLFO : Module {
     float display5_val;
     float display6_val;
 
-    RangeLFO() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    RangeLFO() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -207,57 +208,58 @@ struct RangeLFOWidget: ModuleWidget {
     RangeLFOWidget(RangeLFO *module);
 };
 
-RangeLFOWidget::RangeLFOWidget(RangeLFO *module) : ModuleWidget(module) {
+RangeLFOWidget::RangeLFOWidget(RangeLFO *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/RangeLFO.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/RangeLFO.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     SmallIntegerDisplayWidgeter *display = new SmallIntegerDisplayWidgeter();
     display->box.pos = Vec(23, 160);
     display->box.size = Vec(50, 40);
     display->value = &module->display1_val;
     addChild(display);
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
-    addInput(Port::create<PJ301MPort>(Vec(5, 235), Port::INPUT, module, RangeLFO::FROM_CV_INPUT));
+    addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
+    addInput(createPort<PJ301MPort>(Vec(5, 235), PortWidget::INPUT, module, RangeLFO::FROM_CV_INPUT));
 
     SmallIntegerDisplayWidgeter *display2 = new SmallIntegerDisplayWidgeter();
     display2->box.pos = Vec(83, 160);
     display2->box.size = Vec(50, 40);
     display2->value = &module->display2_val;
     addChild(display2);
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
-    addInput(Port::create<PJ301MPort>(Vec(62, 235), Port::INPUT, module, RangeLFO::TO_CV_INPUT));
+    addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
+    addInput(createPort<PJ301MPort>(Vec(62, 235), PortWidget::INPUT, module, RangeLFO::TO_CV_INPUT));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, RangeLFO::FREQ_PARAM, -8.0, 6.0, -1.0));
-    // addParam(ParamWidget::create<RoundBlackKnob>(Vec(23, 143), module, RangeLFO::FM1_PARAM, 0.0, 1.0, 0.0));
-    // addParam(ParamWidget::create<RoundBlackKnob>(Vec(91, 143), module, RangeLFO::PW_PARAM, 0.0, 1.0, 0.5));
-    // addParam(ParamWidget::create<RoundBlackKnob>(Vec(23, 208), module, RangeLFO::FM2_PARAM, 0.0, 1.0, 0.0));
-    // addParam(ParamWidget::create<RoundBlackKnob>(Vec(91, 208), module, RangeLFO::PWM_PARAM, 0.0, 1.0, 0.0));
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, RangeLFO::RATE_CV_INPUT));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, RangeLFO::FREQ_PARAM, -8.0, 6.0, -1.0));
+    // addParam(createParam<RoundBlackKnob>(Vec(23, 143), module, RangeLFO::FM1_PARAM, 0.0, 1.0, 0.0));
+    // addParam(createParam<RoundBlackKnob>(Vec(91, 143), module, RangeLFO::PW_PARAM, 0.0, 1.0, 0.5));
+    // addParam(createParam<RoundBlackKnob>(Vec(23, 208), module, RangeLFO::FM2_PARAM, 0.0, 1.0, 0.0));
+    // addParam(createParam<RoundBlackKnob>(Vec(91, 208), module, RangeLFO::PWM_PARAM, 0.0, 1.0, 0.0));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, RangeLFO::RATE_CV_INPUT));
 
-    addInput(Port::create<PJ301MPort>(Vec(11, 276), Port::INPUT, module, RangeLFO::FM1_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(45, 276), Port::INPUT, module, RangeLFO::RESET_INPUT));
-    // addInput(Port::create<PJ301MPort>(Vec(80, 276), Port::INPUT, module, RangeLFO::RESET_INPUT));
-    // addInput(Port::create<PJ301MPort>(Vec(114, 276), Port::INPUT, module, RangeLFO::PW_INPUT));
-    addParam(ParamWidget::create<CKSS>(Vec(85, 276), module, RangeLFO::INVERT_PARAM, 0.0, 1.0, 0.0));
-    //addParam(ParamWidget::create<CKSS>(Vec(119, 276), module, RangeLFO::OFFSET_PARAM, 0.0, 1.0, 0.0));
+    addInput(createPort<PJ301MPort>(Vec(11, 276), PortWidget::INPUT, module, RangeLFO::FM1_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(45, 276), PortWidget::INPUT, module, RangeLFO::RESET_INPUT));
+    // addInput(createPort<PJ301MPort>(Vec(80, 276), PortWidget::INPUT, module, RangeLFO::RESET_INPUT));
+    // addInput(createPort<PJ301MPort>(Vec(114, 276), PortWidget::INPUT, module, RangeLFO::PW_INPUT));
+    addParam(createParam<CKSS>(Vec(85, 276), module, RangeLFO::INVERT_PARAM, 0.0, 1.0, 0.0));
+    //addParam(createParam<CKSS>(Vec(119, 276), module, RangeLFO::OFFSET_PARAM, 0.0, 1.0, 0.0));
 
-    addOutput(Port::create<PJ301MPort>(Vec(11, 320), Port::OUTPUT, module, RangeLFO::SIN_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(45, 320), Port::OUTPUT, module, RangeLFO::TRI_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(80, 320), Port::OUTPUT, module, RangeLFO::SAW_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(114, 320), Port::OUTPUT, module, RangeLFO::SQR_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::OUTPUT, module, RangeLFO::SIN_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::OUTPUT, module, RangeLFO::TRI_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, RangeLFO::SAW_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(114, 320), PortWidget::OUTPUT, module, RangeLFO::SQR_OUTPUT));
 
-    addChild(ModuleLightWidget::create<SmallLight<GreenRedLight>>(Vec(99, 60), module, RangeLFO::PHASE_POS_LIGHT));
+    addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, RangeLFO::PHASE_POS_LIGHT));
 }
 
-Model *modelRangeLFO = Model::create<RangeLFO, RangeLFOWidget>("RJModules", "RangeLFO", "[GEN] RangeLFO", LFO_TAG);
+Model *modelRangeLFO = createModel<RangeLFO, RangeLFOWidget>("RJModules", "RangeLFO", "[GEN] RangeLFO", LFO_TAG);

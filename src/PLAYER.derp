@@ -81,7 +81,8 @@ struct PLAYER : Module {
     bool oscState = false ;
 
 
-    PLAYER() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+    PLAYER() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
             playBuffer.resize(2);
             playBuffer[0].resize(0);
             playBuffer[1].resize(0); }
@@ -92,7 +93,7 @@ struct PLAYER : Module {
 
     // persistence
 
-    json_t *toJson() override {
+    json_t *dataToJson() override {
         json_t *rootJ = json_object();
         // lastPath
         json_object_set_new(rootJ, "lastPath", json_string(lastPath.c_str()));
@@ -100,7 +101,7 @@ json_object_set_new(rootJ, "oscstate", json_integer(oscState));
         return rootJ;
     }
 
-    void fromJson(json_t *rootJ) override {
+    void dataFromJson(json_t *rootJ) override {
         // lastPath
         json_t *lastPathJ = json_object_get(rootJ, "lastPath");
         if (lastPathJ) {
@@ -285,16 +286,16 @@ if (!oscState) {
 
 struct upButton : SVGSwitch, MomentarySwitch {
     upButton() {
-        addFrame(SVG::load(assetPlugin(plugin, "res/upButton.svg")));
-        addFrame(SVG::load(assetPlugin(plugin, "res/upButtonDown.svg")));
+        addFrame(SVG::load(assetPlugin(pluginInstance, "res/upButton.svg")));
+        addFrame(SVG::load(assetPlugin(pluginInstance, "res/upButtonDown.svg")));
         sw->wrap();
         box.size = sw->box.size;
     }
 };
 struct downButton : SVGSwitch, MomentarySwitch {
     downButton() {
-        addFrame(SVG::load(assetPlugin(plugin, "res/downButton.svg")));
-        addFrame(SVG::load(assetPlugin(plugin, "res/downButtonDown.svg")));
+        addFrame(SVG::load(assetPlugin(pluginInstance, "res/downButton.svg")));
+        addFrame(SVG::load(assetPlugin(pluginInstance, "res/downButtonDown.svg")));
         sw->wrap();
         box.size = sw->box.size;
     }
@@ -306,7 +307,7 @@ struct PLAYERDisplay : TransparentWidget {
     shared_ptr<Font> font;
 
     PLAYERDisplay() {
-        font = Font::load(assetPlugin(plugin, "res/DejaVuSansMono.ttf"));
+        font = Font::load(assetPlugin(pluginInstance, "res/DejaVuSansMono.ttf"));
     }
 
     void draw(NVGcontext *vg) override {
@@ -386,13 +387,14 @@ struct PLAYERWidget : ModuleWidget {
     Menu *createContextMenu() override;
 };
 
-PLAYERWidget::PLAYERWidget(PLAYER *module) : ModuleWidget(module) {
-    setPanel(SVG::load(assetPlugin(plugin, "res/PLAYER.svg")));
+PLAYERWidget::PLAYERWidget(PLAYER *module) {
+		setModule(module);
+    setPanel(SVG::load(assetPlugin(pluginInstance, "res/PLAYER.svg")));
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     {
         PLAYERDisplay *display = new PLAYERDisplay();
@@ -405,26 +407,26 @@ PLAYERWidget::PLAYERWidget(PLAYER *module) : ModuleWidget(module) {
     static const float portX0[4] = {10, 40, 70, 100};
 
 
-    addParam(ParamWidget::create<RoundLargeBlackKnob>(Vec(23, 235), module, PLAYER::LSTART_PARAM, 0.0f, 10.0f, 0.0f));
-    addParam(ParamWidget::create<RoundLargeBlackKnob>(Vec(73, 235), module, PLAYER::LSPEED_PARAM, -5.0f, 5.0f, 0.0f));
-    addParam(ParamWidget::create<Trimpot>(Vec(42, 278), module, PLAYER::TSTART_PARAM, -1.0f, 1.0f, 0.0f));
-    addParam(ParamWidget::create<Trimpot>(Vec(73, 278), module, PLAYER::TSPEED_PARAM, -1.0f, 1.0f, 0.0f));
+    addParam(createParam<RoundLargeBlackKnob>(Vec(23, 235), module, PLAYER::LSTART_PARAM, 0.0f, 10.0f, 0.0f));
+    addParam(createParam<RoundLargeBlackKnob>(Vec(73, 235), module, PLAYER::LSPEED_PARAM, -5.0f, 5.0f, 0.0f));
+    addParam(createParam<Trimpot>(Vec(42, 278), module, PLAYER::TSTART_PARAM, -1.0f, 1.0f, 0.0f));
+    addParam(createParam<Trimpot>(Vec(73, 278), module, PLAYER::TSPEED_PARAM, -1.0f, 1.0f, 0.0f));
 
-    addInput(Port::create<PJ301MPort>(Vec(portX0[0], 321), Port::INPUT, module, PLAYER::GATE_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(portX0[1], 321), Port::INPUT, module, PLAYER::POS_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(portX0[2], 321), Port::INPUT, module, PLAYER::SPD_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(portX0[3], 275), Port::OUTPUT, module, PLAYER::OUT_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(portX0[3], 321), Port::OUTPUT, module, PLAYER::OUT2_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(portX0[0], 321), PortWidget::INPUT, module, PLAYER::GATE_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(portX0[1], 321), PortWidget::INPUT, module, PLAYER::POS_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(portX0[2], 321), PortWidget::INPUT, module, PLAYER::SPD_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(portX0[3], 275), PortWidget::OUTPUT, module, PLAYER::OUT_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(portX0[3], 321), PortWidget::OUTPUT, module, PLAYER::OUT2_OUTPUT));
 
-    addInput(Port::create<PJ301MPort>(Vec(portX0[0], 91), Port::INPUT, module, PLAYER::PREV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(portX0[3], 91), Port::INPUT, module, PLAYER::NEXT_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(portX0[0], 275), Port::INPUT, module, PLAYER::TRIG_INPUT));
-    addParam(ParamWidget::create<upButton>(Vec(43, 95), module, PLAYER::PREV_PARAM, 0.0f, 1.0f, 0.0f));
-    addParam(ParamWidget::create<downButton>(Vec(73, 95), module, PLAYER::NEXT_PARAM, 0.0f, 1.0f, 0.0f));
+    addInput(createPort<PJ301MPort>(Vec(portX0[0], 91), PortWidget::INPUT, module, PLAYER::PREV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(portX0[3], 91), PortWidget::INPUT, module, PLAYER::NEXT_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(portX0[0], 275), PortWidget::INPUT, module, PLAYER::TRIG_INPUT));
+    addParam(createParam<upButton>(Vec(43, 95), module, PLAYER::PREV_PARAM, 0.0f, 1.0f, 0.0f));
+    addParam(createParam<downButton>(Vec(73, 95), module, PLAYER::NEXT_PARAM, 0.0f, 1.0f, 0.0f));
 
-    addParam(ParamWidget::create<LEDButton>(Vec(104, 212), module, PLAYER::OSC_PARAM, 0.0, 1.0, 0.0));
-        addChild(ModuleLightWidget::create<MediumLight<BlueLight>>(Vec(108.4, 216.4), module, PLAYER::OSC_LIGHT));
-    addInput(Port::create<PJ301MPort>(Vec(portX0[0], 210), Port::INPUT, module, PLAYER::VO_INPUT));
+    addParam(createParam<LEDButton>(Vec(104, 212), module, PLAYER::OSC_PARAM, 0.0, 1.0, 0.0));
+        addChild(createLight<MediumLight<BlueLight>>(Vec(108.4, 216.4), module, PLAYER::OSC_LIGHT));
+    addInput(createPort<PJ301MPort>(Vec(portX0[0], 210), PortWidget::INPUT, module, PLAYER::VO_INPUT));
 }
 
 struct PLAYERItem : MenuItem {
@@ -444,8 +446,8 @@ struct PLAYERItem : MenuItem {
     }
 };
 
-Menu *PLAYERWidget::createContextMenu() {
-    Menu *menu = ModuleWidget::createContextMenu();
+Menu *PLAYERcreateWidgetContextMenu() {
+    Menu *menu = ModulecreateWidgetContextMenu();
 
     MenuLabel *spacerLabel = new MenuLabel();
     menu->addChild(spacerLabel);
@@ -461,4 +463,4 @@ Menu *PLAYERWidget::createContextMenu() {
     return menu;
 }
 
-Model *modelPLAYER = Model::create<PLAYER, PLAYERWidget>("cf", "PLAYER", "Player", SAMPLER_TAG);
+Model *modelPLAYER = createModel<PLAYER, PLAYERWidget>("cf", "PLAYER", "Player", SAMPLER_TAG);

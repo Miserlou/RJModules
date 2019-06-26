@@ -90,7 +90,8 @@
 //     DoubleRingBuffer<float, 16> outBuffer;
 //     SampleRateConverter<1> src;
 
-//     FFTuner() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+//     FFTuner() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
 //     void step() override;
 // };
 
@@ -275,24 +276,25 @@
 
 
 
-// FFTunerWidget::FFTunerWidget(FFTuner *module) : ModuleWidget(module) {
+// FFTunerWidget::FFTunerWidget(FFTuner *module) {
+		setModule(module);
 //     box.size = Vec(15*10, 380);
 
 //     {
 //         SVGPanel *panel = new SVGPanel();
 //         panel->box.size = box.size;
-//         panel->setBackground(SVG::load(assetPlugin(plugin, "res/FFTuner.svg")));
+//         panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/FFTuner.svg")));
 //         addChild(panel);
 //     }
 
-//     addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-//     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-//     addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-//     addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+//     addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+//     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+//     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+//     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-//     addParam(ParamWidget::create<RoundBlackKnob>(Vec(57, 79), module, FFTuner::CH1_PARAM, 0.0, 1.0, 0.5));
-//     addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, FFTuner::CH1_INPUT));
-//     addOutput(Port::create<PJ301MPort>(Vec(110, 85), Port::OUTPUT, module, FFTuner::CH1_OUTPUT));
+//     addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, FFTuner::CH1_PARAM, 0.0, 1.0, 0.5));
+//     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, FFTuner::CH1_INPUT));
+//     addOutput(createPort<PJ301MPort>(Vec(110, 85), PortWidget::OUTPUT, module, FFTuner::CH1_OUTPUT));
 // }
 
 

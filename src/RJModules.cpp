@@ -1,10 +1,10 @@
 #include "RJModules.hpp"
 #include "VAStateVariableFilter.h"
 
-Plugin *plugin;
+Plugin *pluginInstance;
 
 void init(rack::Plugin *p) {
-	plugin = p;
+	pluginInstance = p;
 
     // Generators
     p->addModel(modelSupersaw);

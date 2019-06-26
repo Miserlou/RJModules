@@ -26,7 +26,8 @@ struct Panners : Module {
     bool state[NUM_CHANNELS];
     SchmittTrigger muteTrigger[NUM_CHANNELS];
 
-    Panners() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+    Panners() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         reset();
     }
     void step() override;
@@ -42,7 +43,7 @@ struct Panners : Module {
         }
     }
 
-    json_t *toJson() override {
+    json_t *dataToJson() override {
         json_t *rootJ = json_object();
         // states
         json_t *statesJ = json_array();
@@ -53,7 +54,7 @@ struct Panners : Module {
         json_object_set_new(rootJ, "states", statesJ);
         return rootJ;
     }
-    void fromJson(json_t *rootJ) override {
+    void dataFromJson(json_t *rootJ) override {
         // states
         json_t *statesJ = json_object_get(rootJ, "states");
         if (statesJ) {
@@ -121,41 +122,42 @@ struct PannersWidget: ModuleWidget {
     PannersWidget(Panners *module);
 };
 
-PannersWidget::PannersWidget(Panners *module) : ModuleWidget(module) {
-    setPanel(SVG::load(assetPlugin(plugin, "res/Panners.svg")));
+PannersWidget::PannersWidget(Panners *module) {
+		setModule(module);
+    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Panners.svg")));
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x - 30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(15.57, 23.165)), module, Panners::MUTE_PARAM + 0, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(15.57, 43.164)), module, Panners::MUTE_PARAM + 1, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(15.57, 63.164)), module, Panners::MUTE_PARAM + 2, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(15.57, 83.165)), module, Panners::MUTE_PARAM + 3, 0.0, 1.0, 0.5));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(mm2px(Vec(15.57, 103.164)), module, Panners::MUTE_PARAM + 4, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 23.165)), module, Panners::MUTE_PARAM + 0, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 43.164)), module, Panners::MUTE_PARAM + 1, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 63.164)), module, Panners::MUTE_PARAM + 2, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 83.165)), module, Panners::MUTE_PARAM + 3, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 103.164)), module, Panners::MUTE_PARAM + 4, 0.0, 1.0, 0.5));
 
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 17.81)), Port::INPUT, module, Panners::IN_INPUT + 0));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 27.809)), Port::INPUT, module, Panners::IN_INPUT + 1));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 37.809)), Port::INPUT, module, Panners::IN_INPUT + 2));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 47.81)), Port::INPUT, module, Panners::IN_INPUT + 3));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 57.81)), Port::INPUT, module, Panners::IN_INPUT + 4));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 67.809)), Port::INPUT, module, Panners::IN_INPUT + 5));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 77.81)), Port::INPUT, module, Panners::IN_INPUT + 6));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 87.81)), Port::INPUT, module, Panners::IN_INPUT + 7));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 97.809)), Port::INPUT, module, Panners::IN_INPUT + 8));
-    addInput(Port::create<PJ301MPort>(mm2px(Vec(4.214, 107.809)), Port::INPUT, module, Panners::IN_INPUT + 9));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Panners::IN_INPUT + 0));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Panners::IN_INPUT + 1));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 37.809)), PortWidget::INPUT, module, Panners::IN_INPUT + 2));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 47.81)), PortWidget::INPUT, module, Panners::IN_INPUT + 3));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 57.81)), PortWidget::INPUT, module, Panners::IN_INPUT + 4));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 67.809)), PortWidget::INPUT, module, Panners::IN_INPUT + 5));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 77.81)), PortWidget::INPUT, module, Panners::IN_INPUT + 6));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 87.81)), PortWidget::INPUT, module, Panners::IN_INPUT + 7));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 97.809)), PortWidget::INPUT, module, Panners::IN_INPUT + 8));
+    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 107.809)), PortWidget::INPUT, module, Panners::IN_INPUT + 9));
 
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 17.81)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 0));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 27.809)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 1));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 37.809)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 2));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 47.81)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 3));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 57.809)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 4));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 67.809)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 5));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 77.81)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 6));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 87.81)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 7));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 97.809)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 8));
-    addOutput(Port::create<PJ301MPort>(mm2px(Vec(28.214, 107.809)), Port::OUTPUT, module, Panners::OUT_OUTPUT + 9));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 17.81)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 0));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 27.809)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 1));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 37.809)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 2));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 47.81)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 3));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 57.809)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 4));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 67.809)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 5));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 77.81)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 6));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 87.81)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 7));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 97.809)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 8));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Panners::OUT_OUTPUT + 9));
 }
 
-Model *modelPanners = Model::create<Panners, PannersWidget>("RJModules", "Panners", "[MIX] Panners", UTILITY_TAG);
+Model *modelPanners = createModel<Panners, PannersWidget>("RJModules", "Panners", "[MIX] Panners", UTILITY_TAG);

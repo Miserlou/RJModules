@@ -32,14 +32,15 @@ struct MetaKnob: Module {
     };
     float resetLight = 0.0;
 
-    MetaKnob() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    MetaKnob() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
 
 struct RoundGiantBlackKnob : RoundKnob {
     RoundGiantBlackKnob() {
-        setSVG(SVG::load(assetPlugin(plugin, "res/RoundGiantBlackKnob.svg")));
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/RoundGiantBlackKnob.svg")));
     }
 };
 
@@ -75,40 +76,41 @@ struct MetaKnobWidget: ModuleWidget {
     MetaKnobWidget(MetaKnob *module);
 };
 
-MetaKnobWidget::MetaKnobWidget(MetaKnob *module) : ModuleWidget(module) {
+MetaKnobWidget::MetaKnobWidget(MetaKnob *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/MetaKnob.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/MetaKnob.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(Port::create<PJ301MPort>(Vec(24, 160), Port::INPUT, module, MetaKnob::BIG_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(24, 160), PortWidget::INPUT, module, MetaKnob::BIG_CV_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 223), Port::OUTPUT, module, MetaKnob::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 223), Port::OUTPUT, module, MetaKnob::CH2_OUTPUT));
-    //addOutput(Port::create<PJ301MPort>(Vec(105, 223), Port::OUTPUT, module, MetaKnob::CH3_OUTPUT));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(Vec(105, 223), module, MetaKnob::RANGE_PARAM_1, -5.0, 5.0, -5.0));
+    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, MetaKnob::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, MetaKnob::CH2_OUTPUT));
+    //addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, MetaKnob::CH3_OUTPUT));
+    addParam(createParam<RoundSmallBlackKnob>(Vec(105, 223), module, MetaKnob::RANGE_PARAM_1, -5.0, 5.0, -5.0));
 
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 274), Port::OUTPUT, module, MetaKnob::CH4_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 274), Port::OUTPUT, module, MetaKnob::CH5_OUTPUT));
-    //addOutput(Port::create<PJ301MPort>(Vec(106, 274), Port::OUTPUT, module, MetaKnob::CH6_OUTPUT));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(Vec(105, 274), module, MetaKnob::RANGE_PARAM_2, -5.0, 5.0, 5.0));
+    addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, MetaKnob::CH4_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, MetaKnob::CH5_OUTPUT));
+    //addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, MetaKnob::CH6_OUTPUT));
+    addParam(createParam<RoundSmallBlackKnob>(Vec(105, 274), module, MetaKnob::RANGE_PARAM_2, -5.0, 5.0, 5.0));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 324), Port::OUTPUT, module, MetaKnob::CH7_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 324), Port::OUTPUT, module, MetaKnob::CH8_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(106, 324), Port::OUTPUT, module, MetaKnob::CH9_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 324), PortWidget::OUTPUT, module, MetaKnob::CH7_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 324), PortWidget::OUTPUT, module, MetaKnob::CH8_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(106, 324), PortWidget::OUTPUT, module, MetaKnob::CH9_OUTPUT));
 
-    addParam(ParamWidget::create<RoundGiantBlackKnob>(Vec(20, 55), module, MetaKnob::BIG_PARAM, -5.0, 5.0, 0.0));
+    addParam(createParam<RoundGiantBlackKnob>(Vec(20, 55), module, MetaKnob::BIG_PARAM, -5.0, 5.0, 0.0));
 
 }
 
-Model *modelMetaKnob = Model::create<MetaKnob, MetaKnobWidget>("RJModules", "MetaKnob", "[LIVE] MetaKnob", UTILITY_TAG);
+Model *modelMetaKnob = createModel<MetaKnob, MetaKnobWidget>("RJModules", "MetaKnob", "[LIVE] MetaKnob", UTILITY_TAG);

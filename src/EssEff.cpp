@@ -30,7 +30,7 @@ struct SmallStringDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   SmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Pokemon.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -110,7 +110,8 @@ struct EssEff : Module {
     SchmittTrigger gateTrigger;
     tsf* tee_ess_eff;
 
-    EssEff() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    EssEff() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
     std::string getAbsolutePath(std::string path);
     void loadFile(std::string path);
@@ -176,7 +177,7 @@ void EssEff::step() {
         }
         if(cur_file != last_file){
             this->loading = true;
-            this->loadFile(getAbsolutePath(assetPlugin(plugin, soundfont_files[cur_file])));
+            this->loadFile(getAbsolutePath(assetPlugin(pluginInstance, soundfont_files[cur_file])));
             last_file = cur_file;
         }
     }
@@ -264,20 +265,21 @@ struct EssEffWidget: ModuleWidget {
     Menu *createContextMenu() override;
 };
 
-EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
+EssEffWidget::EssEffWidget(EssEff *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/EssEff.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/EssEff.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     // Displays
     SmallStringDisplayWidget *fileDisplay = new SmallStringDisplayWidget();
@@ -293,18 +295,18 @@ EssEffWidget::EssEffWidget(EssEff *module) : ModuleWidget(module) {
     addChild(presetDisplay);
 
     // Knobs
-    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0, num_files - 1, 0));
-    addParam(ParamWidget::create<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM, 0, 320, 0));
-    addInput(Port::create<PJ301MPort>(Vec(37, 117.5), Port::INPUT, module, EssEff::FILE_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(37, 217.5), Port::INPUT, module, EssEff::PRESET_INPUT));
+    addParam(createParam<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0, num_files - 1, 0));
+    addParam(createParam<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM, 0, 320, 0));
+    addInput(createPort<PJ301MPort>(Vec(37, 117.5), PortWidget::INPUT, module, EssEff::FILE_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(37, 217.5), PortWidget::INPUT, module, EssEff::PRESET_INPUT));
 
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM, 0, 16383, 8192));
-    addInput(Port::create<PJ301MPort>(Vec(37, 264.5), Port::INPUT, module, EssEff::BEND_INPUT));
+    addParam(createParam<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM, 0, 16383, 8192));
+    addInput(createPort<PJ301MPort>(Vec(37, 264.5), PortWidget::INPUT, module, EssEff::BEND_INPUT));
 
     // Inputs and Knobs
-    addInput(Port::create<PJ301MPort>(Vec(16, 320), Port::INPUT, module, EssEff::VOCT_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(53, 320), Port::INPUT, module, EssEff::GATE_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(112.5, 320), Port::OUTPUT, module, EssEff::MAIN_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(16, 320), PortWidget::INPUT, module, EssEff::VOCT_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(53, 320), PortWidget::INPUT, module, EssEff::GATE_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, EssEff::MAIN_OUTPUT));
 }
 
 struct EssEffItem : MenuItem {
@@ -322,8 +324,8 @@ struct EssEffItem : MenuItem {
     }
 };
 
-Menu *EssEffWidget::createContextMenu() {
-    Menu *menu = ModuleWidget::createContextMenu();
+Menu *EssEffcreateWidgetContextMenu() {
+    Menu *menu = ModulecreateWidgetContextMenu();
 
     MenuLabel *spacerLabel = new MenuLabel();
     menu->addChild(spacerLabel);
@@ -339,4 +341,4 @@ Menu *EssEffWidget::createContextMenu() {
     return menu;
 }
 
-Model *modelEssEff = Model::create<EssEff, EssEffWidget>("RJModules", "EssEff", "[GEN] EssEff - SoundFont Player", LFO_TAG);
+Model *modelEssEff = createModel<EssEff, EssEffWidget>("RJModules", "EssEff", "[GEN] EssEff - SoundFont Player", LFO_TAG);

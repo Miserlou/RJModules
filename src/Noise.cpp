@@ -95,7 +95,8 @@ struct Noise : Module {
     VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
-    Noise() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Noise() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -143,30 +144,31 @@ struct NoiseWidget: ModuleWidget {
     NoiseWidget(Noise *module);
 };
 
-NoiseWidget::NoiseWidget(Noise *module) : ModuleWidget(module) {
+NoiseWidget::NoiseWidget(Noise *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Noise.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Noise.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Noise::COLOR_PARAM, 0.0, 1.0, 1.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Noise::LPF_PARAM, 0.0, 8000.0, 8000.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Noise::HPF_PARAM, 30.0, 8000.0, 30.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Noise::COLOR_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Noise::LPF_PARAM, 0.0, 8000.0, 8000.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Noise::HPF_PARAM, 30.0, 8000.0, 30.0));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Noise::COLOR_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Noise::LPF_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Noise::HPF_CV_INPUT));
-    addParam(ParamWidget::create<RoundSmallBlackKnob>(Vec(20, 310), module, Noise::VOL_PARAM, 0.0, 2.0, 1.0));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Noise::COLOR_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Noise::LPF_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Noise::HPF_CV_INPUT));
+    addParam(createParam<RoundSmallBlackKnob>(Vec(20, 310), module, Noise::VOL_PARAM, 0.0, 2.0, 1.0));
 
-    addOutput(Port::create<PJ301MPort>(Vec(100, 310), Port::OUTPUT, module, Noise::NOISE_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Noise::NOISE_OUTPUT));
 }
-Model *modelNoise = Model::create<Noise, NoiseWidget>("RJModules", "Noise", "[GEN] Noise", LFO_TAG);
+Model *modelNoise = createModel<Noise, NoiseWidget>("RJModules", "Noise", "[GEN] Noise", LFO_TAG);

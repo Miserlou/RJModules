@@ -43,7 +43,8 @@ struct BPM: Module {
     float m_fBeatsPers;
     float m_fMainClockCount;
 
-    BPM() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    BPM() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
     void    BPMChange( float fbmp, bool bforce );
 };
@@ -61,7 +62,7 @@ struct NumberDisplayWidget : TransparentWidget {
   std::shared_ptr<Font> font;
 
   NumberDisplayWidget() {
-    font = Font::load(assetPlugin(plugin, "res/Segment7Standard.ttf"));
+    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -149,37 +150,38 @@ struct BPMWidget: ModuleWidget {
     BPMWidget(BPM *module);
 };
 
-BPMWidget::BPMWidget(BPM *module) : ModuleWidget(module) {
+BPMWidget::BPMWidget(BPM *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/BPM.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/BPM.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(Port::create<PJ301MPort>(Vec(24, 160), Port::INPUT, module, BPM::CH1_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(106, 165), Port::INPUT, module, BPM::RESET_CV_INPUT));
-    addParam(ParamWidget::create<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM, 0.0, 1.0, 0.0));
-    addChild(ModuleLightWidget::create<MediumLight<GreenLight>>(Vec(113.4, 136.4), module, BPM::RESET_LIGHT));
+    addInput(createPort<PJ301MPort>(Vec(24, 160), PortWidget::INPUT, module, BPM::CH1_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(106, 165), PortWidget::INPUT, module, BPM::RESET_CV_INPUT));
+    addParam(createParam<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM, 0.0, 1.0, 0.0));
+    addChild(createLight<MediumLight<GreenLight>>(Vec(113.4, 136.4), module, BPM::RESET_LIGHT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 223), Port::OUTPUT, module, BPM::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 223), Port::OUTPUT, module, BPM::CH2_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(105, 223), Port::OUTPUT, module, BPM::CH3_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, BPM::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, BPM::CH2_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, BPM::CH3_OUTPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(24, 274), Port::OUTPUT, module, BPM::CH4_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(65, 274), Port::OUTPUT, module, BPM::CH5_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(106, 274), Port::OUTPUT, module, BPM::CH6_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, BPM::CH4_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, BPM::CH5_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, BPM::CH6_OUTPUT));
 
-    addParam(ParamWidget::create<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.165));
-    // addChild(ModuleLightWidget::create<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
-    //addChild(ModuleLightWidget::create<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
+    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.165));
+    // addChild(createLight<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
+    //addChild(createLight<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
 
     NumberDisplayWidget *display = new NumberDisplayWidget();
     display->box.pos = Vec(28, 70);
@@ -188,4 +190,4 @@ BPMWidget::BPMWidget(BPM *module) : ModuleWidget(module) {
     addChild(display);
 }
 
-Model *modelBPM = Model::create<BPM, BPMWidget>("RJModules", "BPM", "[LIVE] BPM", UTILITY_TAG);
+Model *modelBPM = createModel<BPM, BPMWidget>("RJModules", "BPM", "[LIVE] BPM", UTILITY_TAG);

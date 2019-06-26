@@ -26,7 +26,8 @@ struct BPF: Module {
     VAStateVariableFilter *BPFilter = new VAStateVariableFilter();
 
 
-    BPF() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS) {}
+    BPF() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
     void step() override;
 };
 
@@ -53,29 +54,30 @@ struct BPFWidget: ModuleWidget {
     BPFWidget(BPF *module);
 };
 
-BPFWidget::BPFWidget(BPF *module) : ModuleWidget(module) {
+BPFWidget::BPFWidget(BPF *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/BPF.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/BPF.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM, 30.0, 3000.0, 400.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, BPF::VOL_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM, 30.0, 3000.0, 400.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, BPF::VOL_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, BPF::FREQ_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 180), Port::INPUT, module, BPF::VOL_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 310), Port::INPUT, module, BPF::CH1_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, BPF::FREQ_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, BPF::VOL_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, BPF::CH1_INPUT));
 
-    addOutput(Port::create<PJ301MPort>(Vec(110, 310), Port::OUTPUT, module, BPF::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, BPF::CH1_OUTPUT));
 }
 
-Model *modelBPF = Model::create<BPF, BPFWidget>("RJModules", "BPF", "[FILT] BPF - Band Pass Filter", UTILITY_TAG);
+Model *modelBPF = createModel<BPF, BPFWidget>("RJModules", "BPF", "[FILT] BPF - Band Pass Filter", UTILITY_TAG);

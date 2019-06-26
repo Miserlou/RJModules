@@ -56,7 +56,8 @@ struct Widener : Module {
     VAStateVariableFilter *lpFilter = new VAStateVariableFilter() ; // create a lpFilter;
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
-    Widener() : Module(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    Widener() {
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
     void step() override;
 };
 
@@ -139,31 +140,32 @@ struct WidenerWidget: ModuleWidget {
     WidenerWidget(Widener *module);
 };
 
-WidenerWidget::WidenerWidget(Widener *module) : ModuleWidget(module) {
+WidenerWidget::WidenerWidget(Widener *module) {
+		setModule(module);
     box.size = Vec(15*10, 380);
 
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(plugin, "res/Widener.svg")));
+        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Widener.svg")));
         addChild(panel);
     }
 
-    addChild(Widget::create<ScrewSilver>(Vec(15, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(Widget::create<ScrewSilver>(Vec(15, 365)));
-    addChild(Widget::create<ScrewSilver>(Vec(box.size.x-30, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM, 0.0, 1.0, 1.0));
-    addParam(ParamWidget::create<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM, 0.0, 1.0, 0.5));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 100), Port::INPUT, module, Widener::TIME_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 190), Port::INPUT, module, Widener::MIX_CV_INPUT));
-    addInput(Port::create<PJ301MPort>(Vec(22, 270), Port::INPUT, module, Widener::FILTER_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Widener::TIME_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Widener::MIX_CV_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Widener::FILTER_CV_INPUT));
 
-    addInput(Port::create<PJ301MPort>(Vec(22, 315), Port::INPUT, module, Widener::CH1_INPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(62, 315), Port::OUTPUT, module, Widener::CH1_OUTPUT));
-    addOutput(Port::create<PJ301MPort>(Vec(100, 315), Port::OUTPUT, module, Widener::CH2_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(22, 315), PortWidget::INPUT, module, Widener::CH1_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(62, 315), PortWidget::OUTPUT, module, Widener::CH1_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(100, 315), PortWidget::OUTPUT, module, Widener::CH2_OUTPUT));
 }
-Model *modelWidener = Model::create<Widener, WidenerWidget>("RJModules", "Widener", "[FX] Widener", UTILITY_TAG);
+Model *modelWidener = createModel<Widener, WidenerWidget>("RJModules", "Widener", "[FX] Widener", UTILITY_TAG);
