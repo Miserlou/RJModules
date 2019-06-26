@@ -1,0 +1,26 @@
+{
+  "slug": "rjmodules",
+  "name": "RJModules",
+  "version": "1.0.0",
+  "license": "MIT",
+  "brand": "RJModules",
+  "author": "Rich Jones",
+  "authorEmail": "miserlou@gmail.com",
+  "authorUrl": "http://github.com/Miserlou/RJModules",
+  "pluginUrl": "http://github.com/Miserlou/RJModules",
+  "manualUrl": "http://github.com/Miserlou/RJModules",
+  "sourceUrl": "htto://github.com/Miserlou/RJModules",
+  "donateUrl": "http://patreon.com/Miserlou",
+  "modules": [
+    {
+      "slug": "Acid",
+      "name": "Acid",
+      "description": "Rich's take on the TB-303, with two VCOs, a powerful filter, an envelope generator and a pluck!",
+      "tags": [
+        "VCO",
+        "Mutiple",
+        "Envelope generator"
+      ]
+    }
+  ]
+}
