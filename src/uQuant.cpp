@@ -216,21 +216,24 @@ uQuantWidget::uQuantWidget(uQuant *module) {
 
     addInput(createPort<PJ301MPort>(Vec(leftPad, 41), PortWidget::INPUT, module, uQuant::IN_INPUT));
 
-    TinyStringDisplayWidget *displayKey = new TinyStringDisplayWidget();
-    displayKey = new TinyStringDisplayWidget();
-    displayKey->box.pos = Vec(leftPad, 71);
-    displayKey->box.size = Vec(25, 25);
-    displayKey->value = &module->keyValue[0];
-    addChild(displayKey);
-    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
-    addInput(createPort<PJ301MPort>(Vec(leftPad, 125), PortWidget::INPUT, module, uQuant::KEY_INPUT));
+    if(module != NULL){
+        TinyStringDisplayWidget *displayKey = new TinyStringDisplayWidget();
+        displayKey = new TinyStringDisplayWidget();
+        displayKey->box.pos = Vec(leftPad, 71);
+        displayKey->box.size = Vec(25, 25);
+        displayKey->value = &module->keyValue[0];
+        addChild(displayKey);
+        addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+        addInput(createPort<PJ301MPort>(Vec(leftPad, 125), PortWidget::INPUT, module, uQuant::KEY_INPUT));
 
-    TinyStringDisplayWidget *displayScale = new TinyStringDisplayWidget();
-    displayScale = new TinyStringDisplayWidget();
-    displayScale->box.pos = Vec(leftPad, 155);
-    displayScale->box.size = Vec(25, 25);
-    displayScale->value = &module->scaleValue[0];
-    addChild(displayScale);
+        TinyStringDisplayWidget *displayScale = new TinyStringDisplayWidget();
+        displayScale = new TinyStringDisplayWidget();
+        displayScale->box.pos = Vec(leftPad, 155);
+        displayScale->box.size = Vec(25, 25);
+        displayScale->value = &module->scaleValue[0];
+        addChild(displayScale);
+    }
+
     addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
     addInput(createPort<PJ301MPort>(Vec(leftPad, 209), PortWidget::INPUT, module, uQuant::SCALE_INPUT));
 

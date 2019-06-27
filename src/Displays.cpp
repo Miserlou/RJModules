@@ -110,29 +110,35 @@ DisplaysWidget::DisplaysWidget(Displays *module) {
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-    NumberDisplayWidgeter *display = new NumberDisplayWidgeter();
-    display->box.pos = Vec(28, 60);
-    display->box.size = Vec(100, 40);
-    display->value = &module->display1_val;
-    addChild(display);
+    if(module != NULL){
+        NumberDisplayWidgeter *display = new NumberDisplayWidgeter();
+        display->box.pos = Vec(28, 60);
+        display->box.size = Vec(100, 40);
+        display->value = &module->display1_val;
+        addChild(display);
+    }
 
     addInput(createPort<PJ301MPort>(Vec(35, 123), PortWidget::INPUT, module, Displays::CH1_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(95, 123), PortWidget::OUTPUT, module, Displays::CH1_OUTPUT));
 
-    NumberDisplayWidgeter *display2 = new NumberDisplayWidgeter();
-    display2->box.pos = Vec(28, 160);
-    display2->box.size = Vec(100, 40);
-    display2->value = &module->display2_val;
-    addChild(display2);
+    if(module != NULL){
+        NumberDisplayWidgeter *display2 = new NumberDisplayWidgeter();
+        display2->box.pos = Vec(28, 160);
+        display2->box.size = Vec(100, 40);
+        display2->value = &module->display2_val;
+        addChild(display2);
+    }
 
     addInput(createPort<PJ301MPort>(Vec(35, 223), PortWidget::INPUT, module, Displays::CH2_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(95, 223), PortWidget::OUTPUT, module, Displays::CH2_OUTPUT));
 
-    NumberDisplayWidgeter *display3 = new NumberDisplayWidgeter();
-    display3->box.pos = Vec(28, 260);
-    display3->box.size = Vec(100, 40);
-    display3->value = &module->display3_val;
-    addChild(display3);
+    if(module != NULL){
+        NumberDisplayWidgeter *display3 = new NumberDisplayWidgeter();
+        display3->box.pos = Vec(28, 260);
+        display3->box.size = Vec(100, 40);
+        display3->value = &module->display3_val;
+        addChild(display3);
+    }
 
     addInput(createPort<PJ301MPort>(Vec(35, 323), PortWidget::INPUT, module, Displays::CH3_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(95, 323), PortWidget::OUTPUT, module, Displays::CH3_OUTPUT));

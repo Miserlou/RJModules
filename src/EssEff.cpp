@@ -281,17 +281,19 @@ EssEffWidget::EssEffWidget(EssEff *module) {
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     // Displays
-    SmallStringDisplayWidget *fileDisplay = new SmallStringDisplayWidget();
-    fileDisplay->box.pos = Vec(28, 70);
-    fileDisplay->box.size = Vec(100, 40);
-    fileDisplay->value = &module->file_name;
-    addChild(fileDisplay);
+    if(module != NULL){
+        SmallStringDisplayWidget *fileDisplay = new SmallStringDisplayWidget();
+        fileDisplay->box.pos = Vec(28, 70);
+        fileDisplay->box.size = Vec(100, 40);
+        fileDisplay->value = &module->file_name;
+        addChild(fileDisplay);
 
-    SmallStringDisplayWidget *presetDisplay = new SmallStringDisplayWidget();
-    presetDisplay->box.pos = Vec(28, 170);
-    presetDisplay->box.size = Vec(100, 40);
-    presetDisplay->value = &module->preset_name;
-    addChild(presetDisplay);
+        SmallStringDisplayWidget *presetDisplay = new SmallStringDisplayWidget();
+        presetDisplay->box.pos = Vec(28, 170);
+        presetDisplay->box.size = Vec(100, 40);
+        presetDisplay->value = &module->preset_name;
+        addChild(presetDisplay);
+    }
 
     // Knobs
     addParam(createParam<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0, num_files - 1, 0));

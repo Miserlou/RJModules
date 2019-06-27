@@ -410,19 +410,21 @@ struct ChordSeqWidget : ModuleWidget {
 		addOutput(createPort<PJ301MPort>(Vec(portX[6]-1, 98), PortWidget::OUTPUT, module, ChordSeq::ROW2_OUTPUT));
 		addOutput(createPort<PJ301MPort>(Vec(portX[7]-1, 98), PortWidget::OUTPUT, module, ChordSeq::ROW3_OUTPUT));
 
-		SmallStringDisplayWidget *display = new SmallStringDisplayWidget();
-		for (int i = 0; i < 8; i++) {
-		    display = new SmallStringDisplayWidget();
-		    display->box.pos = Vec(portX[i]-10, 157);
-		    display->box.size = Vec(45, 30);
-		    display->value = &module->chord_values[i];
-		    addChild(display);
+		if(module != NULL){
+			SmallStringDisplayWidget *display = new SmallStringDisplayWidget();
+			for (int i = 0; i < 8; i++) {
+			    display = new SmallStringDisplayWidget();
+			    display->box.pos = Vec(portX[i]-10, 157);
+			    display->box.size = Vec(45, 30);
+			    display->value = &module->chord_values[i];
+			    addChild(display);
 
-			addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0, 59.0, 24.0));
-			addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0f, 3.0f, 0.0f));
-			addParam(createParam<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
-			addChild(createLight<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
-			addOutput(createPort<PJ301MPort>(Vec(portX[i]-1, 307), PortWidget::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));
+				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0, 59.0, 24.0));
+				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0f, 3.0f, 0.0f));
+				addParam(createParam<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
+				addChild(createLight<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
+				addOutput(createPort<PJ301MPort>(Vec(portX[i]-1, 307), PortWidget::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));
+			}
 		}
 	}
 };

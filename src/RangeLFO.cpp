@@ -224,19 +224,22 @@ RangeLFOWidget::RangeLFOWidget(RangeLFO *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    SmallIntegerDisplayWidgeter *display = new SmallIntegerDisplayWidgeter();
-    display->box.pos = Vec(23, 160);
-    display->box.size = Vec(50, 40);
-    display->value = &module->display1_val;
-    addChild(display);
-    addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
-    addInput(createPort<PJ301MPort>(Vec(5, 235), PortWidget::INPUT, module, RangeLFO::FROM_CV_INPUT));
+    if(module != NULL){
+        SmallIntegerDisplayWidgeter *display = new SmallIntegerDisplayWidgeter();
+        display->box.pos = Vec(23, 160);
+        display->box.size = Vec(50, 40);
+        display->value = &module->display1_val;
+        addChild(display);
+        addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
+        addInput(createPort<PJ301MPort>(Vec(5, 235), PortWidget::INPUT, module, RangeLFO::FROM_CV_INPUT));
 
-    SmallIntegerDisplayWidgeter *display2 = new SmallIntegerDisplayWidgeter();
-    display2->box.pos = Vec(83, 160);
-    display2->box.size = Vec(50, 40);
-    display2->value = &module->display2_val;
-    addChild(display2);
+        SmallIntegerDisplayWidgeter *display2 = new SmallIntegerDisplayWidgeter();
+        display2->box.pos = Vec(83, 160);
+        display2->box.size = Vec(50, 40);
+        display2->value = &module->display2_val;
+        addChild(display2);
+    }
+
     addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
     addInput(createPort<PJ301MPort>(Vec(62, 235), PortWidget::INPUT, module, RangeLFO::TO_CV_INPUT));
 

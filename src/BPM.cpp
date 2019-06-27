@@ -151,7 +151,7 @@ struct BPMWidget: ModuleWidget {
 };
 
 BPMWidget::BPMWidget(BPM *module) {
-		setModule(module);
+	setModule(module);
     box.size = Vec(15*10, 380);
 
     {
@@ -183,11 +183,13 @@ BPMWidget::BPMWidget(BPM *module) {
     // addChild(createLight<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
     //addChild(createLight<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
 
-    NumberDisplayWidget *display = new NumberDisplayWidget();
-    display->box.pos = Vec(28, 70);
-    display->box.size = Vec(100, 40);
-    display->value = &module->m_fBPM;
-    addChild(display);
+    if(module != NULL){
+        NumberDisplayWidget *display = new NumberDisplayWidget();
+        display->box.pos = Vec(28, 70);
+        display->box.size = Vec(100, 40);
+        display->value = &module->m_fBPM;
+        addChild(display);
+    }
 }
 
 Model *modelBPM = createModel<BPM, BPMWidget>("BPM");

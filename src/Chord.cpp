@@ -275,11 +275,13 @@ ChordWidget::ChordWidget(Chord *module) {
     addOutput(createPort<PJ301MPort>(Vec(81, 319), PortWidget::OUTPUT, module, Chord::FIVE_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(114, 319), PortWidget::OUTPUT, module, Chord::SEVEN_OUTPUT));
 
-    StringDisplayWidget *display = new StringDisplayWidget();
-    display->box.pos = Vec(28, 70);
-    display->box.size = Vec(100, 40);
-    display->value = &module->chord_name;
-    addChild(display);
+    if(module != NULL){
+        StringDisplayWidget *display = new StringDisplayWidget();
+        display->box.pos = Vec(28, 70);
+        display->box.size = Vec(100, 40);
+        display->value = &module->chord_name;
+        addChild(display);
+    }
 
 }
 Model *modelChord = createModel<Chord, ChordWidget>("Chord");
