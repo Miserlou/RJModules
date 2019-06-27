@@ -1,10 +1,5 @@
 #include "RJModules.hpp"
 
-#include "dsp/samplerate.hpp"
-#include "dsp/ringbuffer.hpp"
-#include "dsp/filter.hpp"
-#include "dsp/digital.hpp"
-
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -90,7 +85,7 @@ struct ReplayKnob : Module {
     void step() override;
 };
 
-struct LilLEDButton : SVGSwitch, MomentarySwitch {
+struct LilLEDButton : SVGSwitch {
         LilLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/LilLEDButton.svg")));
         }
@@ -294,4 +289,4 @@ ReplayKnobWidget::ReplayKnobWidget(ReplayKnob *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 142 + offset), PortWidget::OUTPUT, module, ReplayKnob::OUT_OUTPUT_2));
 
 }
-Model *modelReplayKnob = createModel<ReplayKnob, ReplayKnobWidget>("RJModules", "ReplayKnob", "[LIVE] ReplayKnob", DELAY_TAG);
+Model *modelReplayKnob = createModel<ReplayKnob, ReplayKnobWidget>("ReplayKnob");

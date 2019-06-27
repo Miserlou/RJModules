@@ -2,9 +2,7 @@
 
 #include <iostream>
 
-#include "dsp/digital.hpp"
-
-// #include "AH.hpp"
+#include "AH.hpp"
 using namespace rack;
 
 const double PI = 3.14159265358979323846264338327950288;

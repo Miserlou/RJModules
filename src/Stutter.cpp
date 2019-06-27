@@ -3,11 +3,6 @@
 #include <random>
 #include <cmath>
 
-#include "dsp/digital.hpp"
-#include "dsp/samplerate.hpp"
-#include "dsp/ringbuffer.hpp"
-#include "dsp/filter.hpp"
-
 #include "RJModules.hpp"
 #include "VAStateVariableFilter.h"
 
@@ -54,7 +49,7 @@ struct Stutter : Module {
     void step() override;
 };
 
-struct BigSwitchLEDButton : SVGSwitch, MomentarySwitch {
+struct BigSwitchLEDButton : SVGSwitch {
         BigSwitchLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/SwitchLEDButton.svg")));
         }
@@ -158,4 +153,4 @@ StutterWidget::StutterWidget(Stutter *module) {
     addInput(createPort<PJ301MPort>(Vec(22, 315), PortWidget::INPUT, module, Stutter::CH1_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(100, 315), PortWidget::OUTPUT, module, Stutter::CH1_OUTPUT));
 }
-Model *modelStutter = createModel<Stutter, StutterWidget>("RJModules", "Stutter", "[FX] Stutter", DELAY_TAG);
+Model *modelStutter = createModel<Stutter, StutterWidget>("Stutter");

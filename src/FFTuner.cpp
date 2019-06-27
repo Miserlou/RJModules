@@ -91,7 +91,7 @@
 //     SampleRateConverter<1> src;
 
 //     FFTuner() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		// config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
 //     void step() override;
 // };
 
@@ -277,7 +277,7 @@
 
 
 // FFTunerWidget::FFTunerWidget(FFTuner *module) {
-		setModule(module);
+		// setModule(module);
 //     box.size = Vec(15*10, 380);
 
 //     {

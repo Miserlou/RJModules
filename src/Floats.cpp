@@ -79,4 +79,4 @@ FloatsWidget::FloatsWidget(Floats *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Floats::CH3_OUTPUT));
 }
 
-Model *modelFloats = createModel<Floats, FloatsWidget>("RJModules", "Floats", "[NUM] Floats", UTILITY_TAG);
+Model *modelFloats = createModel<Floats, FloatsWidget>("Floats");

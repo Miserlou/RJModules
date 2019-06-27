@@ -80,4 +80,4 @@ BPFWidget::BPFWidget(BPF *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, BPF::CH1_OUTPUT));
 }
 
-Model *modelBPF = createModel<BPF, BPFWidget>("RJModules", "BPF", "[FILT] BPF - Band Pass Filter", UTILITY_TAG);
+Model *modelBPF = createModel<BPF, BPFWidget>("BPF");

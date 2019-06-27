@@ -3,7 +3,6 @@ Pluck is an integrated VCA + "ADSR". Hacked up from Fundamental.
 */
 
 #include "RJModules.hpp"
-#include "dsp/digital.hpp"
 
 struct Pluck : Module {
     enum ParamIds {
@@ -116,43 +115,43 @@ struct Pluck : Module {
     }
 };
 
+struct PluckVUKnob : SliderKnob {
+    Pluck *module = NULL;
 
-struct PluckVUKnob : Knob {
     PluckVUKnob() {
-        box.size = mm2px(Vec(10, 20));
+        box.size = mm2px(Vec(10, 46));
     }
 
-    void draw(NVGcontext *vg) override {
-        nvgBeginPath(vg);
-        nvgRoundedRect(vg, 0, 0, box.size.x, box.size.y, 2.0);
-        nvgFillColor(vg, nvgRGB(0, 0, 0));
-        nvgFill(vg);
+    void draw(const DrawArgs &args) override {
+        float amplitude = module ? module->lastCv : 1.f;
 
-        Pluck *module = dynamic_cast<Pluck*>(this->module);
+        nvgBeginPath(args.vg);
+        nvgRoundedRect(args.vg, 0, 0, box.size.x, box.size.y, 2.0);
+        nvgFillColor(args.vg, nvgRGB(0, 0, 0));
+        nvgFill(args.vg);
 
         const int segs = 25;
-        const Vec margin = Vec(4, 4);
-        Rect r = box.zeroPos().shrink(margin);
+        const Vec margin = Vec(3, 3);
+        Rect r = box.zeroPos().grow(margin.neg());
 
         for (int i = 0; i < segs; i++) {
+            float value = paramQuantity ? paramQuantity->getValue() : 1.f;
             float segValue = clamp(value * segs - (segs - i - 1), 0.f, 1.f);
-            float amplitude = value * module->lastCv;
             float segAmplitude = clamp(amplitude * segs - (segs - i - 1), 0.f, 1.f);
-            nvgBeginPath(vg);
-            nvgRect(vg, r.pos.x, r.pos.y + r.size.y / segs * i + 0.5,
+            nvgBeginPath(args.vg);
+            nvgRect(args.vg, r.pos.x, r.pos.y + r.size.y / segs * i + 0.5,
                 r.size.x, r.size.y / segs - 1.0);
             if (segValue > 0.f) {
-                nvgFillColor(vg, colorAlpha(nvgRGBf(0.33, 0.33, 0.33), segValue));
-                nvgFill(vg);
+                nvgFillColor(args.vg, color::alpha(nvgRGBf(0.33, 0.33, 0.33), segValue));
+                nvgFill(args.vg);
             }
             if (segAmplitude > 0.f) {
-                nvgFillColor(vg, colorAlpha(COLOR_GREEN, segAmplitude));
-                nvgFill(vg);
+                nvgFillColor(args.vg, color::alpha(SCHEME_GREEN, segAmplitude));
+                nvgFill(args.vg);
             }
         }
     }
 };
-
 
 struct PluckWidget : ModuleWidget {
     PluckWidget(Pluck *module) {
@@ -179,4 +178,4 @@ struct PluckWidget : ModuleWidget {
 };
 
 
-Model *modelPluck = createModel<Pluck, PluckWidget>("RJModules", "Pluck", "[VCA] Pluck", AMPLIFIER_TAG);
+Model *modelPluck = createModel<Pluck, PluckWidget>("Pluck");

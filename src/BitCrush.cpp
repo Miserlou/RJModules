@@ -79,4 +79,4 @@ BitCrushWidget::BitCrushWidget(BitCrush *module) {
 	addOutput(createPort<PJ301MPort>(Vec(110, 145), PortWidget::OUTPUT, module, BitCrush::CH1_OUTPUT));
 }
 
-Model *modelBitCrush = createModel<BitCrush, BitCrushWidget>("RJModules", "BitCrush", "[FX] BitCrush", DISTORTION_TAG);
+Model *modelBitCrush = createModel<BitCrush, BitCrushWidget>("BitCrush");

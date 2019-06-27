@@ -157,4 +157,4 @@ SupersawWidget::SupersawWidget(Supersaw *module) {
 
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Supersaw::PHASE_POS_LIGHT));
 }
-Model *modelSupersaw = createModel<Supersaw, SupersawWidget>("RJModules", "Supersaw", "[GEN] Supersaw", LFO_TAG);
+Model *modelSupersaw = createModel<Supersaw, SupersawWidget>("Supersaw");

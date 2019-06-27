@@ -262,4 +262,4 @@ RangeLFOWidget::RangeLFOWidget(RangeLFO *module) {
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, RangeLFO::PHASE_POS_LIGHT));
 }
 
-Model *modelRangeLFO = createModel<RangeLFO, RangeLFOWidget>("RJModules", "RangeLFO", "[GEN] RangeLFO", LFO_TAG);
+Model *modelRangeLFO = createModel<RangeLFO, RangeLFOWidget>("RangeLFO");

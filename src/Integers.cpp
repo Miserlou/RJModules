@@ -83,4 +83,4 @@ IntegersWidget::IntegersWidget(Integers *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Integers::CH3_OUTPUT));
 }
 
-Model *modelIntegers = createModel<Integers, IntegersWidget>("RJModules", "Integers", "[NUM] Integers", UTILITY_TAG);
+Model *modelIntegers = createModel<Integers, IntegersWidget>("Integers");

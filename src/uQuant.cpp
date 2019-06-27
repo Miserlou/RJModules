@@ -247,5 +247,5 @@ uQuantWidget::uQuantWidget(uQuant *module) {
 
 }
 
-Model *modeluQuant = createModel<uQuant, uQuantWidget>( "RJModules", "uQuant", "[MUS] uQuant", QUANTIZER_TAG);
+Model *modeluQuant = createModel<uQuant, uQuantWidget>("uQuant");
 

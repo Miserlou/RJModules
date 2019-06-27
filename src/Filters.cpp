@@ -30,20 +30,8 @@ struct Filters : Module {
 
     Filters() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
-        reset();
     }
     void step() override;
-
-    void reset() override {
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            state[i] = true;
-        }
-    }
-    void randomize() override {
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            state[i] = (randomUniform() < 0.5);
-        }
-    }
 
     json_t *dataToJson() override {
         json_t *rootJ = json_object();
@@ -175,4 +163,4 @@ FiltersWidget::FiltersWidget(Filters *module) {
     addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 9));
 }
 
-Model *modelFilters = createModel<Filters, FiltersWidget>("RJModules", "Filters", "[FILT] Filters", UTILITY_TAG);
+Model *modelFilters = createModel<Filters, FiltersWidget>("Filters");

@@ -242,7 +242,7 @@ struct ChordSeq : Module {
 			}
 			outputs[GATE_OUTPUT + i].value = (running && gateIn && i == index && gates[i]) ? 10.0f : 0.0f;
 			lights[GATE_LIGHTS + i].setBrightnessSmooth((gateIn && i == index) ? (gates[i] ? 1.f : 0.33) : (gates[i] ? 0.66 : 0.0));
-		
+
 		    _input_pitch = params[ROW2_PARAM + i].value;
 		    _input_shape = params[ROW3_PARAM + i].value;
 		    _pitch = (int) _input_pitch % (int) 12;
@@ -429,4 +429,4 @@ struct ChordSeqWidget : ModuleWidget {
 
 
 
-Model *modelChordSeq = createModel<ChordSeq, ChordSeqWidget>("RJModules", "ChordSeq", "[SEQ] ChordSeq - Chord Sequencer", SEQUENCER_TAG);
+Model *modelChordSeq = createModel<ChordSeq, ChordSeqWidget>("ChordSeq");

@@ -99,4 +99,4 @@ RandomsWidget::RandomsWidget(Randoms *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Randoms::CH3_OUTPUT));
 }
 
-Model *modelRandoms = createModel<Randoms, RandomsWidget>("RJModules", "Randoms", "[NUM] Randoms", UTILITY_TAG);
+Model *modelRandoms = createModel<Randoms, RandomsWidget>("Randoms");

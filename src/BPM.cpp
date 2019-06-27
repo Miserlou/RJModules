@@ -190,4 +190,4 @@ BPMWidget::BPMWidget(BPM *module) {
     addChild(display);
 }
 
-Model *modelBPM = createModel<BPM, BPMWidget>("RJModules", "BPM", "[LIVE] BPM", UTILITY_TAG);
+Model *modelBPM = createModel<BPM, BPMWidget>("BPM");

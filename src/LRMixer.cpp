@@ -85,4 +85,4 @@ LRMixerWidget::LRMixerWidget(LRMixer *module) {
 
 }
 
-Model *modelLRMixer = createModel<LRMixer, LRMixerWidget>("RJModules", "LRMixer", "[MIX] LRMixer", UTILITY_TAG);
+Model *modelLRMixer = createModel<LRMixer, LRMixerWidget>("LRMixer");

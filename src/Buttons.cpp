@@ -58,7 +58,7 @@ struct Buttons: Module {
     void step() override;
 };
 
-struct MedLEDButton : SVGSwitch, MomentarySwitch {
+struct MedLEDButton : SVGSwitch {
         MedLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/MedLEDButton.svg")));
         }
@@ -217,4 +217,4 @@ ButtonsWidget::ButtonsWidget(Buttons *module) {
 
 }
 
-Model *modelButtons = createModel<Buttons, ButtonsWidget>("RJModules", "Buttons", "[LIVE] Buttons", UTILITY_TAG);
+Model *modelButtons = createModel<Buttons, ButtonsWidget>("Buttons");

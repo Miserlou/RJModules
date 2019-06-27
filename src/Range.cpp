@@ -182,4 +182,4 @@ RangeWidget::RangeWidget(Range *module) {
 
 }
 
-Model *modelRange = createModel<Range, RangeWidget>("RJModules", "Range", "[UTIL] Range", UTILITY_TAG);
+Model *modelRange = createModel<Range, RangeWidget>("Range");

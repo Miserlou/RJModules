@@ -91,4 +91,4 @@ SidechainWidget::SidechainWidget(Sidechain *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 305), PortWidget::OUTPUT, module, Sidechain::CH1_OUTPUT));
 }
 
-Model *modelSidechain = createModel<Sidechain, SidechainWidget>("RJModules", "Sidechain", "[FX] Sidechain", UTILITY_TAG);
+Model *modelSidechain = createModel<Sidechain, SidechainWidget>("Sidechain");

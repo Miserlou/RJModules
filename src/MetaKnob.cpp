@@ -113,4 +113,4 @@ MetaKnobWidget::MetaKnobWidget(MetaKnob *module) {
 
 }
 
-Model *modelMetaKnob = createModel<MetaKnob, MetaKnobWidget>("RJModules", "MetaKnob", "[LIVE] MetaKnob", UTILITY_TAG);
+Model *modelMetaKnob = createModel<MetaKnob, MetaKnobWidget>("MetaKnob");

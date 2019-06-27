@@ -125,7 +125,7 @@ void Chord::step() {
     float _pitch = (int) _input_pitch % (int) 12;
     float _octave = int(_input_pitch / 12);
 
-    float _shape = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);; 
+    float _shape = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
     float _three_interval;
     float _five_interval;
     float _seven_interval;
@@ -282,4 +282,4 @@ ChordWidget::ChordWidget(Chord *module) {
     addChild(display);
 
 }
-Model *modelChord = createModel<Chord, ChordWidget>("RJModules", "Chord", "[GEN] Chord", LFO_TAG);
+Model *modelChord = createModel<Chord, ChordWidget>("Chord");

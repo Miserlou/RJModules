@@ -1,5 +1,4 @@
 #include "RJModules.hpp"
-#include "dsp/digital.hpp"
 #include "osdialog.h"
 #include "common.hpp"
 #include <iostream>
@@ -15,7 +14,7 @@ using namespace std;
 #include "tsf.h"
 
 int num_files = 2;
-string soundfont_files[2] = {
+std::string soundfont_files[2] = {
     "soundfonts/FluidR3GM.sf2",
     "soundfonts/Grand_Piano.sf2"
 };
@@ -262,7 +261,7 @@ void EssEff::step() {
 
 struct EssEffWidget: ModuleWidget {
     EssEffWidget(EssEff *module);
-    Menu *createContextMenu() override;
+    Menu *createContextMenu();
 };
 
 EssEffWidget::EssEffWidget(EssEff *module) {
@@ -311,9 +310,9 @@ EssEffWidget::EssEffWidget(EssEff *module) {
 
 struct EssEffItem : MenuItem {
     EssEff *player;
-    void onAction(EventAction &e) override {
+    void onAction(const event::Action &e) override {
 
-        std::string dir = player->last_path.empty() ? assetLocal("") : stringDirectory(player->last_path);
+        std::string dir = "";
         char *path = osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, NULL);
         if (path) {
             player->loadFile(path);
@@ -325,20 +324,20 @@ struct EssEffItem : MenuItem {
 };
 
 Menu *EssEffcreateWidgetContextMenu() {
-    Menu *menu = ModulecreateWidgetContextMenu();
+    Menu *menu = EssEffcreateWidgetContextMenu();
 
     MenuLabel *spacerLabel = new MenuLabel();
     menu->addChild(spacerLabel);
 
-    EssEff *player = dynamic_cast<EssEff*>(module);
-    assert(player);
+    // EssEff *player = dynamic_cast<EssEff*>(module);
+    // assert(player);
 
     EssEffItem *sampleItem = new EssEffItem();
     sampleItem->text = "Load .sf2 file";
-    sampleItem->player = player;
+    // sampleItem->player = player;
     menu->addChild(sampleItem);
 
     return menu;
 }
 
-Model *modelEssEff = createModel<EssEff, EssEffWidget>("RJModules", "EssEff", "[GEN] EssEff - SoundFont Player", LFO_TAG);
+Model *modelEssEff = createModel<EssEff, EssEffWidget>("EssEff");

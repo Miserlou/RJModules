@@ -1,7 +1,4 @@
 #include "RJModules.hpp"
-#include "dsp/samplerate.hpp"
-#include "dsp/ringbuffer.hpp"
-#include "dsp/filter.hpp"
 
 #define HISTORY_SIZE (1<<21)
 
@@ -142,4 +139,4 @@ FilterDelayWidget::FilterDelayWidget(FilterDelay *module) {
     addInput(createPort<PJ301MPort>(Vec(22, 305), PortWidget::INPUT, module, FilterDelay::IN_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(105, 305), PortWidget::OUTPUT, module, FilterDelay::OUT_OUTPUT));
 }
-Model *modelFilterDelay = createModel<FilterDelay, FilterDelayWidget>("RJModules", "FilterDelay", "[FX] FilterDelay", DELAY_TAG);
+Model *modelFilterDelay = createModel<FilterDelay, FilterDelayWidget>("FilterDelay");

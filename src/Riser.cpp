@@ -174,4 +174,4 @@ RiserWidget::RiserWidget(Riser *module) {
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Riser::PHASE_POS_LIGHT));
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 140), module, Riser::PHASE_POS_LIGHT2));
 }
-Model *modelRiser = createModel<Riser, RiserWidget>("RJModules", "Riser", "[GEN] Riser", LFO_TAG);
+Model *modelRiser = createModel<Riser, RiserWidget>("Riser");

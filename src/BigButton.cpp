@@ -1,5 +1,4 @@
 #include "RJModules.hpp"
-#include "dsp/digital.hpp"
 #include <iostream>
 #include <cmath>
 
@@ -31,7 +30,8 @@ struct BigButton: Module {
     void step() override;
 };
 
-struct BigLEDButton : SVGSwitch, MomentarySwitch {
+// struct BigLEDButton : SVGSwitch, MomentarySwitch {
+struct BigLEDButton : SVGSwitch{
         BigLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/BigLEDButton.svg")));
         }
@@ -101,4 +101,4 @@ ButtonWidget::ButtonWidget(BigButton *module) {
 
 }
 
-Model *modelButton = createModel<BigButton, ButtonWidget>("RJModules", "Button", "[LIVE] Button", UTILITY_TAG);
+Model *modelButton = createModel<BigButton, ButtonWidget>("Button");

@@ -6,7 +6,7 @@
  * @brief Construct a Oscillator
  * @param sr SampleRate
  */
-DSPBLOscillator::DSPBLOscillator(float sr) : DSPSystem(sr) {
+deesp::DSPBLOscillator::DSPBLOscillator(float sr) : DSPSystem(sr) {
     lfo = new DSPSineLFO(sr);
     reset();
 }
@@ -15,7 +15,7 @@ DSPBLOscillator::DSPBLOscillator(float sr) : DSPSystem(sr) {
 /**
  * @brief Trigger recalculation of internal state
  */
-void DSPBLOscillator::invalidate() {
+void deesp::DSPBLOscillator::invalidate() {
     incr = getPhaseIncrement(param[FREQUENCY].value);
     n = floorf(sr * 0.5 / param[FREQUENCY].value);
 }
@@ -24,7 +24,7 @@ void DSPBLOscillator::invalidate() {
 /**
  * @brief Process one sample
  */
-void DSPBLOscillator::process() {
+void deesp::DSPBLOscillator::process() {
     updatePitch();
 
     /* phase locked loop */
@@ -69,7 +69,7 @@ void DSPBLOscillator::process() {
 }
 
 
-void DSPBLOscillator::reset() {
+void deesp::DSPBLOscillator::reset() {
     param[FREQUENCY].value = 0.f;
     param[PULSEWIDTH].value = 1.f;
     phase = 0.f;
@@ -106,7 +106,7 @@ void DSPBLOscillator::reset() {
  * @param tune Tune knob value
  * @param oct Octave knob value
  */
-void DSPBLOscillator::updatePitch() {
+void deesp::DSPBLOscillator::updatePitch() {
     // CV is at 1V/OCt, C0 = 16.3516Hz, C4 = 261.626Hz
     // 10.3V = 20614.33hz
 
@@ -160,17 +160,17 @@ void DSPBLOscillator::updatePitch() {
 }
 
 
-void DSPBLOscillator::setFrequency(float frq) {
+void deesp::DSPBLOscillator::setFrequency(float frq) {
     setParam(FREQUENCY, clamp(frq, 0.00001f, 18000.f), true);
 }
 
 
-void DSPBLOscillator::setPulseWidth(float width) {
+void deesp::DSPBLOscillator::setPulseWidth(float width) {
     setParam(PULSEWIDTH, width, true);
 }
 
 
-void DSPBLOscillator::setInputs(float voct1, float voct2, float fm, float tune, float oct) {
+void deesp::DSPBLOscillator::setInputs(float voct1, float voct2, float fm, float tune, float oct) {
     setInput(VOCT1, voct1);
     setInput(VOCT2, voct2);
     setInput(FM_CV, fm);
@@ -186,7 +186,7 @@ void DSPBLOscillator::setInputs(float voct1, float voct2, float fm, float tune, 
  * @brief Pass changed samplerate to LFO
  * @param sr
  */
-void DSPBLOscillator::updateSampleRate(float sr) {
+void deesp::DSPBLOscillator::updateSampleRate(float sr) {
     DSPSystem::updateSampleRate(sr);
     lfo->updateSampleRate(sr);
 }

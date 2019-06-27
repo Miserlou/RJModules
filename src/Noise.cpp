@@ -171,4 +171,4 @@ NoiseWidget::NoiseWidget(Noise *module) {
 
     addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Noise::NOISE_OUTPUT));
 }
-Model *modelNoise = createModel<Noise, NoiseWidget>("RJModules", "Noise", "[GEN] Noise", LFO_TAG);
+Model *modelNoise = createModel<Noise, NoiseWidget>("Noise");

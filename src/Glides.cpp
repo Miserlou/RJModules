@@ -1,5 +1,4 @@
 #include "RJModules.hpp"
-#include "dsp/digital.hpp"
 
 #define NUM_CHANNELS 10
 
@@ -28,20 +27,8 @@ struct Glides : Module {
 
     Glides() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        reset();
     }
     void step() override;
-
-    void reset() override {
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            state[i] = true;
-        }
-    }
-    void randomize() override {
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            state[i] = (randomUniform() < 0.5);
-        }
-    }
 
     json_t *dataToJson() override {
         json_t *rootJ = json_object();
@@ -75,7 +62,7 @@ void Glides::step() {
             state[i] = out;
         } else {
             out = state[i] - (.00001 * (10 - (params[GLIDE_PARAM + i].value)));
-            state[i] = out;            
+            state[i] = out;
         }
 
         outputs[OUT_OUTPUT + i].value = out;
@@ -137,4 +124,4 @@ GlidesWidget::GlidesWidget(Glides *module) {
     addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Glides::OUT_OUTPUT + 9));
 }
 
-Model *modelGlides = createModel<Glides, GlidesWidget>("RJModules", "Glides", "[GEN] Glides", UTILITY_TAG);
+Model *modelGlides = createModel<Glides, GlidesWidget>("Glides");

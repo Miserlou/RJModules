@@ -159,4 +159,4 @@ TwinLFOWidget::TwinLFOWidget(TwinLFO *module) {
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, TwinLFO::PHASE_POS_LIGHT));
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 140), module, TwinLFO::PHASE_POS_LIGHT2));
 }
-Model *modelTwinLFO = createModel<TwinLFO, TwinLFOWidget>("RJModules", "TwinLFO", "[GEN] TwinLFO", LFO_TAG);
+Model *modelTwinLFO = createModel<TwinLFO, TwinLFOWidget>("TwinLFO");

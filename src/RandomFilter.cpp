@@ -37,7 +37,7 @@ struct RandomFilter: Module {
     void step() override;
 };
 
-struct BigAssLEDButton : SVGSwitch, MomentarySwitch {
+struct BigAssLEDButton : SVGSwitch {
         BigAssLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/BigLEDButton.svg")));
         }
@@ -120,4 +120,4 @@ RandomFilterWidget::RandomFilterWidget(RandomFilter *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, RandomFilter::CH1_OUTPUT));
 }
 
-Model *modelRandomFilter = createModel<RandomFilter, RandomFilterWidget>("RJModules", "RandomFilter", "[FILT] RandomFilter", UTILITY_TAG);
+Model *modelRandomFilter = createModel<RandomFilter, RandomFilterWidget>("RandomFilter");

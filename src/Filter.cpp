@@ -113,4 +113,4 @@ FilterWidget::FilterWidget(Filter *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, Filter::CH1_OUTPUT));
 }
 
-Model *modelFilter = createModel<Filter, FilterWidget>("RJModules", "Filter", "[FILT] Filter", UTILITY_TAG);
+Model *modelFilter = createModel<Filter, FilterWidget>("Filter");

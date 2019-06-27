@@ -67,4 +67,4 @@ PannerWidget::PannerWidget(Panner *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 175), PortWidget::OUTPUT, module, Panner::CH2_OUTPUT));
 }
 
-Model *modelPanner = createModel<Panner, PannerWidget>("RJModules", "Panner", "[MIX] Panner", UTILITY_TAG);
+Model *modelPanner = createModel<Panner, PannerWidget>("Panner");

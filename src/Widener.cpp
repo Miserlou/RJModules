@@ -3,11 +3,6 @@
 #include <random>
 #include <cmath>
 
-#include "dsp/digital.hpp"
-#include "dsp/samplerate.hpp"
-#include "dsp/ringbuffer.hpp"
-#include "dsp/filter.hpp"
-
 #include "RJModules.hpp"
 #include "VAStateVariableFilter.h"
 
@@ -168,4 +163,4 @@ WidenerWidget::WidenerWidget(Widener *module) {
     addOutput(createPort<PJ301MPort>(Vec(62, 315), PortWidget::OUTPUT, module, Widener::CH1_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(100, 315), PortWidget::OUTPUT, module, Widener::CH2_OUTPUT));
 }
-Model *modelWidener = createModel<Widener, WidenerWidget>("RJModules", "Widener", "[FX] Widener", UTILITY_TAG);
+Model *modelWidener = createModel<Widener, WidenerWidget>("Widener");

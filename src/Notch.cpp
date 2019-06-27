@@ -82,4 +82,4 @@ NotchWidget::NotchWidget(Notch *module) {
     addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, Notch::CH1_OUTPUT));
 }
 
-Model *modelNotch = createModel<Notch, NotchWidget>("RJModules", "Notch", "[FILT] Notch", UTILITY_TAG);
+Model *modelNotch = createModel<Notch, NotchWidget>("Notch");

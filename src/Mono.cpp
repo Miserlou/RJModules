@@ -67,4 +67,4 @@ MonoWidget::MonoWidget(Mono *module) {
     addOutput(createPort<PJ301MPort>(Vec(22, 255), PortWidget::OUTPUT, module, Mono::CH1_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(104, 255), PortWidget::OUTPUT, module, Mono::CH2_OUTPUT));
 }
-Model *modelMono = createModel<Mono, MonoWidget>("RJModules", "Mono", "[MIX] Mono", UTILITY_TAG);
+Model *modelMono = createModel<Mono, MonoWidget>("Mono");

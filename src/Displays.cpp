@@ -1,6 +1,5 @@
 #include "RJModules.hpp"
 
-#include "dsp/digital.hpp"
 #include "common.hpp"
 #include <iostream>
 #include <cmath>
@@ -140,4 +139,4 @@ DisplaysWidget::DisplaysWidget(Displays *module) {
 
 }
 
-Model *modelDisplays = createModel<Displays, DisplaysWidget>("RJModules", "Displays", "[UTIL] Displays", UTILITY_TAG);
+Model *modelDisplays = createModel<Displays, DisplaysWidget>("Displays");

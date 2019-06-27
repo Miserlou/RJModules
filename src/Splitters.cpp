@@ -98,4 +98,4 @@ SplittersWidget::SplittersWidget(Splitters *module) {
 
 }
 
-Model *modelSplitters = createModel<Splitters, SplittersWidget>("RJModules", "Splitters", "[UTIL] Splitters", UTILITY_TAG);
+Model *modelSplitters = createModel<Splitters, SplittersWidget>("Splitters");

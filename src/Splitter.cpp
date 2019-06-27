@@ -81,4 +81,4 @@ SplitterWidget::SplitterWidget(Splitter *module) {
 
 }
 
-Model *modelSplitter = createModel<Splitter, SplitterWidget>("RJModules", "Splitter", "[UTIL] Splitter", UTILITY_TAG);
+Model *modelSplitter = createModel<Splitter, SplitterWidget>("Splitter");

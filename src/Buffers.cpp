@@ -4,11 +4,6 @@
 #include <random>
 #include <cmath>
 
-#include "dsp/digital.hpp"
-#include "dsp/samplerate.hpp"
-#include "dsp/ringbuffer.hpp"
-#include "dsp/filter.hpp"
-
 #define NUM_CHANNELS 10
 #define HISTORY_SIZE (1<<21)
 
@@ -66,43 +61,43 @@ struct Buffers : Module {
 
     Buffers() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        reset();
+        // reset();
     }
     void step() override;
 
-    void reset() override {
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            state[i] = true;
-        }
-    }
-    void randomize() override {
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            state[i] = (randomUniform() < 0.5);
-        }
-    }
+    // void reset() override {
+    //     for (int i = 0; i < NUM_CHANNELS; i++) {
+    //         state[i] = true;
+    //     }
+    // }
+    // void randomize() override {
+    //     for (int i = 0; i < NUM_CHANNELS; i++) {
+    //         state[i] = (randomUniform() < 0.5);
+    //     }
+    // }
 
-    json_t *dataToJson() override {
-        json_t *rootJ = json_object();
-        // states
-        json_t *statesJ = json_array();
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            json_t *stateJ = json_boolean(state[i]);
-            json_array_append_new(statesJ, stateJ);
-        }
-        json_object_set_new(rootJ, "states", statesJ);
-        return rootJ;
-    }
-    void dataFromJson(json_t *rootJ) override {
-        // states
-        json_t *statesJ = json_object_get(rootJ, "states");
-        if (statesJ) {
-            for (int i = 0; i < NUM_CHANNELS; i++) {
-                json_t *stateJ = json_array_get(statesJ, i);
-                if (stateJ)
-                    state[i] = json_boolean_value(stateJ);
-            }
-        }
-    }
+    // json_t *dataToJson() override {
+    //     json_t *rootJ = json_object();
+    //     // states
+    //     json_t *statesJ = json_array();
+    //     for (int i = 0; i < NUM_CHANNELS; i++) {
+    //         json_t *stateJ = json_boolean(state[i]);
+    //         json_array_append_new(statesJ, stateJ);
+    //     }
+    //     json_object_set_new(rootJ, "states", statesJ);
+    //     return rootJ;
+    // }
+    // void dataFromJson(json_t *rootJ) override {
+    //     // states
+    //     json_t *statesJ = json_object_get(rootJ, "states");
+    //     if (statesJ) {
+    //         for (int i = 0; i < NUM_CHANNELS; i++) {
+    //             json_t *stateJ = json_array_get(statesJ, i);
+    //             if (stateJ)
+    //                 state[i] = json_boolean_value(stateJ);
+    //         }
+    //     }
+    // }
 };
 
 void Buffers::step() {
@@ -121,11 +116,11 @@ void Buffers::step() {
     /*
         Oh god I'm so sorry I'm just so lazy right now
         Don't judge me on this, just send a PR
-    */ 
+    */
 
     /*
         1
-    */ 
+    */
     float in = inputs[IN_INPUT].value;
     // Compute delay time in seconds
     float delay = .01 * params[MUTE_PARAM].value;
@@ -160,7 +155,7 @@ void Buffers::step() {
 
     /*
         2
-    */ 
+    */
     in = inputs[IN_INPUT + 1].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 1].value;
@@ -193,7 +188,7 @@ void Buffers::step() {
 
     /*
         3
-    */ 
+    */
     in = inputs[IN_INPUT + 2].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 2].value;
@@ -226,7 +221,7 @@ void Buffers::step() {
 
     /*
         4
-    */ 
+    */
     in = inputs[IN_INPUT + 3].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 3].value;
@@ -259,7 +254,7 @@ void Buffers::step() {
 
     /*
         5
-    */ 
+    */
     in = inputs[IN_INPUT + 4].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 4].value;
@@ -292,7 +287,7 @@ void Buffers::step() {
 
     /*
         6
-    */ 
+    */
     in = inputs[IN_INPUT + 5].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 5].value;
@@ -325,7 +320,7 @@ void Buffers::step() {
 
     /*
         7
-    */ 
+    */
     in = inputs[IN_INPUT + 6].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 6].value;
@@ -358,7 +353,7 @@ void Buffers::step() {
 
     /*
         8
-    */ 
+    */
     in = inputs[IN_INPUT + 7].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 7].value;
@@ -391,7 +386,7 @@ void Buffers::step() {
 
     /*
         9
-    */ 
+    */
     in = inputs[IN_INPUT + 8].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 8].value;
@@ -424,7 +419,7 @@ void Buffers::step() {
 
     /*
         10
-    */ 
+    */
     in = inputs[IN_INPUT + 9].value;
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 9].value;
@@ -512,4 +507,4 @@ BuffersWidget::BuffersWidget(Buffers *module) {
     addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 9));
 }
 
-Model *modelBuffers = createModel<Buffers, BuffersWidget>("RJModules", "Buffers", "[UTIL] Buffers", UTILITY_TAG);
+Model *modelBuffers = createModel<Buffers, BuffersWidget>("Buffers");
