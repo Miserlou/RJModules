@@ -1,5 +1,4 @@
 #include "RJModules.hpp"
-#include "dsp/digital.hpp"
 
 #include "common.hpp"
 #include <iostream>
@@ -7,14 +6,14 @@
 #include <sstream>
 #include <iomanip>
 
-struct LowFrequencyOscillator {
+struct LowFrequencyOscillatorr {
     float phase = 0.0;
     float pw = 0.5;
     float freq = 1.0;
     bool offset = false;
     bool invert = false;
     SchmittTrigger resetTrigger;
-    LowFrequencyOscillator() {}
+    LowFrequencyOscillatorr() {}
     void setPitch(float pitch) {
         pitch = fminf(pitch, 8.0);
         freq = powf(2.0, pitch);
@@ -73,12 +72,12 @@ Display
 */
 
 
-struct SmallIntegerDisplayWidgeter : TransparentWidget {
+struct SmallIntegerDisplayWidgeterer : TransparentWidget {
 
   float *value;
   std::shared_ptr<Font> font;
 
-  SmallIntegerDisplayWidgeter() {
+  SmallIntegerDisplayWidgeterer() {
     font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
@@ -125,9 +124,9 @@ struct RangeLFO : Module {
         FM2_PARAM,
         PW_PARAM,
         PWM_PARAM,
-        NUM_PARAMS,
         CH1_PARAM,
         CH2_PARAM,
+        NUM_PARAMS
     };
     enum InputIds {
         FM1_INPUT,
@@ -152,15 +151,10 @@ struct RangeLFO : Module {
         NUM_LIGHTS
     };
 
-    LowFrequencyOscillator oscillator;
-
+    LowFrequencyOscillatorr oscillator;
 
     float display1_val;
     float display2_val;
-    float display3_val;
-    float display4_val;
-    float display5_val;
-    float display6_val;
 
     RangeLFO() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
@@ -170,7 +164,7 @@ struct RangeLFO : Module {
 
 void RangeLFO::step() {
 
-    // display
+    //display
     display1_val = params[CH1_PARAM].value * clamp(inputs[FROM_CV_INPUT].normalize(10.0f) / 10.0f, -1.0f, 1.0f);
     display2_val = params[CH2_PARAM].value * clamp(inputs[TO_CV_INPUT].normalize(10.0f) / 10.0f, -1.0f, 1.0f);
 
@@ -225,23 +219,24 @@ RangeLFOWidget::RangeLFOWidget(RangeLFO *module) {
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     if(module != NULL){
-        SmallIntegerDisplayWidgeter *display = new SmallIntegerDisplayWidgeter();
+        SmallIntegerDisplayWidgeterer *display = new SmallIntegerDisplayWidgeterer();
         display->box.pos = Vec(23, 160);
         display->box.size = Vec(50, 40);
         display->value = &module->display1_val;
         addChild(display);
+
         addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
         addInput(createPort<PJ301MPort>(Vec(5, 235), PortWidget::INPUT, module, RangeLFO::FROM_CV_INPUT));
 
-        SmallIntegerDisplayWidgeter *display2 = new SmallIntegerDisplayWidgeter();
+        SmallIntegerDisplayWidgeterer *display2 = new SmallIntegerDisplayWidgeterer();
         display2->box.pos = Vec(83, 160);
         display2->box.size = Vec(50, 40);
         display2->value = &module->display2_val;
         addChild(display2);
-    }
 
-    addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
-    addInput(createPort<PJ301MPort>(Vec(62, 235), PortWidget::INPUT, module, RangeLFO::TO_CV_INPUT));
+        addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
+        addInput(createPort<PJ301MPort>(Vec(62, 235), PortWidget::INPUT, module, RangeLFO::TO_CV_INPUT));
+    }
 
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, RangeLFO::FREQ_PARAM, -8.0, 6.0, -1.0));
     // addParam(createParam<RoundBlackKnob>(Vec(23, 143), module, RangeLFO::FM1_PARAM, 0.0, 1.0, 0.0));

@@ -324,7 +324,7 @@ struct Acid : Module {
         env_in = 0.0f;
 
         // Trigger
-        if (inputs[TRIG_INPUT].value >= 1.0f) {
+        if (env_trigger.process(inputs[TRIG_INPUT].value)) {
             env_gate = true;
         }
         if (env_gate) {
@@ -420,8 +420,12 @@ struct Acid : Module {
 
             // Gate and trigger
             bool gated = inputs[TRIG_INPUT].value >= 1.0f;
-            if (trigger.process(inputs[TRIG_INPUT].value))
+            if (trigger.process(inputs[TRIG_INPUT].value)){
                 decaying = false;
+                gated =true;
+            } else{
+                gated=false;
+            }
 
             const float base = 20000.0f;
             const float maxTime = 20.0f;
@@ -616,7 +620,7 @@ struct AcidWidget : ModuleWidget {
 
         // Pluck
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_REL_PARAM, 0.2f, 0.4f, 0.2f));
-        addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.0001f, .2f, 4.0f));
+        addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM, 0.0001f, .1f, 4.0f));
         // addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_ATTACK_PARAM, 0.0, 1.0f, 0.90f));
 
         addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Acid::PLUCK_REL_INPUT));
