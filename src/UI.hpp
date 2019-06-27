@@ -110,19 +110,19 @@ struct AHParamWidget { // it's a mix-in
 };
 
 // Not going to monitor buttons
-struct AHButton : SVGSwitch, MomentarySwitch {
+struct AHButton : SVGSwitch {
 	AHButton() {
 		addFrame(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHButton.svg")));
 	}
 };
 
 struct AHKnob : RoundKnob, AHParamWidget {
-	void onChange(EventChange &e) override {
+	void onChange(const event::Change &e) override {
 		// One off cast, don't want to subclass from ParamWidget, so have to grab it here
-		if (!mod) {
-			mod = static_cast<AHModule *>(this->module);
-		}
-		mod->receiveEvent(generateEvent(value));
+		// if (!mod) {
+		// 	mod = static_cast<AHModule *>(this->module);
+		// }
+		// mod->receiveEvent(generateEvent(value));
 		RoundKnob::onChange(e);
 	}
 };
