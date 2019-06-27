@@ -12,7 +12,7 @@
 #define DRIFT_FREQ 0.00005f
 #define DRIFT_VARIANZ 0.004
 
-namespace dsp {
+namespace deesp {
 
 /**
  * @brief Simple and fast LFO

@@ -6,7 +6,7 @@
  * @brief Basic DSP types
  */
 
-namespace dsp {
+namespace deesp {
 
 /**
  * @brief Represents an IOPort of a DSP system

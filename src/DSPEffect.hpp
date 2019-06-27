@@ -1,13 +1,13 @@
 #pragma once
 
 #include <string.h>
-#include "dsp/ringbuffer.hpp"
+// #include "dsp/ringbuffer.hpp"
 
 #define RS_BUFFER_SIZE 512
 #define UPSAMPLE_COMPENSATION 1.3
 
 
-namespace dsp {
+namespace deesp {
 
 /**
  * @brief Base class for all signal processors

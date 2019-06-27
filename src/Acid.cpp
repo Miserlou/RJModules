@@ -14,7 +14,6 @@ Elements pinched from Lindenberg + dBiZ
 #include <iostream>
 
 #include "Oscillator.hpp"
-#include "dsp/digital.hpp"
 
 #include <math.h>
 #define DR_WAV_IMPLEMENTATION
@@ -24,7 +23,7 @@ Elements pinched from Lindenberg + dBiZ
 #include <dirent.h>
 #include <algorithm> //----added by Joakim Lindbom
 
-using dsp::DSPBLOscillator;
+using deesp::DSPBLOscillator;
 #define pi 3.14159265359
 
 using namespace std;
@@ -186,12 +185,12 @@ struct Acid : Module {
     vector<vector<float>> playBuffer;
     bool loading = false;
     bool play = false;
-    string lastPath = "";
+    std::string lastPath = "";
     float samplePos = 0;
     float startPos = 0;
-    string fileDesc;
+    std::string fileDesc;
     bool fileLoaded = false;
-    vector <string> fichier;
+    vector <std::string> fichier;
     int sampnumber = 0;
     int retard = 0;
     bool reload = false ;
@@ -512,13 +511,11 @@ struct Acid : Module {
             for (int i=0; i < floor(totalSampleCount); i = i + floor(totalSampleCount/130)) {
                 displayBuff.push_back(playBuffer[0][i]);
             }
-            fileDesc = stringFilename(path)+ "\n";
-            fileDesc += std::to_string(sampleRate)+ " Hz" + "\n";
-            fileDesc += std::to_string(channels)+ " channel(s)" + "\n";
+            fileDesc = "\n";
             if (reload) {
                 DIR* rep = NULL;
                 struct dirent* dirp = NULL;
-                std::string dir = path.empty() ? assetLocal("") : stringDirectory(path);
+                std::string dir = path.empty() ? assetLocal("") : "";
 
                 rep = opendir(dir.c_str());
                 int i = 0;
@@ -639,4 +636,4 @@ struct AcidWidget : ModuleWidget {
 };
 
 
-Model *modelAcid = createModel<Acid, AcidWidget>("RJModules", "Acid");
+Model *modelAcid = createModel<Acid, AcidWidget>("Acid");

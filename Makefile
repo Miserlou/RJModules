@@ -12,5 +12,7 @@ SOURCES += $(wildcard src/*.cpp)
 
 DISTRIBUTABLES += $(wildcard LICENSE*) res soundfonts samples
 
+FLAGS += -w
+
 RACK_DIR ?= ../..
 include $(RACK_DIR)/plugin.mk

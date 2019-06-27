@@ -1,8 +1,6 @@
 #include "DSPMath.hpp"
 #include "Oscillator.hpp"
 
-using namespace dsp;
-
 
 /**
  * @brief Construct a Oscillator
