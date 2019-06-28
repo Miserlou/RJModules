@@ -1,13 +1,16 @@
 <img src="https://i.imgur.com/mksL6UX.png" width="100%">
 
 # RJModules [![](https://img.shields.io/badge/version-0.5.0-brightgreen.svg)](https://github.com/Miserlou/RJModules/releases) [![](https://img.shields.io/badge/youtube-demo-red.svg)](https://www.youtube.com/watch?v=qkEjmZZbGGo)
-Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack). So far, mostly simple utilities and effects, hopefully some more interesting ones soon!
+Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack) 0.6.3 and 1.1.0+. 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
 - [Contents](#contents)
+  - [Synths](#synths)
+    - [ACID](#acid)
+    - [EssEff](#esseff)
   - [Generators](#generators)
     - [Supersaw](#supersaw)
     - [Twin LFO](#twin-lfo)
@@ -54,6 +57,19 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Contents
+
+### Synths
+
+#### ACID
+<img src='https://i.imgur.com/zJyg3A9.png' width="25%" />
+ACID is my take on the legendary TB-303. It features two independent multi-waveform VCOs and mixer, wavetables from the actual 303, an integrated envelope generator, a powerful filter, and a pluck circuit!
+
+Experiment with this and you'll find yourself making some of the craziest, squelchiest acid the world has ever heard!
+
+Oh, and there's also a hidden feature - see if you can find it!
+
+#### EssEff
+EssEff is a SoundFont (sf2) player! Comes with a few free soundfonts and the button lets you load more.
 
 ### Generators
 
