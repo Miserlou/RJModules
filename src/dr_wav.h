@@ -1054,11 +1054,8 @@ drwav_bool32 drwav_init_file(drwav* pWav, const char* filename)
 {
     FILE* pFile = drwav_fopen(filename, "rb");
     if (pFile == NULL) {
-        std::cout << "no file\n";
         return DRWAV_FALSE;
     }
-
-    std::cout << "file\n";
     return drwav_init(pWav, drwav__on_read_stdio, drwav__on_seek_stdio, (void*)pFile);
 }
 

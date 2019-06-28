@@ -119,7 +119,7 @@ struct PluckVUKnob : SliderKnob {
     Pluck *module = NULL;
 
     PluckVUKnob() {
-        box.size = mm2px(Vec(10, 46));
+        box.size = mm2px(Vec(10, 20));
     }
 
     void draw(const DrawArgs &args) override {

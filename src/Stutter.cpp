@@ -52,6 +52,7 @@ struct Stutter : Module {
 struct BigSwitchLEDButton : SVGSwitch {
         BigSwitchLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/SwitchLEDButton.svg")));
+                momentary = true;
         }
 };
 

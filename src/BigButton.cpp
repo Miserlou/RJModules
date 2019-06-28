@@ -34,6 +34,7 @@ struct BigButton: Module {
 struct BigLEDButton : SVGSwitch{
         BigLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/BigLEDButton.svg")));
+                momentary = true;
         }
 };
 

@@ -88,6 +88,7 @@ struct ReplayKnob : Module {
 struct LilLEDButton : SVGSwitch {
         LilLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/LilLEDButton.svg")));
+                momentary = true;
         }
 };
 

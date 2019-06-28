@@ -61,6 +61,7 @@ struct Buttons: Module {
 struct MedLEDButton : SVGSwitch {
         MedLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/MedLEDButton.svg")));
+                momentary = true;
         }
 };
 

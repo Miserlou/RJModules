@@ -265,7 +265,7 @@ struct EssEffWidget: ModuleWidget {
 };
 
 EssEffWidget::EssEffWidget(EssEff *module) {
-		setModule(module);
+	setModule(module);
     box.size = Vec(15*10, 380);
 
     {
@@ -326,6 +326,9 @@ struct EssEffItem : MenuItem {
 };
 
 Menu *EssEffcreateWidgetContextMenu() {
+
+    std::cout << "HELP\n";
+
     Menu *menu = EssEffcreateWidgetContextMenu();
 
     MenuLabel *spacerLabel = new MenuLabel();

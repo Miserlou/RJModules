@@ -40,6 +40,7 @@ struct RandomFilter: Module {
 struct BigAssLEDButton : SVGSwitch {
         BigAssLEDButton() {
                 addFrame(SVG::load(assetPlugin(pluginInstance, "res/BigLEDButton.svg")));
+                momentary = true;
         }
 };
 
