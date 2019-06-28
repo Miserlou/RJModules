@@ -172,7 +172,7 @@ struct Acid : Module {
         SUSTAIN_LIGHT,
         RELEASE_LIGHT,
         NUM_LIGHTS
-};
+    };
 
     // Wave
     DSPBLOscillator *osc1 = new DSPBLOscillator(engineGetSampleRate());

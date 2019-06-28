@@ -15,8 +15,8 @@ using namespace std;
 
 int num_files = 2;
 std::string soundfont_files[2] = {
-    "soundfonts/FluidR3GM.sf2",
-    "soundfonts/Grand_Piano.sf2"
+    "soundfonts/Grand_Piano.sf2",
+    "soundfonts/8bit.sf2"
 };
 
 /*
