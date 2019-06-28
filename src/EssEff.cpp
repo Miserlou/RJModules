@@ -19,6 +19,8 @@ std::string soundfont_files[2] = {
     "soundfonts/8bit.sf2"
 };
 
+
+
 /*
 Display
 */
@@ -66,6 +68,7 @@ struct EssEff : Module {
         PRESET_PARAM,
         MOD_PARAM,
         BEND_PARAM,
+        REC_BUTTON,
         NUM_PARAMS
     };
     enum InputIds {
@@ -258,6 +261,32 @@ void EssEff::step() {
     }
 }
 
+/*
+Button
+*/
+
+struct RecButton : SvgSwitch {
+    RecButton() {
+        momentary = true;
+        addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LilLEDButton.svg")));
+    }
+
+    void onDragStart(const event::DragStart &e) override {
+        EssEff *module = dynamic_cast<EssEff*>(paramQuantity->module);
+        if (module && module->last_path == ""){
+            std::string dir = "";
+            char *path = osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, NULL);
+            if (path) {
+                module->loadFile(path);
+                module->last_path = path;
+                module->file_chosen = true;
+                free(path);
+            }
+        }
+
+        SvgSwitch::onDragStart(e);
+    }
+};
 
 struct EssEffWidget: ModuleWidget {
     EssEffWidget(EssEff *module);
@@ -308,6 +337,10 @@ EssEffWidget::EssEffWidget(EssEff *module) {
     addInput(createPort<PJ301MPort>(Vec(16, 320), PortWidget::INPUT, module, EssEff::VOCT_INPUT));
     addInput(createPort<PJ301MPort>(Vec(53, 320), PortWidget::INPUT, module, EssEff::GATE_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, EssEff::MAIN_OUTPUT));
+
+    //Button
+    addParam(createParam<RecButton>(Vec(114, 40), module, EssEff::REC_BUTTON, 0.0, 1.0, 0.0));
+
 }
 
 struct EssEffItem : MenuItem {
@@ -327,8 +360,6 @@ struct EssEffItem : MenuItem {
 
 Menu *EssEffcreateWidgetContextMenu() {
 
-    std::cout << "HELP\n";
-
     Menu *menu = EssEffcreateWidgetContextMenu();
 
     MenuLabel *spacerLabel = new MenuLabel();
@@ -344,5 +375,7 @@ Menu *EssEffcreateWidgetContextMenu() {
 
     return menu;
 }
+
+
 
 Model *modelEssEff = createModel<EssEff, EssEffWidget>("EssEff");
