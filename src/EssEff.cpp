@@ -1,6 +1,7 @@
 #include "RJModules.hpp"
 #include "osdialog.h"
 #include "common.hpp"
+#include <locale> // for wstring_convert
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -127,7 +128,8 @@ std::string EssEff::getAbsolutePath(std::string path){
         if (absPathC)
             return absPathC;
     #elif defined ARCH_WIN
-        std::wstring pathW = toWstring(path);
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        std::wstring pathW = converter.from_bytes(path);
         wchar_t buf[PATH_MAX];
         wchar_t *absPathC = _wfullpath(buf, pathW.c_str(), PATH_MAX);
         if (absPathC)
