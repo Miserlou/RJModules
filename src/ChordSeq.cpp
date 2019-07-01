@@ -135,6 +135,13 @@ struct ChordSeq : Module {
 
 	ChordSeq() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+		configParam(ChordSeq::CLOCK_PARAM, -2.0f, 6.0f, 2.0f, "");
+		configParam(ChordSeq::RUN_PARAM, 0.0f, 1.0f, 0.0f, "");
+		configParam(ChordSeq::RESET_PARAM, 0.0f, 1.0f, 0.0f, "");
+		configParam(ChordSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "");
+		configParam(ChordSeq::ROW2_PARAM + i, 0.0, 59.0, 24.0, "");
+		configParam(ChordSeq::ROW3_PARAM + i, 0.0f, 3.0f, 0.0f, "");
+		configParam(ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f, "");
 		onReset();
 	}
 
@@ -389,12 +396,12 @@ struct ChordSeqWidget : ModuleWidget {
 		addChild(createWidget<ScrewSilver>(Vec(15, 365)));
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-		addParam(createParam<RoundBlackKnob>(Vec(18, 56), module, ChordSeq::CLOCK_PARAM, -2.0f, 6.0f, 2.0f));
-		addParam(createParam<LEDButton>(Vec(60, 61-1), module, ChordSeq::RUN_PARAM, 0.0f, 1.0f, 0.0f));
+		addParam(createParam<RoundBlackKnob>(Vec(18, 56), module, ChordSeq::CLOCK_PARAM));
+		addParam(createParam<LEDButton>(Vec(60, 61-1), module, ChordSeq::RUN_PARAM));
 		addChild(createLight<MediumLight<GreenLight>>(Vec(64.4f, 64.4f), module, ChordSeq::RUNNING_LIGHT));
-		addParam(createParam<LEDButton>(Vec(99, 61-1), module, ChordSeq::RESET_PARAM, 0.0f, 1.0f, 0.0f));
+		addParam(createParam<LEDButton>(Vec(99, 61-1), module, ChordSeq::RESET_PARAM));
 		addChild(createLight<MediumLight<GreenLight>>(Vec(103.4f, 64.4f), module, ChordSeq::RESET_LIGHT));
-		addParam(createParam<RoundBlackSnapKnob>(Vec(132, 56), module, ChordSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f));
+		addParam(createParam<RoundBlackSnapKnob>(Vec(132, 56), module, ChordSeq::STEPS_PARAM));
 		addChild(createLight<MediumLight<GreenLight>>(Vec(179.4f, 64.4f), module, ChordSeq::GATES_LIGHT));
 		addChild(createLight<MediumLight<GreenLight>>(Vec(218.4f, 64.4f), module, ChordSeq::ROW_LIGHTS));
 		addChild(createLight<MediumLight<GreenLight>>(Vec(256.4f, 64.4f), module, ChordSeq::ROW_LIGHTS + 1));
@@ -419,9 +426,9 @@ struct ChordSeqWidget : ModuleWidget {
 			    display->value = &module->chord_values[i];
 			    addChild(display);
 
-				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i, 0.0, 59.0, 24.0));
-				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i, 0.0f, 3.0f, 0.0f));
-				addParam(createParam<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f));
+				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 198), module, ChordSeq::ROW2_PARAM + i));
+				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i));
+				addParam(createParam<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i));
 				addChild(createLight<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
 				addOutput(createPort<PJ301MPort>(Vec(portX[i]-1, 307), PortWidget::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));
 			}

@@ -79,7 +79,12 @@ struct uQuant : AHModule {
         NUM_LIGHTS
     };
 
-    uQuant() : AHModule(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {}
+    uQuant() : AHModule(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS) {
+    configParam(uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f, "");
+    configParam(uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f, "");
+    configParam(uQuant::SHIFT_PARAM, -3.0f, 3.0f, 0.0f, "");
+    configParam(uQuant::TRANS_PARAM, -11.0f, 11.0f, 0.0f, "");
+    }
 
     void step() override;
 
@@ -223,7 +228,7 @@ uQuantWidget::uQuantWidget(uQuant *module) {
         displayKey->box.size = Vec(25, 25);
         displayKey->value = &module->keyValue[0];
         addChild(displayKey);
-        addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+        addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM)); // 12 notes
         addInput(createPort<PJ301MPort>(Vec(leftPad, 125), PortWidget::INPUT, module, uQuant::KEY_INPUT));
 
         TinyStringDisplayWidget *displayScale = new TinyStringDisplayWidget();
@@ -234,14 +239,14 @@ uQuantWidget::uQuantWidget(uQuant *module) {
         addChild(displayScale);
     }
 
-    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM, 0.0f, 11.0f, 0.0f)); // 12 notes
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM)); // 12 notes
     addInput(createPort<PJ301MPort>(Vec(leftPad, 209), PortWidget::INPUT, module, uQuant::SCALE_INPUT));
 
     // Octave
-    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 240), module, uQuant::SHIFT_PARAM, -3.0f, 3.0f, 0.0f));
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 240), module, uQuant::SHIFT_PARAM));
 
     // Transpose
-    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad,265), module, uQuant::TRANS_PARAM, -11.0f, 11.0f, 0.0f)); // 12 notes
+    addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad,265), module, uQuant::TRANS_PARAM)); // 12 notes
     addInput(createPort<PJ301MPort>(Vec(leftPad, 290), PortWidget::INPUT, module, uQuant::TRANS_INPUT));
 
     // Outputs

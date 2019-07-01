@@ -26,7 +26,9 @@ struct BigButton: Module {
     float resetLight = 0.0;
 
     BigButton() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(BigButton::RESET_PARAM, 0.0, 1.0, 0.0, "");
+    }
     void step() override;
 };
 
@@ -97,7 +99,7 @@ ButtonWidget::ButtonWidget(BigButton *module) {
     addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, BigButton::CH5_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, BigButton::CH6_OUTPUT));
 
-    addParam(createParam<BigLEDButton>(Vec(15, 60), module, BigButton::RESET_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<BigLEDButton>(Vec(15, 60), module, BigButton::RESET_PARAM));
     addChild(createLight<GiantLight<GreenLight>>(Vec(25, 70), module, BigButton::RESET_LIGHT));
 
 }

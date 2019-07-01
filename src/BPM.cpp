@@ -44,7 +44,10 @@ struct BPM: Module {
     float m_fMainClockCount;
 
     BPM() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+        config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(BPM::RESET_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(BPM::BPM_PARAM, 0.0, 1.0, 0.165, "");
+    }
     void step() override;
     void    BPMChange( float fbmp, bool bforce );
 };
@@ -168,7 +171,7 @@ BPMWidget::BPMWidget(BPM *module) {
 
     addInput(createPort<PJ301MPort>(Vec(24, 160), PortWidget::INPUT, module, BPM::CH1_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(106, 165), PortWidget::INPUT, module, BPM::RESET_CV_INPUT));
-    addParam(createParam<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM));
     addChild(createLight<MediumLight<GreenLight>>(Vec(113.4, 136.4), module, BPM::RESET_LIGHT));
 
     addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, BPM::CH1_OUTPUT));
@@ -179,7 +182,7 @@ BPMWidget::BPMWidget(BPM *module) {
     addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, BPM::CH5_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, BPM::CH6_OUTPUT));
 
-    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM, 0.0, 1.0, 0.165));
+    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM));
     // addChild(createLight<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));
     //addChild(createLight<BigOlLight<GreenLight>>(Vec(25, 70), module, BPM::RESET_LIGHT));
 

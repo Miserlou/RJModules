@@ -114,7 +114,13 @@ struct EssEff : Module {
     tsf* tee_ess_eff;
 
     EssEff() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(EssEff::FILE_PARAM, 0, num_files - 1, 0, "");
+        configParam(EssEff::PRESET_PARAM, 0, 320, 0, "");
+        configParam(EssEff::BEND_PARAM, 0, 16383, 8192, "");
+        configParam(EssEff::REC_BUTTON, 0.0, 1.0, 0.0, "");
+
+    }
     void step() override;
     std::string getAbsolutePath(std::string path);
     void loadFile(std::string path);
@@ -327,12 +333,12 @@ EssEffWidget::EssEffWidget(EssEff *module) {
     }
 
     // Knobs
-    addParam(createParam<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM, 0, num_files - 1, 0));
-    addParam(createParam<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM, 0, 320, 0));
+    addParam(createParam<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM));
+    addParam(createParam<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM));
     addInput(createPort<PJ301MPort>(Vec(37, 117.5), PortWidget::INPUT, module, EssEff::FILE_INPUT));
     addInput(createPort<PJ301MPort>(Vec(37, 217.5), PortWidget::INPUT, module, EssEff::PRESET_INPUT));
 
-    addParam(createParam<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM, 0, 16383, 8192));
+    addParam(createParam<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM));
     addInput(createPort<PJ301MPort>(Vec(37, 264.5), PortWidget::INPUT, module, EssEff::BEND_INPUT));
 
     // Inputs and Knobs
@@ -341,7 +347,7 @@ EssEffWidget::EssEffWidget(EssEff *module) {
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, EssEff::MAIN_OUTPUT));
 
     //Button
-    addParam(createParam<RecButton>(Vec(114, 40), module, EssEff::REC_BUTTON, 0.0, 1.0, 0.0));
+    addParam(createParam<RecButton>(Vec(114, 40), module, EssEff::REC_BUTTON));
 
 }
 

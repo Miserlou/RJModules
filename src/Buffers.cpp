@@ -61,6 +61,16 @@ struct Buffers : Module {
 
     Buffers() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Buffers::MUTE_PARAM + 0, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 1, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 2, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 3, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 4, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 5, 0.0, 2.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 6, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 7, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 8, 0.0, 3.6, 0.0, "");
+        configParam(Buffers::MUTE_PARAM + 9, 0.0, 3.6, 0.0, "");
         // reset();
     }
     void step() override;
@@ -473,16 +483,16 @@ BuffersWidget::BuffersWidget(Buffers *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 17.165)), module, Buffers::MUTE_PARAM + 0, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 27.164)), module, Buffers::MUTE_PARAM + 1, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 37.164)), module, Buffers::MUTE_PARAM + 2, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 47.165)), module, Buffers::MUTE_PARAM + 3, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 57.164)), module, Buffers::MUTE_PARAM + 4, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 67.165)), module, Buffers::MUTE_PARAM + 5, 0.0, 2.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 77.164)), module, Buffers::MUTE_PARAM + 6, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 87.164)), module, Buffers::MUTE_PARAM + 7, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 97.165)), module, Buffers::MUTE_PARAM + 8, 0.0, 3.6, 0.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 107.166)), module, Buffers::MUTE_PARAM + 9, 0.0, 3.6, 0.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 17.165)), module, Buffers::MUTE_PARAM + 0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 27.164)), module, Buffers::MUTE_PARAM + 1));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 37.164)), module, Buffers::MUTE_PARAM + 2));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 47.165)), module, Buffers::MUTE_PARAM + 3));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 57.164)), module, Buffers::MUTE_PARAM + 4));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 67.165)), module, Buffers::MUTE_PARAM + 5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 77.164)), module, Buffers::MUTE_PARAM + 6));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 87.164)), module, Buffers::MUTE_PARAM + 7));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 97.165)), module, Buffers::MUTE_PARAM + 8));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 107.166)), module, Buffers::MUTE_PARAM + 9));
 
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Buffers::IN_INPUT + 0));
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Buffers::IN_INPUT + 1));

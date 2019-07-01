@@ -21,7 +21,10 @@ struct BitCrush: Module {
 	};
 
 	BitCrush() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+		configParam(BitCrush::CH1_PARAM, 0.0, 1.0, 0.0, "");
+		configParam(BitCrush::CH2_PARAM, 0.0, 1.0, 0.0, "");
+		}
 	void step() override;
 };
 
@@ -68,8 +71,8 @@ BitCrushWidget::BitCrushWidget(BitCrush *module) {
 	addChild(createWidget<ScrewSilver>(Vec(15, 365)));
 	addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-	addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, BitCrush::CH1_PARAM, 0.0, 1.0, 0.0));
-	addParam(createParam<RoundBlackKnob>(Vec(57, 219), module, BitCrush::CH2_PARAM, 0.0, 1.0, 0.0));
+	addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, BitCrush::CH1_PARAM));
+	addParam(createParam<RoundBlackKnob>(Vec(57, 219), module, BitCrush::CH2_PARAM));
 
 	addInput(createPort<PJ301MPort>(Vec(22, 129), PortWidget::INPUT, module, BitCrush::CH1_INPUT));
 	addInput(createPort<PJ301MPort>(Vec(22, 160), PortWidget::INPUT, module, BitCrush::CH1_CV_INPUT));

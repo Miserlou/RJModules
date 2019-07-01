@@ -80,7 +80,19 @@ struct ReplayKnob : Module {
     const float lightLambda = 0.075;
 
     ReplayKnob() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(ReplayKnob::BIG_PARAM, -5.0, 5.0, 0.0, "");
+        configParam(ReplayKnob::REC_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(ReplayKnob::REPLAY_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(ReplayKnob::START_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(ReplayKnob::END_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(ReplayKnob::BIG_PARAM_2, 0.0, 10.0, 5.0, "");
+        configParam(ReplayKnob::REC_PARAM_2, 0.0, 1.0, 0.0, "");
+        configParam(ReplayKnob::REPLAY_PARAM_2, 0.0, 1.0, 0.0, "");
+        configParam(ReplayKnob::START_PARAM_2, 0.0, 1.0, 0.0, "");
+        configParam(ReplayKnob::END_PARAM_2, 0.0, 1.0, 1.0, "");
+
+    }
 
     void step() override;
 };
@@ -258,35 +270,35 @@ ReplayKnobWidget::ReplayKnobWidget(ReplayKnob *module) {
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     // Knob One
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, ReplayKnob::BIG_PARAM, -5.0, 5.0, 0.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, ReplayKnob::BIG_PARAM));
     addInput(createPort<PJ301MPort>(Vec(17, 50), PortWidget::INPUT, module, ReplayKnob::BIG_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(17, 80), PortWidget::INPUT, module, ReplayKnob::REC_CV_INPUT));
 
-    addParam(createParam<LilLEDButton>(Vec(buttonx, buttony), module, ReplayKnob::REC_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<LilLEDButton>(Vec(buttonx, buttony), module, ReplayKnob::REC_PARAM));
     addChild(createLight<MediumLight<RedLight>>(Vec(buttonx+4.4, buttony+4.4), module, ReplayKnob::REC_LIGHT));
 
     addInput(createPort<PJ301MPort>(Vec(110, 50), PortWidget::INPUT, module, ReplayKnob::REPLAY_CV_INPUT));
-    addParam(createParam<LilLEDButton>(Vec(114, 85), module, ReplayKnob::REPLAY_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<LilLEDButton>(Vec(114, 85), module, ReplayKnob::REPLAY_PARAM));
     addChild(createLight<MediumLight<GreenLight>>(Vec(114+4.4, 85+4.4), module, ReplayKnob::REPLAY_LIGHT));
 
-    addParam(createParam<RoundBlackKnob>(Vec(17, 140), module, ReplayKnob::START_PARAM, 0.0, 1.0, 0.0));
-    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, ReplayKnob::END_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundBlackKnob>(Vec(17, 140), module, ReplayKnob::START_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, ReplayKnob::END_PARAM));
     addOutput(createPort<PJ301MPort>(Vec(110, 142), PortWidget::OUTPUT, module, ReplayKnob::OUT_OUTPUT));
 
     // Knob Two
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61 + offset), module, ReplayKnob::BIG_PARAM_2, 0.0, 10.0, 5.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61 + offset), module, ReplayKnob::BIG_PARAM_2));
     addInput(createPort<PJ301MPort>(Vec(17, 50 + offset), PortWidget::INPUT, module, ReplayKnob::BIG_CV_INPUT_2));
     addInput(createPort<PJ301MPort>(Vec(17, 80 + offset), PortWidget::INPUT, module, ReplayKnob::REC_CV_INPUT_2));
 
-    addParam(createParam<LilLEDButton>(Vec(buttonx, buttony + offset), module, ReplayKnob::REC_PARAM_2, 0.0, 1.0, 0.0));
+    addParam(createParam<LilLEDButton>(Vec(buttonx, buttony + offset), module, ReplayKnob::REC_PARAM_2));
     addChild(createLight<MediumLight<RedLight>>(Vec(buttonx+4.4, buttony+4.4+ offset), module, ReplayKnob::REC_LIGHT_2));
 
     addInput(createPort<PJ301MPort>(Vec(110, 50 + offset), PortWidget::INPUT, module, ReplayKnob::REPLAY_CV_INPUT_2));
-    addParam(createParam<LilLEDButton>(Vec(114, 85 + offset), module, ReplayKnob::REPLAY_PARAM_2, 0.0, 1.0, 0.0));
+    addParam(createParam<LilLEDButton>(Vec(114, 85 + offset), module, ReplayKnob::REPLAY_PARAM_2));
     addChild(createLight<MediumLight<GreenLight>>(Vec(114+4.4, 85+4.4 + offset), module, ReplayKnob::REPLAY_LIGHT_2));
 
-    addParam(createParam<RoundBlackKnob>(Vec(17, 140 + offset), module, ReplayKnob::START_PARAM_2, 0.0, 1.0, 0.0));
-    addParam(createParam<RoundBlackKnob>(Vec(58, 140 + offset), module, ReplayKnob::END_PARAM_2, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundBlackKnob>(Vec(17, 140 + offset), module, ReplayKnob::START_PARAM_2));
+    addParam(createParam<RoundBlackKnob>(Vec(58, 140 + offset), module, ReplayKnob::END_PARAM_2));
     addOutput(createPort<PJ301MPort>(Vec(110, 142 + offset), PortWidget::OUTPUT, module, ReplayKnob::OUT_OUTPUT_2));
 
 }

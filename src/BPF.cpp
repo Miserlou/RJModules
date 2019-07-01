@@ -27,7 +27,10 @@ struct BPF: Module {
 
 
     BPF() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+        configParam(BPF::FREQ_PARAM, 30.0, 3000.0, 400.0, "");
+        configParam(BPF::VOL_PARAM, 0.0, 1.0, 0.5, "");
+    }
     void step() override;
 };
 
@@ -70,8 +73,8 @@ BPFWidget::BPFWidget(BPF *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM, 30.0, 3000.0, 400.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, BPF::VOL_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, BPF::VOL_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, BPF::FREQ_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, BPF::VOL_CV_INPUT));

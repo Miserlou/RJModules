@@ -54,7 +54,17 @@ struct Buttons: Module {
     float resetLight9 = 0.0;
 
     Buttons() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Buttons::RESET_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM2, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM3, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM4, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM5, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM6, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM7, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM8, 0.0, 1.0, 0.0, "");
+        configParam(Buttons::RESET_PARAM9, 0.0, 1.0, 0.0, "");
+    }
     void step() override;
 };
 
@@ -188,31 +198,31 @@ ButtonsWidget::ButtonsWidget(Buttons *module) {
     addOutput(createPort<PJ301MPort>(Vec(65, 324), PortWidget::OUTPUT, module, Buttons::CH8_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(106, 324), PortWidget::OUTPUT, module, Buttons::CH9_OUTPUT));
 
-    addParam(createParam<MedLEDButton>(Vec(15, 60), module, Buttons::RESET_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(15, 60), module, Buttons::RESET_PARAM));
     addChild(createLight<MedLight<GreenLight>>(Vec(20, 65), module, Buttons::RESET_LIGHT));
 
-    addParam(createParam<MedLEDButton>(Vec(55, 60), module, Buttons::RESET_PARAM2, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(55, 60), module, Buttons::RESET_PARAM2));
     addChild(createLight<MedLight<GreenLight>>(Vec(60, 65), module, Buttons::RESET_LIGHT2));
 
-    addParam(createParam<MedLEDButton>(Vec(95, 60), module, Buttons::RESET_PARAM3, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(95, 60), module, Buttons::RESET_PARAM3));
     addChild(createLight<MedLight<GreenLight>>(Vec(100, 65), module, Buttons::RESET_LIGHT3));
 
-    addParam(createParam<MedLEDButton>(Vec(15, 100), module, Buttons::RESET_PARAM4, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(15, 100), module, Buttons::RESET_PARAM4));
     addChild(createLight<MedLight<GreenLight>>(Vec(20, 105), module, Buttons::RESET_LIGHT4));
 
-    addParam(createParam<MedLEDButton>(Vec(55, 100), module, Buttons::RESET_PARAM5, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(55, 100), module, Buttons::RESET_PARAM5));
     addChild(createLight<MedLight<GreenLight>>(Vec(60, 105), module, Buttons::RESET_LIGHT5));
 
-    addParam(createParam<MedLEDButton>(Vec(95, 100), module, Buttons::RESET_PARAM6, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(95, 100), module, Buttons::RESET_PARAM6));
     addChild(createLight<MedLight<GreenLight>>(Vec(100, 105), module, Buttons::RESET_LIGHT6));
 
-    addParam(createParam<MedLEDButton>(Vec(15, 140), module, Buttons::RESET_PARAM7, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(15, 140), module, Buttons::RESET_PARAM7));
     addChild(createLight<MedLight<GreenLight>>(Vec(20, 145), module, Buttons::RESET_LIGHT7));
 
-    addParam(createParam<MedLEDButton>(Vec(55, 140), module, Buttons::RESET_PARAM8, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(55, 140), module, Buttons::RESET_PARAM8));
     addChild(createLight<MedLight<GreenLight>>(Vec(60, 145), module, Buttons::RESET_LIGHT8));
 
-    addParam(createParam<MedLEDButton>(Vec(95, 140), module, Buttons::RESET_PARAM9, 0.0, 1.0, 0.0));
+    addParam(createParam<MedLEDButton>(Vec(95, 140), module, Buttons::RESET_PARAM9));
     addChild(createLight<MedLight<GreenLight>>(Vec(100, 145), module, Buttons::RESET_LIGHT9));
 
 

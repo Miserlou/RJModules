@@ -111,7 +111,10 @@ struct Chord : Module {
     }
 
     Chord() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Chord::CHORD_PARAM, 0.0, 59.0, 24.0, "");
+        configParam(Chord::SHAPE_PARAM, 0.0, 3.0, 0.0, "");
+    }
     void step() override;
 };
 
@@ -264,8 +267,8 @@ ChordWidget::ChordWidget(Chord *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM, 0.0, 59.0, 24.0));
-    addParam(createParam<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM, 0.0, 3.0, 0.0));
+    addParam(createParam<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM));
+    addParam(createParam<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Chord::CHORD_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Chord::SHAPE_CV_INPUT));
