@@ -2,6 +2,9 @@
 #include "osdialog.h"
 #include "common.hpp"
 #include <locale> // for wstring_convert
+#if defined ARCH_WIN
+#include <codecvt>
+#endif
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -139,7 +142,7 @@ std::string EssEff::getAbsolutePath(std::string path){
         wchar_t buf[PATH_MAX];
         wchar_t *absPathC = _wfullpath(buf, pathW.c_str(), PATH_MAX);
         if (absPathC)
-            return fromWstring(absPathC);
+            return string::fromWstring(absPathC);
     #endif
     return "";
 }
