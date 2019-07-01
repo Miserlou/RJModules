@@ -52,7 +52,11 @@ struct Widener : Module {
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
     Widener() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+      config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+      configParam(Widener::TIME_PARAM, 0.0, 0.7, 0.35, "");
+      configParam(Widener::MIX_PARAM, 0.0, 1.0, 1.0, "");
+      configParam(Widener::FILTER_PARAM, 0.0, 1.0, 0.5, "");
+  }
     void step() override;
 };
 
@@ -151,9 +155,9 @@ WidenerWidget::WidenerWidget(Widener *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM, 0.0, 0.7, 0.35));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Widener::TIME_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Widener::TIME_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Widener::MIX_CV_INPUT));

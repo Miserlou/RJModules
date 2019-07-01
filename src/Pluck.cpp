@@ -48,7 +48,11 @@ struct Pluck : Module {
     SchmittTrigger trigger;
 
     Pluck() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Pluck::LEVEL_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(Pluck::RELEASE_PARAM, 0.2, 0.4f, 0.50f, "");
+        configParam(Pluck::EXP_PARAM, 0.0001f, .2f, 4.0f, "");
+    }
 
     void step() override {
 
@@ -163,12 +167,12 @@ struct PluckWidget : ModuleWidget {
         addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-        addParam(createParam<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM, 0.0, 1.0, 1.0));
+        addParam(createParam<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM));
 
-        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Pluck::RELEASE_PARAM, 0.2, 0.4f, 0.50f));
+        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Pluck::RELEASE_PARAM));
         addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), PortWidget::INPUT, module, Pluck::RELEASE_INPUT));
 
-        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM, 0.0001f, .2f, 4.0f));
+        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM));
         addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), PortWidget::INPUT, module, Pluck::EXP_INPUT));
 
         addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), PortWidget::INPUT, module, Pluck::GATE_INPUT));

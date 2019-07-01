@@ -45,7 +45,13 @@ struct Stutter : Module {
     int tapeHead = 0;
 
     Stutter() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+configParam(Stutter::ONOFF_PARAM, 0.0, 1.0, 1.0, "");
+configParam(Stutter::ONOFF_PARAM, 0.0, 1.0, 0.0, "");
+configParam(Stutter::TIME_PARAM, 0, 36000, 4000, "");
+configParam(Stutter::MIX_PARAM, 0.0, 1.0, 1.0, "");
+
+  }
     void step() override;
 };
 
@@ -140,12 +146,12 @@ StutterWidget::StutterWidget(Stutter *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    //addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Stutter::ONOFF_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<BigSwitchLEDButton>(Vec(47, 61), module, Stutter::ONOFF_PARAM, 0.0, 1.0, 0.0));
+    //addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Stutter::ONOFF_PARAM));
+    addParam(createParam<BigSwitchLEDButton>(Vec(47, 61), module, Stutter::ONOFF_PARAM));
     addChild(createLight<BigOlLight<GreenLight>>(Vec(53, 67), module, Stutter::RESET_LIGHT));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Stutter::TIME_PARAM, 0, 36000, 4000));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Stutter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Stutter::TIME_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Stutter::MIX_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Stutter::ONOFF_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Stutter::TIME_CV_INPUT));

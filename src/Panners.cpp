@@ -28,6 +28,11 @@ struct Panners : Module {
 
     Panners() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Panners::MUTE_PARAM + 0, 0.0, 1.0, 0.5, "");
+        configParam(Panners::MUTE_PARAM + 1, 0.0, 1.0, 0.5, "");
+        configParam(Panners::MUTE_PARAM + 2, 0.0, 1.0, 0.5, "");
+        configParam(Panners::MUTE_PARAM + 3, 0.0, 1.0, 0.5, "");
+        configParam(Panners::MUTE_PARAM + 4, 0.0, 1.0, 0.5, "");
     }
     void step() override;
 
@@ -119,11 +124,11 @@ PannersWidget::PannersWidget(Panners *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 23.165)), module, Panners::MUTE_PARAM + 0, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 43.164)), module, Panners::MUTE_PARAM + 1, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 63.164)), module, Panners::MUTE_PARAM + 2, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 83.165)), module, Panners::MUTE_PARAM + 3, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 103.164)), module, Panners::MUTE_PARAM + 4, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 23.165)), module, Panners::MUTE_PARAM + 0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 43.164)), module, Panners::MUTE_PARAM + 1));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 63.164)), module, Panners::MUTE_PARAM + 2));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 83.165)), module, Panners::MUTE_PARAM + 3));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 103.164)), module, Panners::MUTE_PARAM + 4));
 
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Panners::IN_INPUT + 0));
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Panners::IN_INPUT + 1));

@@ -35,6 +35,17 @@ struct Octaves : Module {
 
     Octaves() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Octaves::MUTE_PARAM + 0, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 1, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 2, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 3, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 4, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 5, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 6, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 7, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 8, -4.5, 4.5, 0.0, "");
+        configParam(Octaves::MUTE_PARAM + 9, -4.5, 4.5, 0.0, "");
+
     }
     void step() override;
 
@@ -90,16 +101,16 @@ OctavesWidget::OctavesWidget(Octaves *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 17.165)), module, Octaves::MUTE_PARAM + 0, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 27.164)), module, Octaves::MUTE_PARAM + 1, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 37.164)), module, Octaves::MUTE_PARAM + 2, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 47.165)), module, Octaves::MUTE_PARAM + 3, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 57.164)), module, Octaves::MUTE_PARAM + 4, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 67.165)), module, Octaves::MUTE_PARAM + 5, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 77.164)), module, Octaves::MUTE_PARAM + 6, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 87.164)), module, Octaves::MUTE_PARAM + 7, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 97.165)), module, Octaves::MUTE_PARAM + 8, -4.5, 4.5, 0.0));
-    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 107.166)), module, Octaves::MUTE_PARAM + 9, -4.5, 4.5, 0.0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 17.165)), module, Octaves::MUTE_PARAM + 0));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 27.164)), module, Octaves::MUTE_PARAM + 1));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 37.164)), module, Octaves::MUTE_PARAM + 2));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 47.165)), module, Octaves::MUTE_PARAM + 3));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 57.164)), module, Octaves::MUTE_PARAM + 4));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 67.165)), module, Octaves::MUTE_PARAM + 5));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 77.164)), module, Octaves::MUTE_PARAM + 6));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 87.164)), module, Octaves::MUTE_PARAM + 7));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 97.165)), module, Octaves::MUTE_PARAM + 8));
+    addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 107.166)), module, Octaves::MUTE_PARAM + 9));
 
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Octaves::IN_INPUT + 0));
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Octaves::IN_INPUT + 1));

@@ -33,7 +33,10 @@ struct RandomFilter: Module {
     VAStateVariableFilter *rFilter = new VAStateVariableFilter() ; // create a lpFilter;
 
     RandomFilter() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(RandomFilter::MIX_PARAM, 0.0, 1.0, 1.0, "");
+    }
     void step() override;
 };
 
@@ -109,8 +112,8 @@ RandomFilterWidget::RandomFilterWidget(RandomFilter *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<BigAssLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM, 0.0, 1.0, 0.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<BigAssLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, RandomFilter::BUTTON_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, RandomFilter::MIX_CV_INPUT));

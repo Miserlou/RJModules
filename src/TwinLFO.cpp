@@ -88,7 +88,13 @@ struct TwinLFO : Module {
     LowFrequencyOscillator oscillator2;
 
     TwinLFO() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(TwinLFO::OFFSET_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(TwinLFO::INVERT_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(TwinLFO::FREQ_PARAM, 0.0, 8.0, 5.0, "");
+        configParam(TwinLFO::FREQ_PARAM_2, 0.0, 8.0, 0.5, "");
+        configParam(TwinLFO::SHAPE_PARAM, 0.0, 1.0, 1.0, "");
+    }
     void step() override;
 };
 
@@ -142,12 +148,12 @@ TwinLFOWidget::TwinLFOWidget(TwinLFO *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<CKSS>(Vec(119, 100), module, TwinLFO::OFFSET_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<CKSS>(Vec(119, 180), module, TwinLFO::INVERT_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 100), module, TwinLFO::OFFSET_PARAM));
+    addParam(createParam<CKSS>(Vec(119, 180), module, TwinLFO::INVERT_PARAM));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, TwinLFO::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, TwinLFO::FREQ_PARAM_2, 0.0, 8.0, 0.5));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, TwinLFO::SHAPE_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, TwinLFO::FREQ_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, TwinLFO::FREQ_PARAM_2));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, TwinLFO::SHAPE_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, TwinLFO::FREQ_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, TwinLFO::FREQ_CV_INPUT_2));

@@ -27,7 +27,11 @@ struct Notch: Module {
 
 
     Notch() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+configParam(Notch::FREQ_PARAM, 30.0, 6000.0, 1000.0, "");
+configParam(Notch::VOL_PARAM,  0.0, 5.0, 2, "");
+configParam(Notch::WIDTH_PARAM, 0.0, 1.0, 0.5, "");
+    }
     void step() override;
 };
 
@@ -70,9 +74,9 @@ NotchWidget::NotchWidget(Notch *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Notch::FREQ_PARAM, 30.0, 6000.0, 1000.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Notch::VOL_PARAM,  0.0, 5.0, 2));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Notch::WIDTH_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Notch::FREQ_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Notch::VOL_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Notch::WIDTH_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Notch::FREQ_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Notch::VOL_CV_INPUT));

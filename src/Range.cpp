@@ -39,7 +39,12 @@ struct Range: Module {
     float display6_val;
 
     Range() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Range::CH1_PARAM, -12.0, 12.0, -12.0, "");
+        configParam(Range::CH2_PARAM, -12.0, 12.0, 12.0, "");
+        configParam(Range::CH3_PARAM, -12.0, 12.0, -12.0, "");
+        configParam(Range::CH4_PARAM, -12.0, 12.0, 12.0, "");
+    }
     void step() override;
 };
 
@@ -124,28 +129,28 @@ RangeWidget::RangeWidget(Range *module) {
         display->box.size = Vec(50, 40);
         display->value = &module->display1_val;
         addChild(display);
-        addParam(createParam<RoundBlackKnob>(Vec(28, 105), module, Range::CH1_PARAM, -12.0, 12.0, -12.0));
+        addParam(createParam<RoundBlackKnob>(Vec(28, 105), module, Range::CH1_PARAM));
 
         SmallNumberDisplayWidgeter *display2 = new SmallNumberDisplayWidgeter();
         display2->box.pos = Vec(83, 60);
         display2->box.size = Vec(50, 40);
         display2->value = &module->display2_val;
         addChild(display2);
-        addParam(createParam<RoundBlackKnob>(Vec(88, 105), module, Range::CH2_PARAM, -12.0, 12.0, 12.0));
+        addParam(createParam<RoundBlackKnob>(Vec(88, 105), module, Range::CH2_PARAM));
 
         SmallNumberDisplayWidgeter *display3 = new SmallNumberDisplayWidgeter();
         display3->box.pos = Vec(23, 160);
         display3->box.size = Vec(50, 40);
         display3->value = &module->display3_val;
         addChild(display3);
-        addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, Range::CH3_PARAM, -12.0, 12.0, -12.0));
+        addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, Range::CH3_PARAM));
 
         SmallNumberDisplayWidgeter *display4 = new SmallNumberDisplayWidgeter();
         display4->box.pos = Vec(83, 160);
         display4->box.size = Vec(50, 40);
         display4->value = &module->display4_val;
         addChild(display4);
-        addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, Range::CH4_PARAM, -12.0, 12.0, 12.0));
+        addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, Range::CH4_PARAM));
 
         SmallNumberDisplayWidgeter *display5 = new SmallNumberDisplayWidgeter();
         display5->box.pos = Vec(23, 260);

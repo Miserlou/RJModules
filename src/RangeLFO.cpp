@@ -157,7 +157,17 @@ struct RangeLFO : Module {
     float display2_val;
 
     RangeLFO() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0, "");
+        configParam(RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0, "");
+        configParam(RangeLFO::FREQ_PARAM, -8.0, 6.0, -1.0, "");
+        configParam(RangeLFO::FM1_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(RangeLFO::PW_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(RangeLFO::FM2_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(RangeLFO::PWM_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(RangeLFO::INVERT_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(RangeLFO::OFFSET_PARAM, 0.0, 1.0, 0.0, "");
+    }
     void step() override;
 };
 
@@ -225,7 +235,7 @@ RangeLFOWidget::RangeLFOWidget(RangeLFO *module) {
         display->value = &module->display1_val;
         addChild(display);
 
-        addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM, -12.0, 12.0, -12.0));
+        addParam(createParam<RoundBlackKnob>(Vec(28, 205), module, RangeLFO::CH1_PARAM));
         addInput(createPort<PJ301MPort>(Vec(5, 235), PortWidget::INPUT, module, RangeLFO::FROM_CV_INPUT));
 
         SmallIntegerDisplayWidgeterer *display2 = new SmallIntegerDisplayWidgeterer();
@@ -234,23 +244,23 @@ RangeLFOWidget::RangeLFOWidget(RangeLFO *module) {
         display2->value = &module->display2_val;
         addChild(display2);
 
-        addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM, -12.0, 12.0, 12.0));
+        addParam(createParam<RoundBlackKnob>(Vec(88, 205), module, RangeLFO::CH2_PARAM));
         addInput(createPort<PJ301MPort>(Vec(62, 235), PortWidget::INPUT, module, RangeLFO::TO_CV_INPUT));
     }
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, RangeLFO::FREQ_PARAM, -8.0, 6.0, -1.0));
-    // addParam(createParam<RoundBlackKnob>(Vec(23, 143), module, RangeLFO::FM1_PARAM, 0.0, 1.0, 0.0));
-    // addParam(createParam<RoundBlackKnob>(Vec(91, 143), module, RangeLFO::PW_PARAM, 0.0, 1.0, 0.5));
-    // addParam(createParam<RoundBlackKnob>(Vec(23, 208), module, RangeLFO::FM2_PARAM, 0.0, 1.0, 0.0));
-    // addParam(createParam<RoundBlackKnob>(Vec(91, 208), module, RangeLFO::PWM_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, RangeLFO::FREQ_PARAM));
+    // addParam(createParam<RoundBlackKnob>(Vec(23, 143), module, RangeLFO::FM1_PARAM));
+    // addParam(createParam<RoundBlackKnob>(Vec(91, 143), module, RangeLFO::PW_PARAM));
+    // addParam(createParam<RoundBlackKnob>(Vec(23, 208), module, RangeLFO::FM2_PARAM));
+    // addParam(createParam<RoundBlackKnob>(Vec(91, 208), module, RangeLFO::PWM_PARAM));
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, RangeLFO::RATE_CV_INPUT));
 
     addInput(createPort<PJ301MPort>(Vec(11, 276), PortWidget::INPUT, module, RangeLFO::FM1_INPUT));
     addInput(createPort<PJ301MPort>(Vec(45, 276), PortWidget::INPUT, module, RangeLFO::RESET_INPUT));
     // addInput(createPort<PJ301MPort>(Vec(80, 276), PortWidget::INPUT, module, RangeLFO::RESET_INPUT));
     // addInput(createPort<PJ301MPort>(Vec(114, 276), PortWidget::INPUT, module, RangeLFO::PW_INPUT));
-    addParam(createParam<CKSS>(Vec(85, 276), module, RangeLFO::INVERT_PARAM, 0.0, 1.0, 0.0));
-    //addParam(createParam<CKSS>(Vec(119, 276), module, RangeLFO::OFFSET_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<CKSS>(Vec(85, 276), module, RangeLFO::INVERT_PARAM));
+    //addParam(createParam<CKSS>(Vec(119, 276), module, RangeLFO::OFFSET_PARAM));
 
     addOutput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::OUTPUT, module, RangeLFO::SIN_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::OUTPUT, module, RangeLFO::TRI_OUTPUT));

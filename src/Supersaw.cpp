@@ -81,7 +81,14 @@ struct Supersaw : Module {
     float DETUNE_STEP = .075;
 
     Supersaw() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Supersaw::OFFSET_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(Supersaw::INVERT_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(Supersaw::THREE_OSC_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(Supersaw::FREQ_PARAM, 0.0, 8.0, 5.0, "");
+        configParam(Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.1, "");
+        configParam(Supersaw::MIX_PARAM, 0.0, 1.0, 1.0, "");
+    }
     void step() override;
 };
 
@@ -140,13 +147,13 @@ SupersawWidget::SupersawWidget(Supersaw *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<CKSS>(Vec(119, 100), module, Supersaw::OFFSET_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<CKSS>(Vec(119, 180), module, Supersaw::INVERT_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<CKSS>(Vec(119, 260), module, Supersaw::THREE_OSC_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 100), module, Supersaw::OFFSET_PARAM));
+    addParam(createParam<CKSS>(Vec(119, 180), module, Supersaw::INVERT_PARAM));
+    addParam(createParam<CKSS>(Vec(119, 260), module, Supersaw::THREE_OSC_PARAM));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Supersaw::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM, 0.0, 1.0, 0.1));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Supersaw::FREQ_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Supersaw::FREQ_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Supersaw::DETUNE_CV_INPUT));

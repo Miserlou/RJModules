@@ -23,7 +23,7 @@ struct Mono : Module {
     };
 
     Mono() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS); configParam(Mono::MONO_PARAM, 0.0, 1.0, 0.1, "");}
     void step() override;
 };
 
@@ -60,7 +60,7 @@ MonoWidget::MonoWidget(Mono *module) {
     addInput(createPort<PJ301MPort>(Vec(22, 85), PortWidget::INPUT, module, Mono::CH1_INPUT));
     addInput(createPort<PJ301MPort>(Vec(104, 85), PortWidget::INPUT, module, Mono::CH2_INPUT));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Mono::MONO_PARAM, 0.0, 1.0, 0.1));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Mono::MONO_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Mono::MONO_CV_INPUT));
 

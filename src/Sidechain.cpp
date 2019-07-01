@@ -22,7 +22,10 @@ struct Sidechain: Module {
 
     float decayAmount = 0.0;
     Sidechain() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+        configParam(Sidechain::RATIO_PARAM, 0.0, 1.0, 1.0, "");
+        configParam(Sidechain::DECAY_PARAM, 0.0, 1.0, 0.3, "");
+    }
     void step() override;
 };
 
@@ -80,8 +83,8 @@ SidechainWidget::SidechainWidget(Sidechain *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Sidechain::RATIO_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Sidechain::DECAY_PARAM, 0.0, 1.0, 0.3));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Sidechain::RATIO_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Sidechain::DECAY_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Sidechain::CH1_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Sidechain::RATIO_CV_INPUT));

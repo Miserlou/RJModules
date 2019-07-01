@@ -20,7 +20,7 @@ struct Panner: Module {
     };
 
     Panner() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS); configParam(Panner::CH1_PARAM, 0.0, 1.0, 0.0, "");}
     void step() override;
 };
 
@@ -58,7 +58,7 @@ PannerWidget::PannerWidget(Panner *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, Panner::CH1_PARAM, 0.0, 1.0, 0.0));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, Panner::CH1_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 129), PortWidget::INPUT, module, Panner::CH1_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 160), PortWidget::INPUT, module, Panner::CH1_CV_INPUT));
