@@ -27,7 +27,12 @@ struct Filter: Module {
     VAStateVariableFilter *hpFilter = new VAStateVariableFilter() ; // create a hpFilter;
 
     Filter() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+        configParam(Filter::FREQ_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(Filter::RES_PARAM,  0.0, 1.0, .8, "");
+        configParam(Filter::MIX_PARAM, 0.0, 1.0, 1.0, "");
+
+    }
     void step() override;
 };
 
@@ -101,9 +106,9 @@ FilterWidget::FilterWidget(Filter *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Filter::FREQ_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM,  0.0, 1.0, .8));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Filter::FREQ_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Filter::FREQ_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Filter::RES_CV_INPUT));

@@ -33,7 +33,11 @@ struct MetaKnob: Module {
     float resetLight = 0.0;
 
     MetaKnob() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(MetaKnob::RANGE_PARAM_1, -5.0, 5.0, -5.0, "");
+        configParam(MetaKnob::RANGE_PARAM_2, -5.0, 5.0, 5.0, "");
+        configParam(MetaKnob::BIG_PARAM, -5.0, 5.0, 0.0, "");
+    }
     void step() override;
 };
 
@@ -97,19 +101,19 @@ MetaKnobWidget::MetaKnobWidget(MetaKnob *module) {
     addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, MetaKnob::CH1_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, MetaKnob::CH2_OUTPUT));
     //addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, MetaKnob::CH3_OUTPUT));
-    addParam(createParam<RoundSmallBlackKnob>(Vec(105, 223), module, MetaKnob::RANGE_PARAM_1, -5.0, 5.0, -5.0));
+    addParam(createParam<RoundSmallBlackKnob>(Vec(105, 223), module, MetaKnob::RANGE_PARAM_1));
 
 
     addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, MetaKnob::CH4_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, MetaKnob::CH5_OUTPUT));
     //addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, MetaKnob::CH6_OUTPUT));
-    addParam(createParam<RoundSmallBlackKnob>(Vec(105, 274), module, MetaKnob::RANGE_PARAM_2, -5.0, 5.0, 5.0));
+    addParam(createParam<RoundSmallBlackKnob>(Vec(105, 274), module, MetaKnob::RANGE_PARAM_2));
 
     addOutput(createPort<PJ301MPort>(Vec(24, 324), PortWidget::OUTPUT, module, MetaKnob::CH7_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(65, 324), PortWidget::OUTPUT, module, MetaKnob::CH8_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(106, 324), PortWidget::OUTPUT, module, MetaKnob::CH9_OUTPUT));
 
-    addParam(createParam<RoundGiantBlackKnob>(Vec(20, 55), module, MetaKnob::BIG_PARAM, -5.0, 5.0, 0.0));
+    addParam(createParam<RoundGiantBlackKnob>(Vec(20, 55), module, MetaKnob::BIG_PARAM));
 
 }
 

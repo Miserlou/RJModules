@@ -139,9 +139,9 @@ struct ChordSeq : Module {
 		configParam(ChordSeq::RUN_PARAM, 0.0f, 1.0f, 0.0f, "");
 		configParam(ChordSeq::RESET_PARAM, 0.0f, 1.0f, 0.0f, "");
 		configParam(ChordSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "");
-		configParam(ChordSeq::ROW2_PARAM + i, 0.0, 59.0, 24.0, "");
-		configParam(ChordSeq::ROW3_PARAM + i, 0.0f, 3.0f, 0.0f, "");
-		configParam(ChordSeq::GATE_PARAM + i, 0.0f, 1.0f, 0.0f, "");
+		configParam(ChordSeq::ROW2_PARAM, 0.0, 59.0, 24.0, "");
+		configParam(ChordSeq::ROW3_PARAM, 0.0f, 3.0f, 0.0f, "");
+		configParam(ChordSeq::GATE_PARAM, 0.0f, 1.0f, 0.0f, "");
 		onReset();
 	}
 

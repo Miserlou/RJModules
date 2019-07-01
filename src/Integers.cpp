@@ -23,7 +23,11 @@ struct Integers: Module {
     };
 
     Integers() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+        configParam(Integers::CH1_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(Integers::CH2_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(Integers::CH3_PARAM, 0.0, 1.0, 0.5, "");
+    }
     void step() override;
 };
 
@@ -70,9 +74,9 @@ IntegersWidget::IntegersWidget(Integers *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, Integers::CH1_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Integers::CH2_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Integers::CH3_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, Integers::CH1_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Integers::CH2_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Integers::CH3_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Integers::CH1_CV_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Integers::CH2_CV_INPUT));

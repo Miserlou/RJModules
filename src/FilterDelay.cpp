@@ -31,7 +31,13 @@ struct FilterDelay : Module {
     RCFilter highpassFilter;
 
     FilterDelay() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+        configParam(FilterDelay::TIME_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(FilterDelay::FEEDBACK_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(FilterDelay::COLOR_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(FilterDelay::MIX_PARAM, 0.0, 1.0, 0.5, "");
+}
+
 
     void step() override;
 };
@@ -126,10 +132,10 @@ FilterDelayWidget::FilterDelayWidget(FilterDelay *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundBlackKnob>(Vec(97, 60), module, FilterDelay::TIME_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(97, 120), module, FilterDelay::FEEDBACK_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(97, 180), module, FilterDelay::COLOR_PARAM, 0.0, 1.0, 0.5));
-    addParam(createParam<RoundBlackKnob>(Vec(97, 240), module, FilterDelay::MIX_PARAM, 0.0, 1.0, 0.5));
+    addParam(createParam<RoundBlackKnob>(Vec(97, 60), module, FilterDelay::TIME_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(97, 120), module, FilterDelay::FEEDBACK_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(97, 180), module, FilterDelay::COLOR_PARAM));
+    addParam(createParam<RoundBlackKnob>(Vec(97, 240), module, FilterDelay::MIX_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 65), PortWidget::INPUT, module, FilterDelay::TIME_INPUT));
     addInput(createPort<PJ301MPort>(Vec(22, 125), PortWidget::INPUT, module, FilterDelay::FEEDBACK_INPUT));

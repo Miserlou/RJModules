@@ -27,6 +27,16 @@ struct Glides : Module {
 
     Glides() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(Glides::GLIDE_PARAM + 0, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 1, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 2, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 3, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 4, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 5, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 6, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 7, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 8, 0.01, 10.0, 5.0, "");
+        configParam(Glides::GLIDE_PARAM + 9, 0.01, 10.0, 5.0, "");
     }
     void step() override;
 
@@ -90,16 +100,16 @@ GlidesWidget::GlidesWidget(Glides *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 17.165)), module, Glides::GLIDE_PARAM + 0, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 27.164)), module, Glides::GLIDE_PARAM + 1, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 37.164)), module, Glides::GLIDE_PARAM + 2, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 47.165)), module, Glides::GLIDE_PARAM + 3, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 57.164)), module, Glides::GLIDE_PARAM + 4, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 67.165)), module, Glides::GLIDE_PARAM + 5, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 77.164)), module, Glides::GLIDE_PARAM + 6, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 87.164)), module, Glides::GLIDE_PARAM + 7, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Glides::GLIDE_PARAM + 8, 0.01, 10.0, 5.0));
-    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Glides::GLIDE_PARAM + 9, 0.01, 10.0, 5.0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 17.165)), module, Glides::GLIDE_PARAM + 0));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 27.164)), module, Glides::GLIDE_PARAM + 1));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 37.164)), module, Glides::GLIDE_PARAM + 2));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 47.165)), module, Glides::GLIDE_PARAM + 3));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 57.164)), module, Glides::GLIDE_PARAM + 4));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 67.165)), module, Glides::GLIDE_PARAM + 5));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 77.164)), module, Glides::GLIDE_PARAM + 6));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 87.164)), module, Glides::GLIDE_PARAM + 7));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Glides::GLIDE_PARAM + 8));
+    addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Glides::GLIDE_PARAM + 9));
 
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Glides::IN_INPUT + 0));
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Glides::IN_INPUT + 1));

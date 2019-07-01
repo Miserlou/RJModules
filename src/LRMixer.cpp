@@ -31,7 +31,9 @@ struct LRMixer: Module {
     };
 
     LRMixer() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
+		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
+    configParam(LRMixer::CH1_PARAM, 0.0, 1.0, 1.0, "");
+}
     void step() override;
 };
 
@@ -64,7 +66,7 @@ LRMixerWidget::LRMixerWidget(LRMixer *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<RoundSmallBlackKnob>(Vec(23, 320), module, LRMixer::CH1_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundSmallBlackKnob>(Vec(23, 320), module, LRMixer::CH1_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(25, 96), PortWidget::INPUT, module, LRMixer::L1_INPUT));
     addInput(createPort<PJ301MPort>(Vec(65, 96), PortWidget::INPUT, module, LRMixer::L2_INPUT));
