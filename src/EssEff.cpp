@@ -23,18 +23,16 @@ std::string soundfont_files[2] = {
     "soundfonts/8bit.sf2"
 };
 
-
-
 /*
 Display
 */
 
-struct SmallStringDisplayWidget : TransparentWidget {
+struct EssEffSmallStringDisplayWidget : TransparentWidget {
 
   std::string *value;
   std::shared_ptr<Font> font;
 
-  SmallStringDisplayWidget() {
+  EssEffSmallStringDisplayWidget() {
     font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
   };
 
@@ -322,13 +320,13 @@ EssEffWidget::EssEffWidget(EssEff *module) {
 
     // Displays
     if(module != NULL){
-        SmallStringDisplayWidget *fileDisplay = new SmallStringDisplayWidget();
+        EssEffSmallStringDisplayWidget *fileDisplay = new EssEffSmallStringDisplayWidget();
         fileDisplay->box.pos = Vec(28, 70);
         fileDisplay->box.size = Vec(100, 40);
         fileDisplay->value = &module->file_name;
         addChild(fileDisplay);
 
-        SmallStringDisplayWidget *presetDisplay = new SmallStringDisplayWidget();
+        EssEffSmallStringDisplayWidget *presetDisplay = new EssEffSmallStringDisplayWidget();
         presetDisplay->box.pos = Vec(28, 170);
         presetDisplay->box.size = Vec(100, 40);
         presetDisplay->value = &module->preset_name;
