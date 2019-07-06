@@ -71,8 +71,8 @@ SplitterWidget::SplitterWidget(Splitter *module) {
     addOutput(createPort<PJ301MPort>(Vec(65, 173), PortWidget::OUTPUT, module, Splitter::CH2_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(105, 173), PortWidget::OUTPUT, module, Splitter::CH3_OUTPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, Splitter::CH5_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, Splitter::CH6_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, Splitter::CH4_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, Splitter::CH5_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, Splitter::CH6_OUTPUT));
 
     addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, Splitter::CH7_OUTPUT));
