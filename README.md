@@ -62,7 +62,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 #### ACID
 <img src='https://i.imgur.com/zJyg3A9.png' width="50%" />
-_"This thing is amaze-balls!! Been messing around with it for about 3 hours didn't even feel the time pass. Acid goodness 👏👏"_ 
+"_This thing is amaze-balls!! Been messing around with it for about 3 hours didn't even feel the time pass. Acid goodness_👏👏" 
 
 ACID is my take on the legendary TB-303. It features two independent multi-waveform VCOs and mixer, wavetables from the actual 303, an integrated envelope generator, a powerful filter, and a pluck circuit!
 
