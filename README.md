@@ -62,11 +62,14 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 #### ACID
 <img src='https://i.imgur.com/zJyg3A9.png' width="50%" />
+_"This thing is amaze-balls!! Been messing around with it for about 3 hours didn't even feel the time pass. Acid goodness 👏👏"_ 
+
 ACID is my take on the legendary TB-303. It features two independent multi-waveform VCOs and mixer, wavetables from the actual 303, an integrated envelope generator, a powerful filter, and a pluck circuit!
 
 Experiment with this and you'll find yourself making some of the craziest, squelchiest acid the world has ever heard!
 
 Oh, and there's also a hidden feature - see if you can find it!
+
 
 #### EssEff
 EssEff is a SoundFont (sf2) player! Comes with a few free soundfonts and the button lets you load more.
