@@ -391,7 +391,7 @@ struct DrumplerWidget : ModuleWidget {
 
         int DISPLAY_SIZE_X = 60;
         int DISPLAY_SIZE_Y = 25;
-        int ROW_OFFSET = 100;
+        int ROW_OFFSET = 35;
         int BANK_OFFSET = 30;
         int BUTTON_SIZE = 5;
         int KNOB_SIZE = 35;
@@ -432,6 +432,17 @@ struct DrumplerWidget : ModuleWidget {
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
         addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+
+        // Row 2
+        addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
+        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+
+        addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
+        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+
+        addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
+        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+
 
         // addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(GROUP_OFFSET + GROUP_OFFSET, TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_1_PARAM));
         // addInput(createPort<PJ301MPort>(Vec(GROUP_OFFSET + GROUP_OFFSET, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
