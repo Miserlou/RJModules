@@ -264,7 +264,8 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Feedback - Self-feeding reverb. Size, decay, damp, mix, drive, bypass. 
   * DJ Suite: Player, Mixer, Library
   * 42VCO: 4xOSC -> 2 Mix -> 1 Mix
-  * Drumpler!
+  * Drumpler! 
+  * Reese! (2 saws with independent LFP, mixed into a notch filter and overdrive before final LPF)
 
 ## Building
 
