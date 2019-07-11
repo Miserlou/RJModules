@@ -46,14 +46,14 @@ struct EssEffSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
-    nvgFontSize(vg, 32);
+    nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 2.5);
+    nvgTextLetterSpacing(vg, 0.4);
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
 
-    Vec textPos = Vec(16.0f, 33.0f);
+    Vec textPos = Vec(12.0f, 28.0f);
     NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
     nvgFillColor(vg, textColor);
     nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
@@ -214,7 +214,7 @@ void EssEff::step() {
         }
 
         std::string preset_name_str(tsf_get_presetname(tee_ess_eff, preset_sel));
-        preset_name = preset_name_str.substr(0, 14);
+        preset_name = preset_name_str.substr(0, 11);
 
         // Render
         if (gateTrigger.process(inputs[GATE_INPUT].value)) {

@@ -13,6 +13,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRangeLFO);
     p->addModel(modelAcid);
     p->addModel(modelEssEff);
+    p->addModel(modelDrumpler);
 
     // p->addModel(modelRiser);
     // p->addModel(modelThreeXOSC);

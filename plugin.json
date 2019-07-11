@@ -344,6 +344,14 @@
         "VCA",
         "Envelope generator"
       ]
+    },
+    {
+      "slug": "Drumpler",
+      "name": "Drumpler",
+      "description": "A drum machine with hand-picked drum samples.",
+      "tags": [
+        "Drums"
+      ]
     }
   ]
 }

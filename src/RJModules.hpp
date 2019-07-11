@@ -46,3 +46,4 @@ extern Model *modeluQuant;
 extern Model *modelPluck;
 extern Model *modelAcid;
 extern Model *modelEssEff;
+extern Model *modelDrumpler;
