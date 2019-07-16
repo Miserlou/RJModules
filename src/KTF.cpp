@@ -208,6 +208,7 @@ struct KTFWidget : ModuleWidget {
         // addParam(createParam<RoundLargeBlackKnob>(Vec(12, 208), module, KTF::FREQ_CV_PARAM));
         addParam(createParam<RoundLargeBlackKnob>(Vec(71, 208), module, KTF::DRIVE_PARAM));
 
+        // XXX TOOO: scratch HBF/BPF and replace with glide
         addInput(createInput<PJ301MPort>(Vec(10, 190), module, KTF::IN_INPUT));
         addInput(createInput<PJ301MPort>(Vec(10, 225), module, KTF::FREQ_INPUT));
 
