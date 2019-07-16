@@ -47,3 +47,4 @@ extern Model *modelPluck;
 extern Model *modelAcid;
 extern Model *modelEssEff;
 extern Model *modelDrumpler;
+extern Model *modelKTF;

@@ -352,6 +352,14 @@
       "tags": [
         "Drums"
       ]
+    },
+    {
+      "slug": "KTF",
+      "name": "KTF - Key Tracking Filter",
+      "description": "A 1v/oct key tracking filter.",
+      "tags": [
+        "VCF"
+      ]
     }
   ]
 }
