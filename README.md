@@ -1,7 +1,7 @@
 <img src="https://i.imgur.com/mksL6UX.png" width="100%">
 
 # RJModules [![](https://img.shields.io/badge/version-0.5.0-brightgreen.svg)](https://github.com/Miserlou/RJModules/releases) [![](https://img.shields.io/badge/youtube-demo-red.svg)](https://www.youtube.com/watch?v=qkEjmZZbGGo)
-Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack) 0.6.3 and 1.1.0+. 
+Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack) 0.6.3 and 1.1.0+.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -26,6 +26,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
     - [Filter](#filter)
     - [Filters](#filters-1)
     - [Notch](#notch)
+    - [KTF](#ktf)
   - [Numerical](#numerical)
     - [Integers](#integers)
     - [Floats](#floats)
@@ -131,6 +132,10 @@ Filters is like Volumes or Panners, but for Filters. Each knob controls both a l
 #### Notch
 <img src="https://i.imgur.com/AzhKPZ1.png" width="25%">
 Notch is a notch filter! You can play with the frequency, depth and width. All voltage controlled.
+
+#### KTF
+<img src="https://i.imgur.com/TAHjvkB.png" width="25%">
+KTF is a key-tracking filter - a filter that takes a V/OCT pitch input. So, the peak of the filter will match your note. Includes an integrated octave and glide. Sounds pretty cool on saws!
 
 ### Numerical
 
@@ -261,10 +266,10 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Shitty - Makes a signal sound shitty. Lofi. So hot right now.
   * Loop Station - 8 track loop station clone. Integrated Trim.
   * The Beast - Chord, Arp, 3xLFO+Filter, Sync, ADSR, VCO, Quantizer, Keyboard, Master Out. All in one panel.
-  * Feedback - Self-feeding reverb. Size, decay, damp, mix, drive, bypass. 
+  * Feedback - Self-feeding reverb. Size, decay, damp, mix, drive, bypass.
   * DJ Suite: Player, Mixer, Library
   * 42VCO: 4xOSC -> 2 Mix -> 1 Mix
-  * Drumpler! 
+  * Drumpler!
   * Reese! (2 saws with independent LFP, mixed into a notch filter and overdrive before final LPF)
   * VOCTFILT - Filter where the cutoff maps to v/oct
 

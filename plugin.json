@@ -346,14 +346,6 @@
       ]
     },
     {
-      "slug": "Drumpler",
-      "name": "Drumpler",
-      "description": "A drum machine with hand-picked drum samples.",
-      "tags": [
-        "Drums"
-      ]
-    },
-    {
       "slug": "KTF",
       "name": "KTF - Key Tracking Filter",
       "description": "A 1v/oct key tracking filter.",
