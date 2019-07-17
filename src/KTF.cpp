@@ -89,6 +89,7 @@ struct KTF : Module {
         OCT_PARAM,
         FINE_PARAM,
         RES_PARAM,
+        GLIDE_PARAM,
         FREQ_CV_PARAM,
         DRIVE_PARAM,
         NUM_PARAMS
@@ -97,6 +98,7 @@ struct KTF : Module {
         OCT_INPUT,
         FREQ_INPUT,
         RES_INPUT,
+        FINE_INPUT,
         DRIVE_INPUT,
         IN_INPUT,
         NUM_INPUTS
@@ -109,13 +111,15 @@ struct KTF : Module {
     };
 
     KTFLadderFilter<float_4> filters[4];
+    float glide_state;
 
     KTF() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
         // Multiply and offset for backward patch compatibility
         configParam(OCT_PARAM, -8.5, 8.5, 0.0, "Octave", " Oct");
-        configParam(FINE_PARAM, 0.f, 1.f, 0.5f, "Fine frequency");
+        configParam(FINE_PARAM, -0.2f, 0.2f, 0.0f, "Fine frequency");
         configParam(RES_PARAM, 0.f, 1.f, .4f, "Resonance", "%", 0.f, 100.f);
+        configParam(GLIDE_PARAM , 0.0f, 10.0f, 0.0001f, "Glide amount");
         configParam(FREQ_CV_PARAM, -1.f, 1.f, 0.f, "Frequency modulation", "%", 0.f, 100.f);
         configParam(DRIVE_PARAM, 0.f, 1.f, 0.f, "Drive", "", 0, 11);
     }
@@ -126,7 +130,8 @@ struct KTF : Module {
     }
 
     void process(const ProcessArgs &args) override {
-        if (!outputs[LPF_OUTPUT].isConnected() && !outputs[HPF_OUTPUT].isConnected() && !outputs[BPF_OUTPUT].isConnected()) {
+        //if (!outputs[LPF_OUTPUT].isConnected() && !outputs[HPF_OUTPUT].isConnected() && !outputs[BPF_OUTPUT].isConnected()) {
+        if (!outputs[LPF_OUTPUT].isConnected()) {
             return;
         }
 
@@ -134,9 +139,8 @@ struct KTF : Module {
         float resParam = params[RES_PARAM].getValue();
         //float fineParam = params[FINE_PARAM].getValue();
         float fineParam = .711f; // Magic number!
+        fineParam = fineParam + params[FINE_PARAM].getValue() + inputs[FINE_INPUT].value;
         fineParam = dsp::quadraticBipolar(fineParam * 2.f - 1.f) * 7.f / 12.f;
-        float freqCvParam = params[FREQ_CV_PARAM].getValue();
-        freqCvParam = dsp::quadraticBipolar(freqCvParam);
 
         float freqParam = 1.f;
         freqParam = freqParam * 10.f - 5.f;
@@ -166,9 +170,20 @@ struct KTF : Module {
             // Get pitch
             float_4 pitch = freqParam + fineParam + inputs[FREQ_INPUT].getPolyVoltageSimd<float_4>(c) + round(params[OCT_PARAM].getValue());
 
+            if (params[GLIDE_PARAM].getValue() == 0.f){
+                pitch = pitch;
+            }
+            else if (pitch[0] > glide_state){
+                pitch[0] = glide_state + (.00001 * (10 - (params[GLIDE_PARAM].getValue())));
+                glide_state = pitch[0];
+            } else {
+                pitch[0] = glide_state - (.00001 * (10 - (params[GLIDE_PARAM].getValue())));
+                glide_state = pitch[0];
+            }
+
             // Set cutoff
             float_4 cutoff = dsp::FREQ_C4 * simd::pow(2.f, pitch);
-            cutoff = clamp(cutoff, 1.f, 16000.f);
+            cutoff = clamp(cutoff, 1.f, 21000.f);
             filter->setCutoff(cutoff);
 
             // Set outputs
@@ -177,11 +192,11 @@ struct KTF : Module {
             float_4 lowpass = 5.f * filter->lowpass();
             lowpass.store(outputs[LPF_OUTPUT].getVoltages(c));
 
-            float_4 highpass = 5.f * filter->highpass();
-            highpass.store(outputs[HPF_OUTPUT].getVoltages(c));
+            // float_4 highpass = 5.f * filter->highpass();
+            // highpass.store(outputs[HPF_OUTPUT].getVoltages(c));
 
-            float_4 bandpass = 5.f * filter->bandpass();
-            bandpass.store(outputs[BPF_OUTPUT].getVoltages(c));
+            // float_4 bandpass = 5.f * filter->bandpass();
+            // bandpass.store(outputs[BPF_OUTPUT].getVoltages(c));
         }
 
         outputs[LPF_OUTPUT].setChannels(channels);
@@ -205,20 +220,20 @@ struct KTFWidget : ModuleWidget {
         addParam(createParam<RoundHugeBlackSnapKnob>(Vec(33, 61), module, KTF::OCT_PARAM));
         addParam(createParam<RoundLargeBlackKnob>(Vec(12, 143), module, KTF::FINE_PARAM));
         addParam(createParam<RoundLargeBlackKnob>(Vec(71, 143), module, KTF::RES_PARAM));
-        // addParam(createParam<RoundLargeBlackKnob>(Vec(12, 208), module, KTF::FREQ_CV_PARAM));
+        addParam(createParam<RoundLargeBlackKnob>(Vec(12, 208), module, KTF::GLIDE_PARAM));
         addParam(createParam<RoundLargeBlackKnob>(Vec(71, 208), module, KTF::DRIVE_PARAM));
-
-        // XXX TOOO: scratch HBF/BPF and replace with glide
-        addInput(createInput<PJ301MPort>(Vec(10, 190), module, KTF::IN_INPUT));
-        addInput(createInput<PJ301MPort>(Vec(10, 225), module, KTF::FREQ_INPUT));
 
         addInput(createInput<PJ301MPort>(Vec(10, 276), module, KTF::OCT_INPUT));
         addInput(createInput<PJ301MPort>(Vec(48, 276), module, KTF::RES_INPUT));
         addInput(createInput<PJ301MPort>(Vec(85, 276), module, KTF::DRIVE_INPUT));
 
-        addOutput(createOutput<PJ301MPort>(Vec(10, 320), module, KTF::BPF_OUTPUT));
-        addOutput(createOutput<PJ301MPort>(Vec(48, 320), module, KTF::LPF_OUTPUT));
-        addOutput(createOutput<PJ301MPort>(Vec(85, 320), module, KTF::HPF_OUTPUT));
+        addInput(createInput<PJ301MPort>(Vec(10, 320), module, KTF::IN_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(48, 320), module, KTF::FREQ_INPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(85, 320), module, KTF::LPF_OUTPUT));
+
+        // These don't work!
+        // addOutput(createOutput<PJ301MPort>(Vec(10, 320), module, KTF::BPF_OUTPUT));
+        // addOutput(createOutput<PJ301MPort>(Vec(85, 320), module, KTF::HPF_OUTPUT));
     }
 };
 
