@@ -3,21 +3,30 @@ KTF - Key Tracking Filter
 VCF from Fundamental, tuned, plus a PBF.
 */
 
-
 #include "RJModules.hpp"
 
 
 using simd::float_4;
 
-struct RoundHugeBlackSnapKnob : RoundHugeBlackKnob
+struct KTFRoundHugeBlackSnapKnob : RoundHugeBlackKnob
 {
-    RoundHugeBlackSnapKnob()
+    KTFRoundHugeBlackSnapKnob()
     {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
     }
 };
+
+struct KTFRoundLargeBlackKnob : RoundLargeBlackKnob
+{
+    KTFRoundLargeBlackKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+    }
+};
+
 
 template <typename T>
 static T clip(T x) {
@@ -137,9 +146,8 @@ struct KTF : Module {
 
         float driveParam = params[DRIVE_PARAM].getValue();
         float resParam = params[RES_PARAM].getValue();
-        //float fineParam = params[FINE_PARAM].getValue();
         float fineParam = .711f; // Magic number!
-        fineParam = fineParam + params[FINE_PARAM].getValue() + inputs[FINE_INPUT].value;
+        fineParam = fineParam + params[FINE_PARAM].getValue() + inputs[FINE_INPUT].value / 10.f;
         fineParam = dsp::quadraticBipolar(fineParam * 2.f - 1.f) * 7.f / 12.f;
 
         float freqParam = 1.f;
@@ -170,14 +178,15 @@ struct KTF : Module {
             // Get pitch
             float_4 pitch = freqParam + fineParam + inputs[FREQ_INPUT].getPolyVoltageSimd<float_4>(c) + round(params[OCT_PARAM].getValue());
 
-            if (params[GLIDE_PARAM].getValue() == 0.f){
+            float gp = params[GLIDE_PARAM].getValue();
+            if (gp == 0.f){
                 pitch = pitch;
             }
             else if (pitch[0] > glide_state){
-                pitch[0] = glide_state + (.00001 * (10 - (params[GLIDE_PARAM].getValue())));
+                pitch[0] = glide_state + (.00001 * (10 - (gp)));
                 glide_state = pitch[0];
             } else {
-                pitch[0] = glide_state - (.00001 * (10 - (params[GLIDE_PARAM].getValue())));
+                pitch[0] = glide_state - (.00001 * (10 - (gp)));
                 glide_state = pitch[0];
             }
 
@@ -217,11 +226,11 @@ struct KTFWidget : ModuleWidget {
         addChild(createWidget<ScrewSilver>(Vec(15, 365)));
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-        addParam(createParam<RoundHugeBlackSnapKnob>(Vec(33, 61), module, KTF::OCT_PARAM));
-        addParam(createParam<RoundLargeBlackKnob>(Vec(12, 143), module, KTF::FINE_PARAM));
-        addParam(createParam<RoundLargeBlackKnob>(Vec(71, 143), module, KTF::RES_PARAM));
-        addParam(createParam<RoundLargeBlackKnob>(Vec(12, 208), module, KTF::GLIDE_PARAM));
-        addParam(createParam<RoundLargeBlackKnob>(Vec(71, 208), module, KTF::DRIVE_PARAM));
+        addParam(createParam<KTFRoundHugeBlackSnapKnob>(Vec(33, 61), module, KTF::OCT_PARAM));
+        addParam(createParam<KTFRoundLargeBlackKnob>(Vec(12, 143), module, KTF::FINE_PARAM));
+        addParam(createParam<KTFRoundLargeBlackKnob>(Vec(71, 143), module, KTF::RES_PARAM));
+        addParam(createParam<KTFRoundLargeBlackKnob>(Vec(12, 208), module, KTF::GLIDE_PARAM));
+        addParam(createParam<KTFRoundLargeBlackKnob>(Vec(71, 208), module, KTF::DRIVE_PARAM));
 
         addInput(createInput<PJ301MPort>(Vec(10, 276), module, KTF::OCT_INPUT));
         addInput(createInput<PJ301MPort>(Vec(48, 276), module, KTF::RES_INPUT));
