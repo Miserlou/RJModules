@@ -226,17 +226,17 @@ struct Acid : Module {
         configParam(Acid::WAVE_1_PARAM, 0.0, 5.0, 0.0, "");
         configParam(Acid::WAVE_2_PARAM, 0.0, 4.0, 0.0, "");
         configParam(Acid::WAVE_MIX_PARAM, 0.0, 1.0f, 0.0f, "");
-        configParam(Acid::ENV_REL_PARAM, 0.0, 1.0, 0.0, "");
+        configParam(Acid::ENV_REL_PARAM, 0.0, 1.0, 0.1, "");
         configParam(Acid::ENV_AMT_PARAM, 0.0, 1.0, 1.0, "");
-        configParam(Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 0.0, "");
+        configParam(Acid::ENV_SHAPE_PARAM, -1.0, 1.0, 1.0, "");
         configParam(Acid::FILTER_CUT_PARAM, 0.0, 1.0f, 0.90f, "");
-        configParam(Acid::FILTER_FM_1_PARAM, -1.0, 1.0f, 0.0f, "");
-        configParam(Acid::FILTER_Q_PARAM, 0.1f, 1.5f, 0.3f, "");
-        configParam(Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.0f, "");
+        configParam(Acid::FILTER_FM_1_PARAM, -1.0, 1.0f, 0.3f, "");
+        configParam(Acid::FILTER_Q_PARAM, 0.1f, 1.5f, 0.7f, "");
+        configParam(Acid::FILTER_FM_2_PARAM, -1.0, 1.0f, 0.3f, "");
         configParam(Acid::FILTER_DRIVE_PARAM, -5.0f, 5.0f, 1.0f, "");
-        configParam(Acid::PLUCK_REL_PARAM, 0.2f, 0.4f, 0.2f, "");
-        configParam(Acid::PLUCK_EXP_PARAM, 0.0001f, .1f, 4.0f, "");
-        configParam(Acid::PLUCK_ATTACK_PARAM, 0.0, 1.0f, 0.90f, "");
+        configParam(Acid::PLUCK_REL_PARAM, 0.2f, 0.4f, 0.4f, "");
+        configParam(Acid::PLUCK_EXP_PARAM, 0.0001f, 0.4f, 0.2f, "");
+        configParam(Acid::PLUCK_ATTACK_PARAM, 0.f, 1.f, 0.9f, "");
 
     }
 

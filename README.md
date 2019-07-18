@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/mksL6UX.png" width="100%">
+<img src="https://i.imgur.com/6W3sCHr.png" width="100%">
 
 # RJModules [![](https://img.shields.io/badge/version-0.5.0-brightgreen.svg)](https://github.com/Miserlou/RJModules/releases) [![](https://img.shields.io/badge/youtube-demo-red.svg)](https://www.youtube.com/watch?v=qkEjmZZbGGo)
 Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.com/VCVRack/Rack) 0.6.3 and 1.1.0+.
