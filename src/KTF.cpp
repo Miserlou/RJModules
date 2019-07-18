@@ -172,7 +172,7 @@ struct KTF : Module {
 
             // Set resonance
             float_4 resonance = resParam + inputs[RES_INPUT].getPolyVoltageSimd<float_4>(c) / 10.f;
-            resonance = clamp(resonance, 0.f, 1.5f);
+            resonance = clamp(resonance, 0.f, 1.f);
             filter->resonance = simd::pow(resonance, 2) * 10.f;
 
             // Get pitch
