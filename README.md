@@ -272,6 +272,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Drumpler!
   * Reese! (2 saws with independent LFP, mixed into a notch filter and overdrive before final LPF)
   * VOCTFILT - Filter where the cutoff maps to v/oct
+  * That Fucking Wub - That fucking FM wubber!
 
 ## Building
 
