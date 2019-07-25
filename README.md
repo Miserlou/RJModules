@@ -273,6 +273,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Reese! (2 saws with independent LFP, mixed into a notch filter and overdrive before final LPF)
   * VOCTFILT - Filter where the cutoff maps to v/oct
   * That Fucking Wub - That fucking FM wubber!
+  * Pedalboard - Send/return bypass buttons for various effects, to simulate the utility of a guitar's pedalboard.
 
 ## Building
 
