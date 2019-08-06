@@ -275,6 +275,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * That Fucking Wub - That fucking FM wubber!
   * Pedalboard - Send/return bypass buttons for various effects, to simulate the utility of a guitar's pedalboard. Maybe add dry wets for fun.
   * Fretboard - 'Quantum' for people who play the guitar, not the piano..
+  * Counters - 4x counters that trigger in/out (for structuring tracks)
 
 ## Building
 
