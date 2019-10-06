@@ -26,6 +26,9 @@ struct Randoms: Module {
     Randoms() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
     void step() override;
+
+    std::random_device rd; // obtain a random number from hardware
+
 };
 
 void Randoms::step() {
@@ -37,28 +40,30 @@ void Randoms::step() {
     float mapped_ch3v1 = inputs[CH3_CV_INPUT_1].value;
     float mapped_ch3v2 = inputs[CH3_CV_INPUT_2].value;
 
-    std::random_device rd; // obtain a random number from hardware
     std::mt19937 eng(rd()); // seed the generator
+    std::uniform_real_distribution<> distr1(mapped_ch1v1, mapped_ch1v2); // define the range
+    std::uniform_real_distribution<> distr2(mapped_ch2v1, mapped_ch2v2);
+    std::uniform_real_distribution<> distr3(mapped_ch3v1, mapped_ch3v2);
 
     if (mapped_ch1v1 == mapped_ch1v2){
         mapped_ch1v1 = -12;
         mapped_ch1v2 = 12;
     }
-    std::uniform_real_distribution<> distr1(mapped_ch1v1, mapped_ch1v2); // define the range
+
     outputs[CH1_OUTPUT].value = distr1(eng);
 
     if (mapped_ch2v1 == mapped_ch2v2){
         mapped_ch2v1 = -12;
         mapped_ch2v2 = 12;
     }
-    std::uniform_real_distribution<> distr2(mapped_ch2v1, mapped_ch2v2);
+
     outputs[CH1_OUTPUT].value = distr1(eng);
 
     if (mapped_ch3v1 == mapped_ch3v2){
         mapped_ch3v1 = -12;
         mapped_ch3v2 = 12;
     }
-    std::uniform_real_distribution<> distr3(mapped_ch3v1, mapped_ch3v2);
+
     outputs[CH1_OUTPUT].value = distr1(eng);
     outputs[CH2_OUTPUT].value = distr2(eng);
     outputs[CH3_OUTPUT].value = distr3(eng);

@@ -49,3 +49,4 @@ extern Model *modelEssEff;
 extern Model *modelDrumpler;
 extern Model *modelKTF;
 extern Model *modelTriggerSwitch;
+extern Model *modelDryWet;

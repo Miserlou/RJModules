@@ -48,6 +48,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelVolumes);
     p->addModel(modelPanner);
     p->addModel(modelPanners);
+    p->addModel(modelDryWet);
 
     // Live
     p->addModel(modelBPM);

@@ -84,7 +84,7 @@ struct TriggerSwitch : Module {
     int tapeHead_2 = 0;
 
     bool switchOneActive = true;
-    bool switchTwoActive = true;
+    bool switchTwoActive = false;
     float replayLight_2 = 0.0;
 
     const float lightLambda = 0.075;
@@ -92,7 +92,7 @@ struct TriggerSwitch : Module {
     TriggerSwitch() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(TriggerSwitch::BIG_PARAM, -5.0, 5.0, 0.0, "");
-        configParam(TriggerSwitch::BIG_PARAM_2, 0.0, 10.0, 5.0, "");
+        configParam(TriggerSwitch::BIG_PARAM_2, -5.0, 5.0, 0.0, "");
 
     }
 
