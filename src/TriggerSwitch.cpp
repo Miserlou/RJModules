@@ -84,7 +84,7 @@ struct TriggerSwitch : Module {
     int tapeHead_2 = 0;
 
     bool switchOneActive = true;
-    bool switchTwoActive = false;
+    bool switchTwoActive = true;
     float replayLight_2 = 0.0;
 
     const float lightLambda = 0.075;
