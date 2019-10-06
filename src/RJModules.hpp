@@ -48,3 +48,4 @@ extern Model *modelAcid;
 extern Model *modelEssEff;
 extern Model *modelDrumpler;
 extern Model *modelKTF;
+extern Model *modelTriggerSwitch;

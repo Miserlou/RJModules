@@ -352,6 +352,14 @@
       "tags": [
         "VCF"
       ]
+    },
+    {
+      "slug": "TriggerSwitch",
+      "name": "TriggerSwitch - Trigger Activated Gate Switch With Button",
+      "description": "Trigger Activated Gate Switch With Button.",
+      "tags": [
+        "VCF"
+      ]
     }
   ]
 }

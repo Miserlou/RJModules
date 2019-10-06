@@ -55,6 +55,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelButtons);
     p->addModel(modelMetaKnob);
     p->addModel(modelReplayKnob);
+    p->addModel(modelTriggerSwitch);
 
     // Util
     p->addModel(modelSplitter);
