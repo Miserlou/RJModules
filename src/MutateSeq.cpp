@@ -14,7 +14,7 @@ struct MutateSnapKnob : RoundSmallBlackKnob
 
 struct MutateSnapKnobLg : RoundBlackKnob
 {
-    MutateSnapKnob()
+    MutateSnapKnobLg()
     {
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
@@ -28,6 +28,10 @@ struct MutateSeq : Module {
         ENUMS(OCT_PARAM, 8),
         ENUMS(SEMI_PARAM, 8),
         STEPS_PARAM,
+        OCT_DEPTH,
+        NOTE_DEPTH,
+        OCT_RATE,
+        NOTE_RATE,
         NUM_PARAMS
     };
     enum InputIds {
@@ -93,6 +97,11 @@ struct MutateSeq : Module {
         configParam(MutateSeq::SEMI_PARAM + 5, 0.0, 11.0, 0.0, string::f("Ch %d semi", 5));
         configParam(MutateSeq::SEMI_PARAM + 6, 0.0, 11.0, 0.0, string::f("Ch %d semi", 6));
         configParam(MutateSeq::SEMI_PARAM + 7, 0.0, 11.0, 0.0, string::f("Ch %d semi", 7));
+
+        configParam(MutateSeq::OCT_DEPTH, 1.0, 6.0, 1.0, "Oct depth");
+        configParam(MutateSeq::NOTE_DEPTH, 1.0, 12.0, 1.0, "Note depth");
+        configParam(MutateSeq::OCT_RATE, 1.0, 32.0, 8.0, "Oct rate");
+        configParam(MutateSeq::NOTE_RATE, 1.0, 32.0, 8.0, "Note rate");
 
         configParam(MutateSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "");
     }
@@ -238,6 +247,11 @@ MutateSeqWidget::MutateSeqWidget(MutateSeq *module) {
     addParam(createParam<MutateSnapKnob>(mm2px(Vec(28.214, 87.164)),  module, MutateSeq::SEMI_PARAM + 7));
 
     // Mutate Params
+    addParam(createParam<MutateSnapKnob>(mm2px(Vec(11.0, 97.0)), module, MutateSeq::OCT_RATE));
+    addParam(createParam<MutateSnapKnob>(mm2px(Vec(11.0, 107.0)), module, MutateSeq::OCT_DEPTH));
+
+    addParam(createParam<MutateSnapKnob>(mm2px(Vec(22.0, 97.0)), module, MutateSeq::NOTE_RATE));
+    addParam(createParam<MutateSnapKnob>(mm2px(Vec(22.0, 107.0)), module, MutateSeq::NOTE_DEPTH));
 
     // Ins/Outs
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 117.809)), PortWidget::INPUT, module, MutateSeq::IN_INPUT));
