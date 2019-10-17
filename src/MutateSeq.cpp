@@ -12,6 +12,16 @@ struct MutateSnapKnob : RoundSmallBlackKnob
     }
 };
 
+struct MutateSnapKnobLg : RoundBlackKnob
+{
+    MutateSnapKnob()
+    {
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
 struct MutateSeq : Module {
     enum ParamIds {
         ENUMS(LOCK_PARAM, 8),
@@ -43,9 +53,16 @@ struct MutateSeq : Module {
     int currentPosition;
     SchmittTrigger clockTrigger;
 
+    bool init = false;
+    float seq_notes[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
+    float seq_octaves[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
+    float last_notes[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
+    float last_octaves[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
+
+    // Static
     float notes[12] = {0,   0.08, 0.17, 0.25, 0.33, 0.42,
                      0.5, 0.58, 0.67, 0.75, 0.83, 0.92};
-    int octaves[7] = {-1, 0, 1, 2, 3, 4, 5};
+    int octaves[6] = {-1, 0, 1, 2, 3, 4};
 
     MutateSeq() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -59,23 +76,23 @@ struct MutateSeq : Module {
         configParam(MutateSeq::LOCK_PARAM + 6, 0.0, 1.0, 0.0, string::f("Ch %d lock", 6));
         configParam(MutateSeq::LOCK_PARAM + 7, 0.0, 1.0, 0.0, string::f("Ch %d lock", 7));
 
-        configParam(MutateSeq::OCT_PARAM + 0, 0.0, 7.0, 0.0, string::f("Ch %d octave", 0));
-        configParam(MutateSeq::OCT_PARAM + 1, 0.0, 7.0, 0.0, string::f("Ch %d octave", 1));
-        configParam(MutateSeq::OCT_PARAM + 2, 0.0, 7.0, 0.0, string::f("Ch %d octave", 2));
-        configParam(MutateSeq::OCT_PARAM + 3, 0.0, 7.0, 0.0, string::f("Ch %d octave", 3));
-        configParam(MutateSeq::OCT_PARAM + 4, 0.0, 7.0, 0.0, string::f("Ch %d octave", 4));
-        configParam(MutateSeq::OCT_PARAM + 5, 0.0, 7.0, 0.0, string::f("Ch %d octave", 5));
-        configParam(MutateSeq::OCT_PARAM + 6, 0.0, 7.0, 0.0, string::f("Ch %d octave", 6));
-        configParam(MutateSeq::OCT_PARAM + 7, 0.0, 7.0, 0.0, string::f("Ch %d octave", 7));
+        configParam(MutateSeq::OCT_PARAM + 0, 0.0, 5.0, 0.0, string::f("Ch %d octave", 0));
+        configParam(MutateSeq::OCT_PARAM + 1, 0.0, 5.0, 0.0, string::f("Ch %d octave", 1));
+        configParam(MutateSeq::OCT_PARAM + 2, 0.0, 5.0, 0.0, string::f("Ch %d octave", 2));
+        configParam(MutateSeq::OCT_PARAM + 3, 0.0, 5.0, 0.0, string::f("Ch %d octave", 3));
+        configParam(MutateSeq::OCT_PARAM + 4, 0.0, 5.0, 0.0, string::f("Ch %d octave", 4));
+        configParam(MutateSeq::OCT_PARAM + 5, 0.0, 5.0, 0.0, string::f("Ch %d octave", 5));
+        configParam(MutateSeq::OCT_PARAM + 6, 0.0, 5.0, 0.0, string::f("Ch %d octave", 6));
+        configParam(MutateSeq::OCT_PARAM + 7, 0.0, 5.0, 0.0, string::f("Ch %d octave", 7));
 
-        configParam(MutateSeq::SEMI_PARAM + 0, 0.0, 12.0, 0.0, string::f("Ch %d semi", 0));
-        configParam(MutateSeq::SEMI_PARAM + 1, 0.0, 12.0, 0.0, string::f("Ch %d semi", 1));
-        configParam(MutateSeq::SEMI_PARAM + 2, 0.0, 12.0, 0.0, string::f("Ch %d semi", 2));
-        configParam(MutateSeq::SEMI_PARAM + 3, 0.0, 12.0, 0.0, string::f("Ch %d semi", 3));
-        configParam(MutateSeq::SEMI_PARAM + 4, 0.0, 12.0, 0.0, string::f("Ch %d semi", 4));
-        configParam(MutateSeq::SEMI_PARAM + 5, 0.0, 12.0, 0.0, string::f("Ch %d semi", 5));
-        configParam(MutateSeq::SEMI_PARAM + 6, 0.0, 12.0, 0.0, string::f("Ch %d semi", 6));
-        configParam(MutateSeq::SEMI_PARAM + 7, 0.0, 12.0, 0.0, string::f("Ch %d semi", 7));
+        configParam(MutateSeq::SEMI_PARAM + 0, 0.0, 11.0, 0.0, string::f("Ch %d semi", 0));
+        configParam(MutateSeq::SEMI_PARAM + 1, 0.0, 11.0, 0.0, string::f("Ch %d semi", 1));
+        configParam(MutateSeq::SEMI_PARAM + 2, 0.0, 11.0, 0.0, string::f("Ch %d semi", 2));
+        configParam(MutateSeq::SEMI_PARAM + 3, 0.0, 11.0, 0.0, string::f("Ch %d semi", 3));
+        configParam(MutateSeq::SEMI_PARAM + 4, 0.0, 11.0, 0.0, string::f("Ch %d semi", 4));
+        configParam(MutateSeq::SEMI_PARAM + 5, 0.0, 11.0, 0.0, string::f("Ch %d semi", 5));
+        configParam(MutateSeq::SEMI_PARAM + 6, 0.0, 11.0, 0.0, string::f("Ch %d semi", 6));
+        configParam(MutateSeq::SEMI_PARAM + 7, 0.0, 11.0, 0.0, string::f("Ch %d semi", 7));
 
         configParam(MutateSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "");
     }
@@ -114,9 +131,18 @@ struct MutateSeq : Module {
     }
 
     void process(const ProcessArgs &args) override {
-        const float zero[16] = {};
-        float out[16] = {};
-        int channels = 1;
+
+        // Reset on first process
+        if(!init){
+            for (int i = 0; i < 8; i++) {
+                seq_octaves[i] = params[OCT_PARAM + i].value;
+                seq_notes[i] = params[SEMI_PARAM + i].value;
+
+                last_octaves[i] = params[OCT_PARAM + i].value;
+                last_notes[i] = params[SEMI_PARAM + i].value;
+            }
+            init = true;
+        }
 
         bool gateIn = false;
         if (inputs[IN_INPUT].active) {
@@ -137,9 +163,18 @@ struct MutateSeq : Module {
             lights[LOCK_LIGHT + i].setBrightness((index == i) ? 1.0f :lights[LOCK_LIGHT + i].getBrightness());
         }
 
+        // If knobs have been nudged since last seen, use those.
+        if(params[OCT_PARAM + index].value != last_octaves[index]){
+            seq_octaves[index] = params[OCT_PARAM + index].value;
+        }
+        last_octaves[index] = params[OCT_PARAM + index].value;
+        if(params[SEMI_PARAM + index].value != last_notes[index]){
+            seq_notes[index] = params[SEMI_PARAM + index].value;
+        }
+        last_notes[index] = params[SEMI_PARAM + index].value;
 
-        float oct_param = params[OCT_PARAM + index].value;
-        float note_param = params[SEMI_PARAM + index].value;
+        float oct_param = seq_octaves[index];
+        float note_param = seq_notes[index];
         outputs[OUT_OUTPUT].value = octaves[(int)oct_param] + notes[(int)note_param];
 
     }
@@ -158,12 +193,13 @@ struct MutateSeqWidget: ModuleWidget {
 
 MutateSeqWidget::MutateSeqWidget(MutateSeq *module) {
     setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Octaves.svg")));
+    setPanel(SVG::load(assetPlugin(pluginInstance, "res/MutateSeq.svg")));
 
-    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
+    // MAGNETS
+    // addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    // addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
+    // addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    // addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
     addParam(createParam<LEDBezel>(mm2px(Vec(4.214, 17.81)), module, MutateSeq::LOCK_PARAM + 0));
     addParam(createParam<LEDBezel>(mm2px(Vec(4.214, 27.809)), module, MutateSeq::LOCK_PARAM + 1));
