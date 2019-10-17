@@ -28,6 +28,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelSidechain);
     p->addModel(modelStutter);
     p->addModel(modelGlides);
+    p->addModel(modelPolySidechain);
 
     // Filters
     p->addModel(modelFilter);
@@ -69,6 +70,7 @@ void init(rack::Plugin *p) {
 
     // Sequencer
     p->addModel(modelChordSeq);
+    p->addModel(modelMutateSeq);
 
     // Quantizer
     p->addModel(modeluQuant);

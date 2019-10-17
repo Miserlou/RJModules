@@ -50,3 +50,5 @@ extern Model *modelDrumpler;
 extern Model *modelKTF;
 extern Model *modelTriggerSwitch;
 extern Model *modelDryWet;
+extern Model *modelPolySidechain;
+extern Model *modelMutateSeq;

@@ -370,6 +370,15 @@
         "Controller",
         "Effect"
       ]
+    },
+    {
+      "slug": "MutateSeq",
+      "name": "MutateSeq - MutateSeq - Mutating Sequencer",
+      "description": "MutateSeq - Mutating Sequencer",
+      "tags": [
+        "Utility",
+        "Sequencer"
+      ]
     }
   ]
 }
