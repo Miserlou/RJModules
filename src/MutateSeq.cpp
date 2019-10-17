@@ -43,6 +43,10 @@ struct MutateSeq : Module {
     int currentPosition;
     SchmittTrigger clockTrigger;
 
+    float notes[12] = {0,   0.08, 0.17, 0.25, 0.33, 0.42,
+                     0.5, 0.58, 0.67, 0.75, 0.83, 0.92};
+    int octaves[7] = {-1, 0, 1, 2, 3, 4, 5};
+
     MutateSeq() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
@@ -55,23 +59,23 @@ struct MutateSeq : Module {
         configParam(MutateSeq::LOCK_PARAM + 6, 0.0, 1.0, 0.0, string::f("Ch %d lock", 6));
         configParam(MutateSeq::LOCK_PARAM + 7, 0.0, 1.0, 0.0, string::f("Ch %d lock", 7));
 
-        configParam(MutateSeq::OCT_PARAM + 0, -4.0, 4.0, 0.0, string::f("Ch %d octave", 0));
-        configParam(MutateSeq::OCT_PARAM + 1, -4.0, 4.0, 0.0, string::f("Ch %d octave", 1));
-        configParam(MutateSeq::OCT_PARAM + 2, -4.0, 4.0, 0.0, string::f("Ch %d octave", 2));
-        configParam(MutateSeq::OCT_PARAM + 3, -4.0, 4.0, 0.0, string::f("Ch %d octave", 3));
-        configParam(MutateSeq::OCT_PARAM + 4, -4.0, 4.0, 0.0, string::f("Ch %d octave", 4));
-        configParam(MutateSeq::OCT_PARAM + 5, -4.0, 4.0, 0.0, string::f("Ch %d octave", 5));
-        configParam(MutateSeq::OCT_PARAM + 6, -4.0, 4.0, 0.0, string::f("Ch %d octave", 6));
-        configParam(MutateSeq::OCT_PARAM + 7, -4.0, 4.0, 0.0, string::f("Ch %d octave", 7));
+        configParam(MutateSeq::OCT_PARAM + 0, 0.0, 7.0, 0.0, string::f("Ch %d octave", 0));
+        configParam(MutateSeq::OCT_PARAM + 1, 0.0, 7.0, 0.0, string::f("Ch %d octave", 1));
+        configParam(MutateSeq::OCT_PARAM + 2, 0.0, 7.0, 0.0, string::f("Ch %d octave", 2));
+        configParam(MutateSeq::OCT_PARAM + 3, 0.0, 7.0, 0.0, string::f("Ch %d octave", 3));
+        configParam(MutateSeq::OCT_PARAM + 4, 0.0, 7.0, 0.0, string::f("Ch %d octave", 4));
+        configParam(MutateSeq::OCT_PARAM + 5, 0.0, 7.0, 0.0, string::f("Ch %d octave", 5));
+        configParam(MutateSeq::OCT_PARAM + 6, 0.0, 7.0, 0.0, string::f("Ch %d octave", 6));
+        configParam(MutateSeq::OCT_PARAM + 7, 0.0, 7.0, 0.0, string::f("Ch %d octave", 7));
 
-        configParam(MutateSeq::SEMI_PARAM + 0, -12.0, 12.0, 0.0, string::f("Ch %d semi", 0));
-        configParam(MutateSeq::SEMI_PARAM + 1, -12.0, 12.0, 0.0, string::f("Ch %d semi", 1));
-        configParam(MutateSeq::SEMI_PARAM + 2, -12.0, 12.0, 0.0, string::f("Ch %d semi", 2));
-        configParam(MutateSeq::SEMI_PARAM + 3, -12.0, 12.0, 0.0, string::f("Ch %d semi", 3));
-        configParam(MutateSeq::SEMI_PARAM + 4, -12.0, 12.0, 0.0, string::f("Ch %d semi", 4));
-        configParam(MutateSeq::SEMI_PARAM + 5, -12.0, 12.0, 0.0, string::f("Ch %d semi", 5));
-        configParam(MutateSeq::SEMI_PARAM + 6, -12.0, 12.0, 0.0, string::f("Ch %d semi", 6));
-        configParam(MutateSeq::SEMI_PARAM + 7, -12.0, 12.0, 0.0, string::f("Ch %d semi", 7));
+        configParam(MutateSeq::SEMI_PARAM + 0, 0.0, 12.0, 0.0, string::f("Ch %d semi", 0));
+        configParam(MutateSeq::SEMI_PARAM + 1, 0.0, 12.0, 0.0, string::f("Ch %d semi", 1));
+        configParam(MutateSeq::SEMI_PARAM + 2, 0.0, 12.0, 0.0, string::f("Ch %d semi", 2));
+        configParam(MutateSeq::SEMI_PARAM + 3, 0.0, 12.0, 0.0, string::f("Ch %d semi", 3));
+        configParam(MutateSeq::SEMI_PARAM + 4, 0.0, 12.0, 0.0, string::f("Ch %d semi", 4));
+        configParam(MutateSeq::SEMI_PARAM + 5, 0.0, 12.0, 0.0, string::f("Ch %d semi", 5));
+        configParam(MutateSeq::SEMI_PARAM + 6, 0.0, 12.0, 0.0, string::f("Ch %d semi", 6));
+        configParam(MutateSeq::SEMI_PARAM + 7, 0.0, 12.0, 0.0, string::f("Ch %d semi", 7));
 
         configParam(MutateSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "");
     }
@@ -86,28 +90,28 @@ struct MutateSeq : Module {
 
     // void step() override;
 
-    // json_t *dataToJson() override {
-    //     json_t *rootJ = json_object();
-    //     // states
-    //     json_t *statesJ = json_array();
-    //     for (int i = 0; i < NUM_CHANNELS; i++) {
-    //         json_t *stateJ = json_boolean(state[i]);
-    //         json_array_append_new(statesJ, stateJ);
-    //     }
-    //     json_object_set_new(rootJ, "states", statesJ);
-    //     return rootJ;
-    // }
-    // void dataFromJson(json_t *rootJ) override {
-    //     // states
-    //     json_t *statesJ = json_object_get(rootJ, "states");
-    //     if (statesJ) {
-    //         for (int i = 0; i < NUM_CHANNELS; i++) {
-    //             json_t *stateJ = json_array_get(statesJ, i);
-    //             if (stateJ)
-    //                 state[i] = json_boolean_value(stateJ);
-    //         }
-    //     }
-    // }
+    json_t *dataToJson() override {
+        json_t *rootJ = json_object();
+        // states
+        json_t *statesJ = json_array();
+        for (int i = 0; i < NUM_CHANNELS; i++) {
+            json_t *stateJ = json_boolean(lock_state[i]);
+            json_array_append_new(statesJ, stateJ);
+        }
+        json_object_set_new(rootJ, "states", statesJ);
+        return rootJ;
+    }
+    void dataFromJson(json_t *rootJ) override {
+        // states
+        json_t *statesJ = json_object_get(rootJ, "states");
+        if (statesJ) {
+            for (int i = 0; i < NUM_CHANNELS; i++) {
+                json_t *stateJ = json_array_get(statesJ, i);
+                if (stateJ)
+                    lock_state[i] = json_boolean_value(stateJ);
+            }
+        }
+    }
 
     void process(const ProcessArgs &args) override {
         const float zero[16] = {};
@@ -132,6 +136,12 @@ struct MutateSeq : Module {
             lights[LOCK_LIGHT + i].setBrightness(lock_state[i] ? 0.6f : 0.f);
             lights[LOCK_LIGHT + i].setBrightness((index == i) ? 1.0f :lights[LOCK_LIGHT + i].getBrightness());
         }
+
+
+        float oct_param = params[OCT_PARAM + index].value;
+        float note_param = params[SEMI_PARAM + index].value;
+        outputs[OUT_OUTPUT].value = octaves[(int)oct_param] + notes[(int)note_param];
+
     }
 };
 
