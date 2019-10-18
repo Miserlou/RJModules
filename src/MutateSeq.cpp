@@ -63,6 +63,8 @@ struct MutateSeq : Module {
     float last_notes[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
     float last_octaves[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
 
+    int mut_counter = 0;
+
     // Static
     float notes[12] = {0,   0.08, 0.17, 0.25, 0.33, 0.42,
                      0.5, 0.58, 0.67, 0.75, 0.83, 0.92};
@@ -159,6 +161,10 @@ struct MutateSeq : Module {
                 setIndex(index + 1);
             }
             gateIn = clockTrigger.isHigh();
+
+            // // MUTATION
+            // mut_counter++;
+            // if (mut_counter>=
         }
 
         // Iterate rows
@@ -181,6 +187,7 @@ struct MutateSeq : Module {
             seq_notes[index] = params[SEMI_PARAM + index].value;
         }
         last_notes[index] = params[SEMI_PARAM + index].value;
+
 
         float oct_param = seq_octaves[index];
         float note_param = seq_notes[index];

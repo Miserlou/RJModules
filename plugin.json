@@ -379,6 +379,24 @@
         "Utility",
         "Sequencer"
       ]
+    },
+    {
+      "slug": "Notes",
+      "name": "Notes",
+      "description": "Static Notes - Polyphonic",
+      "tags": [
+        "Utility",
+        "Polyphonic"
+      ]
+    },
+    {
+      "slug": "Sequential",
+      "name": "Sequential Switch - 8 to 1",
+      "description": "Gate-triggered Sequential Switch",
+      "tags": [
+        "Utility",
+        "Sequencer"
+      ]
     }
   ]
 }

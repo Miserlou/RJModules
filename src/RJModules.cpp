@@ -42,6 +42,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelIntegers);
     p->addModel(modelFloats);
     p->addModel(modelRandoms);
+    p->addModel(modelNotes);
 
     // Mix
     p->addModel(modelLRMixer);
@@ -71,6 +72,7 @@ void init(rack::Plugin *p) {
     // Sequencer
     p->addModel(modelChordSeq);
     p->addModel(modelMutateSeq);
+    p->addModel(modelSequential);
 
     // Quantizer
     p->addModel(modeluQuant);

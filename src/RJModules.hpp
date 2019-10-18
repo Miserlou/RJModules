@@ -52,3 +52,5 @@ extern Model *modelTriggerSwitch;
 extern Model *modelDryWet;
 extern Model *modelPolySidechain;
 extern Model *modelMutateSeq;
+extern Model *modelNotes;
+extern Model *modelSequential;
