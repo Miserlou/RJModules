@@ -43,21 +43,21 @@ struct Notes : Module {
     // Static
     float notes[12] = {0,   0.08, 0.17, 0.25, 0.33, 0.42,
                      0.5, 0.58, 0.67, 0.75, 0.83, 0.92};
-    int octaves[6] = {-1, 0, 1, 2, 3, 4};
+    int octaves[7] = {-2, -1, 0, 1, 2, 3, 4};
 
     Notes() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
-        configParam(Notes::OCT_PARAM + 0, 0.0, 5.0, 0.0, string::f("Ch %d octave", 0));
-        configParam(Notes::OCT_PARAM + 1, 0.0, 5.0, 0.0, string::f("Ch %d octave", 1));
-        configParam(Notes::OCT_PARAM + 2, 0.0, 5.0, 0.0, string::f("Ch %d octave", 2));
-        configParam(Notes::OCT_PARAM + 3, 0.0, 5.0, 0.0, string::f("Ch %d octave", 3));
-        configParam(Notes::OCT_PARAM + 4, 0.0, 5.0, 0.0, string::f("Ch %d octave", 4));
-        configParam(Notes::OCT_PARAM + 5, 0.0, 5.0, 0.0, string::f("Ch %d octave", 5));
-        configParam(Notes::OCT_PARAM + 6, 0.0, 5.0, 0.0, string::f("Ch %d octave", 6));
-        configParam(Notes::OCT_PARAM + 7, 0.0, 5.0, 0.0, string::f("Ch %d octave", 7));
-        configParam(Notes::OCT_PARAM + 8, 0.0, 5.0, 0.0, string::f("Ch %d octave", 8));
-        configParam(Notes::OCT_PARAM + 9, 0.0, 5.0, 0.0, string::f("Ch %d octave", 9));
+        configParam(Notes::OCT_PARAM + 0, 0.0, 6.0, 1.0, string::f("Ch %d octave", 0));
+        configParam(Notes::OCT_PARAM + 1, 0.0, 6.0, 1.0, string::f("Ch %d octave", 1));
+        configParam(Notes::OCT_PARAM + 2, 0.0, 6.0, 1.0, string::f("Ch %d octave", 2));
+        configParam(Notes::OCT_PARAM + 3, 0.0, 6.0, 1.0, string::f("Ch %d octave", 3));
+        configParam(Notes::OCT_PARAM + 4, 0.0, 6.0, 1.0, string::f("Ch %d octave", 4));
+        configParam(Notes::OCT_PARAM + 5, 0.0, 6.0, 1.0, string::f("Ch %d octave", 5));
+        configParam(Notes::OCT_PARAM + 6, 0.0, 6.0, 1.0, string::f("Ch %d octave", 6));
+        configParam(Notes::OCT_PARAM + 7, 0.0, 6.0, 1.0, string::f("Ch %d octave", 7));
+        configParam(Notes::OCT_PARAM + 8, 0.0, 6.0, 1.0, string::f("Ch %d octave", 8));
+        configParam(Notes::OCT_PARAM + 9, 0.0, 6.0, 1.0, string::f("Ch %d octave", 9));
 
         configParam(Notes::SEMI_PARAM + 0, 0.0, 11.0, 0.0, string::f("Ch %d semi", 0));
         configParam(Notes::SEMI_PARAM + 1, 0.0, 11.0, 0.0, string::f("Ch %d semi", 1));

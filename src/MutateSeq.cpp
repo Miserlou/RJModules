@@ -30,8 +30,7 @@ struct MutateSeq : Module {
         STEPS_PARAM,
         OCT_DEPTH,
         NOTE_DEPTH,
-        OCT_RATE,
-        NOTE_RATE,
+        MUTATE_EVERY,
         NUM_PARAMS
     };
     enum InputIds {
@@ -68,7 +67,7 @@ struct MutateSeq : Module {
     // Static
     float notes[12] = {0,   0.08, 0.17, 0.25, 0.33, 0.42,
                      0.5, 0.58, 0.67, 0.75, 0.83, 0.92};
-    int octaves[6] = {-1, 0, 1, 2, 3, 4};
+    int octaves[7] = {-2, -1, 0, 1, 2, 3, 4};
 
     MutateSeq() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -82,14 +81,14 @@ struct MutateSeq : Module {
         configParam(MutateSeq::LOCK_PARAM + 6, 0.0, 1.0, 0.0, string::f("Ch %d lock", 6));
         configParam(MutateSeq::LOCK_PARAM + 7, 0.0, 1.0, 0.0, string::f("Ch %d lock", 7));
 
-        configParam(MutateSeq::OCT_PARAM + 0, 0.0, 5.0, 0.0, string::f("Ch %d octave", 0));
-        configParam(MutateSeq::OCT_PARAM + 1, 0.0, 5.0, 0.0, string::f("Ch %d octave", 1));
-        configParam(MutateSeq::OCT_PARAM + 2, 0.0, 5.0, 0.0, string::f("Ch %d octave", 2));
-        configParam(MutateSeq::OCT_PARAM + 3, 0.0, 5.0, 0.0, string::f("Ch %d octave", 3));
-        configParam(MutateSeq::OCT_PARAM + 4, 0.0, 5.0, 0.0, string::f("Ch %d octave", 4));
-        configParam(MutateSeq::OCT_PARAM + 5, 0.0, 5.0, 0.0, string::f("Ch %d octave", 5));
-        configParam(MutateSeq::OCT_PARAM + 6, 0.0, 5.0, 0.0, string::f("Ch %d octave", 6));
-        configParam(MutateSeq::OCT_PARAM + 7, 0.0, 5.0, 0.0, string::f("Ch %d octave", 7));
+        configParam(MutateSeq::OCT_PARAM + 0, 0.0, 6.0, 1.0, string::f("Ch %d octave", 0));
+        configParam(MutateSeq::OCT_PARAM + 1, 0.0, 6.0, 1.0, string::f("Ch %d octave", 1));
+        configParam(MutateSeq::OCT_PARAM + 2, 0.0, 6.0, 1.0, string::f("Ch %d octave", 2));
+        configParam(MutateSeq::OCT_PARAM + 3, 0.0, 6.0, 1.0, string::f("Ch %d octave", 3));
+        configParam(MutateSeq::OCT_PARAM + 4, 0.0, 6.0, 1.0, string::f("Ch %d octave", 4));
+        configParam(MutateSeq::OCT_PARAM + 5, 0.0, 6.0, 1.0, string::f("Ch %d octave", 5));
+        configParam(MutateSeq::OCT_PARAM + 6, 0.0, 6.0, 1.0, string::f("Ch %d octave", 6));
+        configParam(MutateSeq::OCT_PARAM + 7, 0.0, 6.0, 1.0, string::f("Ch %d octave", 7));
 
         configParam(MutateSeq::SEMI_PARAM + 0, 0.0, 11.0, 0.0, string::f("Ch %d semi", 0));
         configParam(MutateSeq::SEMI_PARAM + 1, 0.0, 11.0, 0.0, string::f("Ch %d semi", 1));
@@ -100,12 +99,11 @@ struct MutateSeq : Module {
         configParam(MutateSeq::SEMI_PARAM + 6, 0.0, 11.0, 0.0, string::f("Ch %d semi", 6));
         configParam(MutateSeq::SEMI_PARAM + 7, 0.0, 11.0, 0.0, string::f("Ch %d semi", 7));
 
-        configParam(MutateSeq::OCT_DEPTH, 1.0, 6.0, 1.0, "Oct depth");
-        configParam(MutateSeq::NOTE_DEPTH, 1.0, 12.0, 1.0, "Note depth");
-        configParam(MutateSeq::OCT_RATE, 1.0, 32.0, 8.0, "Oct rate");
-        configParam(MutateSeq::NOTE_RATE, 1.0, 32.0, 8.0, "Note rate");
+        configParam(MutateSeq::MUTATE_EVERY, 1.0, 128.0, 16.0, "Mutate Every");
+        configParam(MutateSeq::OCT_DEPTH, 0.0, 6.0, 1.0, "Oct depth");
+        configParam(MutateSeq::NOTE_DEPTH, 0.0, 11.0, 11.0, "Note depth");
 
-        configParam(MutateSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "");
+        configParam(MutateSeq::STEPS_PARAM, 1.0f, 8.0f, 8.0f, "Length");
     }
 
     void setIndex(int index) {
@@ -117,29 +115,8 @@ struct MutateSeq : Module {
     }
 
     // void step() override;
-
-    json_t *dataToJson() override {
-        json_t *rootJ = json_object();
-        // states
-        json_t *statesJ = json_array();
-        for (int i = 0; i < NUM_CHANNELS; i++) {
-            json_t *stateJ = json_boolean(lock_state[i]);
-            json_array_append_new(statesJ, stateJ);
-        }
-        json_object_set_new(rootJ, "states", statesJ);
-        return rootJ;
-    }
-    void dataFromJson(json_t *rootJ) override {
-        // states
-        json_t *statesJ = json_object_get(rootJ, "states");
-        if (statesJ) {
-            for (int i = 0; i < NUM_CHANNELS; i++) {
-                json_t *stateJ = json_array_get(statesJ, i);
-                if (stateJ)
-                    lock_state[i] = json_boolean_value(stateJ);
-            }
-        }
-    }
+    // json_t *dataToJson() override {};
+    // void dataFromJson(json_t *rootJ) override {};
 
     void process(const ProcessArgs &args) override {
 
@@ -151,6 +128,8 @@ struct MutateSeq : Module {
 
                 last_octaves[i] = params[OCT_PARAM + i].value;
                 last_notes[i] = params[SEMI_PARAM + i].value;
+
+                lock_state[i] = false;
             }
             init = true;
         }
@@ -159,12 +138,49 @@ struct MutateSeq : Module {
         if (inputs[IN_INPUT].active) {
             if (clockTrigger.process(inputs[IN_INPUT].value)) {
                 setIndex(index + 1);
-            }
-            gateIn = clockTrigger.isHigh();
 
-            // // MUTATION
-            // mut_counter++;
-            // if (mut_counter>=
+                // MUTATION
+                mut_counter++;
+                if (mut_counter >= params[MUTATE_EVERY].value){
+                    mut_counter = 0;
+                    int choice = rand() % (int) params[STEPS_PARAM].value;
+                    if(!lock_state[choice]){
+
+                        bool mutate_oct = rand() & 1;
+                        if(mutate_oct){
+                            if(rand() & 1){
+                                int plus_distance = (int) rand() & (int) params[OCT_DEPTH].value + 1;
+                                seq_octaves[choice] = seq_octaves[choice] + plus_distance;
+                            }else{
+                                int minus_distance = (int) rand() & (int) params[OCT_DEPTH].value + 1;
+                                seq_octaves[choice] = seq_octaves[choice] - minus_distance;
+                            }
+
+                            if(seq_octaves[choice] < 0)
+                                seq_octaves[choice] = 0;
+                            if(seq_octaves[choice] > 6)
+                                seq_octaves[choice] = 6;
+                        }
+
+                        bool mutate_semi = rand() & 1;
+                        if(mutate_semi){
+                            if(rand() & 1){
+                                int plus_distance = (int) rand() & (int) params[NOTE_DEPTH].value + 1;
+                                seq_notes[choice] = seq_notes[choice] + plus_distance;
+                            }else{
+                                int minus_distance = (int) rand() & (int) params[NOTE_DEPTH].value + 1;
+                                seq_notes[choice] = seq_notes[choice] - minus_distance;
+                            }
+
+                            if(seq_notes[choice] < 0)
+                                seq_notes[choice] = 0;
+                            if(seq_notes[choice] > 11)
+                                seq_notes[choice] = 11;
+                        }
+
+                    }
+                }
+            }
         }
 
         // Iterate rows
@@ -187,7 +203,6 @@ struct MutateSeq : Module {
             seq_notes[index] = params[SEMI_PARAM + index].value;
         }
         last_notes[index] = params[SEMI_PARAM + index].value;
-
 
         float oct_param = seq_octaves[index];
         float note_param = seq_notes[index];
@@ -254,11 +269,9 @@ MutateSeqWidget::MutateSeqWidget(MutateSeq *module) {
     addParam(createParam<MutateSnapKnob>(mm2px(Vec(28.214, 87.164)),  module, MutateSeq::SEMI_PARAM + 7));
 
     // Mutate Params
-    addParam(createParam<MutateSnapKnob>(mm2px(Vec(11.0, 97.0)), module, MutateSeq::OCT_RATE));
-    addParam(createParam<MutateSnapKnob>(mm2px(Vec(11.0, 107.0)), module, MutateSeq::OCT_DEPTH));
-
-    addParam(createParam<MutateSnapKnob>(mm2px(Vec(22.0, 97.0)), module, MutateSeq::NOTE_RATE));
-    addParam(createParam<MutateSnapKnob>(mm2px(Vec(22.0, 107.0)), module, MutateSeq::NOTE_DEPTH));
+    addParam(createParam<MutateSnapKnobLg>(mm2px(Vec(4.0, 102.0)), module, MutateSeq::MUTATE_EVERY));
+    addParam(createParam<MutateSnapKnobLg>(mm2px(Vec(16.0, 102.0)), module, MutateSeq::OCT_DEPTH));
+    addParam(createParam<MutateSnapKnobLg>(mm2px(Vec(28.0, 102.0)), module, MutateSeq::NOTE_DEPTH));
 
     // Ins/Outs
     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 117.809)), PortWidget::INPUT, module, MutateSeq::IN_INPUT));
