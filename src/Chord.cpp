@@ -86,6 +86,8 @@ struct Chord : Module {
     int referencePitch = 0;
     int referenceOctave = 4;
 
+    int step_count = 8;
+
     float frequencyToSemitone(float frequency) {
         return logf(frequency / referenceFrequency) / logTwelfthRootTwo + referenceSemitone;
     }
@@ -120,130 +122,135 @@ struct Chord : Module {
 
 void Chord::step() {
 
-    float offset_raw = (params[CHORD_PARAM].value) * 12 - 6 + (inputs[CHORD_CV_INPUT].value) / 1.5;
-    float pitch_offset = round(offset_raw) / 12;
-    float root = 1.0*1 + pitch_offset;
+    if(step_count == 8){
+        float offset_raw = (params[CHORD_PARAM].value) * 12 - 6 + (inputs[CHORD_CV_INPUT].value) / 1.5;
+        float pitch_offset = round(offset_raw) / 12;
+        float root = 1.0*1 + pitch_offset;
 
-    float _input_pitch = params[CHORD_PARAM].value * clamp(inputs[CHORD_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
-    float _pitch = (int) _input_pitch % (int) 12;
-    float _octave = int(_input_pitch / 12);
+        float _input_pitch = params[CHORD_PARAM].value * clamp(inputs[CHORD_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
+        float _pitch = (int) _input_pitch % (int) 12;
+        float _octave = int(_input_pitch / 12);
 
-    float _shape = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
-    float _three_interval;
-    float _five_interval;
-    float _seven_interval;
-    char* shape = NULL;
-    // via https://en.wikibooks.org/wiki/Music_Theory/Chords
-    switch ((int) _shape) {
-        case 0: {
-            // Maj
-            shape = "Maj";
-            _three_interval = 4;
-            _five_interval = 7;
-            _seven_interval = 11;
-            break;
+        float _shape = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
+        float _three_interval;
+        float _five_interval;
+        float _seven_interval;
+        char* shape = NULL;
+        // via https://en.wikibooks.org/wiki/Music_Theory/Chords
+        switch ((int) _shape) {
+            case 0: {
+                // Maj
+                shape = "Maj";
+                _three_interval = 4;
+                _five_interval = 7;
+                _seven_interval = 11;
+                break;
+            }
+            case 1: {
+                // Min
+                shape = "Min";
+                _three_interval = 3;
+                _five_interval = 7;
+                _seven_interval = 10;
+                break;
+            }
+            case 2: {
+                // Dim
+                shape = "Dim";
+                _three_interval = 3;
+                _five_interval = 6;
+                _seven_interval = 10;
+                break;
+            }
+            case 3: {
+                shape = "Aug";
+                _three_interval = 4;
+                _five_interval = 8;
+                _seven_interval = 12;
+                break;
+            }
         }
-        case 1: {
-            // Min
-            shape = "Min";
-            _three_interval = 3;
-            _five_interval = 7;
-            _seven_interval = 10;
-            break;
+
+        float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
+        float _root_cv = frequencyToCV(_root_frequency);
+
+        float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _three_interval - referencePitch));
+        float _third_cv = frequencyToCV(_third_frequency);
+
+        float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _five_interval - referencePitch));
+        float _fifth_cv = frequencyToCV(_fifth_frequency);
+
+        float _seventh_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _seven_interval - referencePitch));
+        float _seventh_cv = frequencyToCV(_seventh_frequency);
+
+        outputs[ROOT_OUTPUT].value = _root_cv;
+        outputs[THREE_OUTPUT].value = _third_cv;
+        outputs[FIVE_OUTPUT].value = _fifth_cv;
+        outputs[SEVEN_OUTPUT].value = _seventh_cv;
+
+        char* pitch = NULL;
+        char* sharpFlat = NULL;
+        switch ((int) _pitch) {
+            case 0: {
+                pitch = "C";
+                break;
+            }
+            case 1: {
+                pitch = "C#";
+                sharpFlat = "#";
+                break;
+            }
+            case 2: {
+                pitch = "D";
+                break;
+            }
+            case 3: {
+                pitch = "D#";
+                sharpFlat = "#";
+                break;
+            }
+            case 4: {
+                pitch = "E";
+                break;
+            }
+            case 5: {
+                pitch = "F";
+                break;
+            }
+            case 6: {
+                pitch = "F#";
+                sharpFlat = "#";
+                break;
+            }
+            case 7: {
+                pitch = "G";
+                break;
+            }
+            case 8: {
+                pitch = "G#";
+                sharpFlat = "#";
+                break;
+            }
+            case 9: {
+                pitch = "A";
+                break;
+            }
+            case 10: {
+                pitch = "A#";
+                sharpFlat = "#";
+                break;
+            }
+            case 11: {
+                pitch = "B";
+                break;
+            }
         }
-        case 2: {
-            // Dim
-            shape = "Dim";
-            _three_interval = 3;
-            _five_interval = 6;
-            _seven_interval = 10;
-            break;
-        }
-        case 3: {
-            shape = "Aug";
-            _three_interval = 4;
-            _five_interval = 8;
-            _seven_interval = 12;
-            break;
-        }
+
+        chord_name = std::string(pitch) + std::to_string((int)_octave) + std::string(shape);
+        step_count = 0;
+    } else{
+        step_count++;
     }
-
-    float _root_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch - referencePitch));
-    float _root_cv = frequencyToCV(_root_frequency);
-
-    float _third_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _three_interval - referencePitch));
-    float _third_cv = frequencyToCV(_third_frequency);
-
-    float _fifth_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _five_interval - referencePitch));
-    float _fifth_cv = frequencyToCV(_fifth_frequency);
-
-    float _seventh_frequency = semitoneToFrequency(referenceSemitone + 12 * (_octave - referenceOctave) + (_pitch + _seven_interval - referencePitch));
-    float _seventh_cv = frequencyToCV(_seventh_frequency);
-
-    outputs[ROOT_OUTPUT].value = _root_cv;
-    outputs[THREE_OUTPUT].value = _third_cv;
-    outputs[FIVE_OUTPUT].value = _fifth_cv;
-    outputs[SEVEN_OUTPUT].value = _seventh_cv;
-
-    char* pitch = NULL;
-    char* sharpFlat = NULL;
-    switch ((int) _pitch) {
-        case 0: {
-            pitch = "C";
-            break;
-        }
-        case 1: {
-            pitch = "C#";
-            sharpFlat = "#";
-            break;
-        }
-        case 2: {
-            pitch = "D";
-            break;
-        }
-        case 3: {
-            pitch = "D#";
-            sharpFlat = "#";
-            break;
-        }
-        case 4: {
-            pitch = "E";
-            break;
-        }
-        case 5: {
-            pitch = "F";
-            break;
-        }
-        case 6: {
-            pitch = "F#";
-            sharpFlat = "#";
-            break;
-        }
-        case 7: {
-            pitch = "G";
-            break;
-        }
-        case 8: {
-            pitch = "G#";
-            sharpFlat = "#";
-            break;
-        }
-        case 9: {
-            pitch = "A";
-            break;
-        }
-        case 10: {
-            pitch = "A#";
-            sharpFlat = "#";
-            break;
-        }
-        case 11: {
-            pitch = "B";
-            break;
-        }
-    }
-
-    chord_name = std::string(pitch) + std::to_string((int)_octave) + std::string(shape);
 
 }
 
