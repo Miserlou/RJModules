@@ -273,7 +273,7 @@ SequentialWidget::SequentialWidget(Sequential *module) {
     addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 57.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 4));
     addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 67.809)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 5));
     addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 77.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 6));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 87.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 6));
+    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 87.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 7));
 
     addParam(createParam<LEDBezel>(mm2px(Vec(28.214, 17.810)), module, Sequential::LOCK_PARAM + 0));
     addParam(createParam<LEDBezel>(mm2px(Vec(28.214, 27.809)), module, Sequential::LOCK_PARAM + 1));
