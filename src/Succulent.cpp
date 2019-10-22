@@ -3,98 +3,92 @@ Succccccccccccccc
 
 */
 
-#include "RJModules.hpp"
+#include "Bitmap.hpp"
 
-/*
-    UI
-*/
+using namespace rack;
 
-// struct SucculentRoundLargeBlackKnob : RoundLargeBlackKnob {
-//     SucculentRoundLargeBlackKnob() {
-//         setSVG(SVG::load(assetPlugin(pluginInstance, "res/SucculentRoundLargeBlackKnob.svg")));
-//     }
-// };
+// Forward-declare the Plugin, defined in Template.cpp
+extern Plugin *pluginInstance;
 
-// struct SucculentRoundLargeHappyKnob : RoundLargeBlackKnob {
-//     SucculentRoundLargeHappyKnob() {
-//         setSVG(SVG::load(assetPlugin(pluginInstance, "res/SucculentRoundLargeHappyKnob.svg")));
-//     }
-// };
+// Forward-declare each Model, defined in each module source file
+extern Model *modelBlank_1HP;
 
-// struct SucculentRoundLargeBlackSnapKnob : SucculentRoundLargeBlackKnob
-// {
-//     SucculentRoundLargeBlackSnapKnob()
-//     {
-//         minAngle = -0.83 * M_PI;
-//         maxAngle = 0.83 * M_PI;
-//         snap = true;
-//     }
-// };
-
-/*
-    Modules
-*/
-struct Succulent : Module {
-    enum ParamIds {
-        NUM_PARAMS
-    };
-    enum InputIds {
-        NUM_INPUTS
-    };
-    enum OutputIds {
-        NUM_OUTPUTS
-    };
-    enum LightIds {
-        NUM_LIGHTS
-    };
-
-    Succulent() {
-		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+struct BlankBaseWidget : ModuleWidget {
+    static constexpr int LISTSIZE = 2;
+    int selected = 0;
+    std::string fileName[LISTSIZE];
+    BitMap *bmp;
+    std::string FileName(std::string tpl, int templateSize) {
+        char workingSpace[100];
+        snprintf(workingSpace, 100, tpl.c_str(), templateSize);
+        return asset::plugin(pluginInstance, workingSpace);
     }
 
-    void step() override {
+    BlankBaseWidget(Module *module) : ModuleWidget() {
+        setModule(module);
+    }
+    void appendContextMenu(Menu *menu) override;
+    void loadBitmap() {
+        bmp = createWidget<BitMap>(Vec(0,0));
+        bmp->box.size.x = box.size.x;
+        bmp->box.size.y = box.size.y;
+        bmp->path = fileName[selected];
+        addChild(bmp);
+    }
+    void setBitmap(int sel) {
+        if (selected == sel)
+            return;
+        selected = clamp(sel, 0, LISTSIZE - 1);
+        removeChild(bmp);
+        delete bmp;
+        loadBitmap();
+    }
+    json_t *toJson() override {
+        json_t *rootJ = ModuleWidget::toJson();
+        json_object_set_new(rootJ, "style", json_real(selected));
+        return rootJ;
+    }
+    void fromJson(json_t *rootJ) override {
+        ModuleWidget::fromJson(rootJ);
+        int sel = selected;
+        json_t *styleJ = json_object_get(rootJ, "style");
+        if (styleJ)
+            sel = json_number_value(styleJ);
+        setBitmap(sel);
+    }
 
+};
+
+struct BitmapMenuItem : MenuItem {
+    BlankBaseWidget *w;
+    int value;
+    void onAction(const event::Action &e) override {
+        w->setBitmap(value);
     }
 };
 
-struct SvgPanelNoBg : SvgPanel{
-    void setBackground(std::shared_ptr<Svg> svg) {
-        widget::SvgWidget* sw = new widget::SvgWidget;
-        sw->setSvg(svg);
-        addChild(sw);
+void BlankBaseWidget::appendContextMenu(Menu *menu) {
+    menu->addChild(new MenuEntry);
+    BitmapMenuItem *m = createMenuItem<BitmapMenuItem>("Succccc");
+    m->w = this;
+    m->value = 0;
+    m->rightText = CHECKMARK(selected==m->value);
+    menu->addChild(m);
+    m = createMenuItem<BitmapMenuItem>("Meow");
+    m->w = this;
+    m->value = 1;
+    m->rightText = CHECKMARK(selected==m->value);
+    menu->addChild(m);
+}
 
-        // Set size
-        box.size = sw->box.size.div(RACK_GRID_SIZE).round().mult(RACK_GRID_SIZE);
+template<int x>
+struct SucculentWidget : BlankBaseWidget {
+    SucculentWidget(Module *module) : BlankBaseWidget(module) {
+        fileName[0] = FileName("res/Blank_%dHP.png", x);
+        fileName[1] = FileName("res/Zen_%dHP.png", x);
+        box.size = Vec(RACK_GRID_WIDTH * x, RACK_GRID_HEIGHT);
+        loadBitmap();
     }
 };
 
-struct SucculentWidget : ModuleWidget {
-    SucculentWidget(Succulent *module) {
-		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Succulent.svg")));
-    }
-
-    void setPanel(std::shared_ptr<Svg> svg) {
-        // Remove existing panel
-        if (panel) {
-            removeChild(panel);
-            delete panel;
-            panel = NULL;
-        }
-
-        // Create SvgPanel
-        SvgPanelNoBg* svgPanel = new SvgPanelNoBg;
-        svgPanel->setBackground(svg);
-        panel = svgPanel;
-        addChildBottom(panel);
-
-        // Set ModuleWidget size based on panel
-        box.size.x = std::round(panel->box.size.x / RACK_GRID_WIDTH) * RACK_GRID_WIDTH;
-    }
-
-    void drawShadow(const DrawArgs& args) {
-        return;
-    }
-};
-
-Model *modelSucculent = createModel<Succulent, SucculentWidget>("Succulent");
+Model *modelSucculent = createModel<Module, SucculentWidget<20>>("Succulent");
