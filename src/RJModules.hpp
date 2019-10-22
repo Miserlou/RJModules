@@ -54,3 +54,4 @@ extern Model *modelPolySidechain;
 extern Model *modelMutateSeq;
 extern Model *modelNotes;
 extern Model *modelSequential;
+extern Model *modelSucculent;

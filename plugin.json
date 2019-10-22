@@ -397,6 +397,14 @@
         "Utility",
         "Sequencer"
       ]
+    },
+    {
+      "slug": "Succulent",
+      "name": "Succulent",
+      "description": "r/synthesizercirclejerk",
+      "tags": [
+        "Utility"
+      ]
     }
   ]
 }
