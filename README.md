@@ -237,7 +237,7 @@ Range will map an input from one range of values to another. So, if you have an 
 None of them actually exist yet, but I'm hoping this will project eventually contain:
 
   * FFTTuner - FFT / Tuner
-  * VCDryWet - A simple dry/wet mixer
+  * ~VCDryWet - A simple dry/wet mixer~
   * DubEcho - Two delays and a spring.
   * Ping Pong Delay (or maybe just a delay with seperate dry/wet outs that can feed to the panner?)
   * Vocoder, maybe?
@@ -253,7 +253,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * 3xOSC - The classic, RJ style
   * MIDI Recorder - record MIDI notes to a MIDI file
   * Wubber - Integrated LCA + LFO with adjustable pulse width and clock divider
-  * Memory - Record a signal to a buffer, loop/trigger it back. Integrated knob. 4 banks.
+  * ~Memory - Record a signal to a buffer, loop/trigger it back. Integrated knob. 4 banks.~
   * XYFX - Kaos Pad-inspired multi-FX rack.
   * OscPhrase - Phrase generation based on a slow LFO
   * LFOArp - Arp with LFO for controlling speed
@@ -271,14 +271,15 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * 42VCO: 4xOSC -> 2 Mix -> 1 Mix
   * Drumpler!
   * Reese! (2 saws with independent LFP, mixed into a notch filter and overdrive before final LPF)
-  * VOCTFILT - Filter where the cutoff maps to v/oct
+  * ~VOCTFILT - Filter where the cutoff maps to v/oct~
   * That Fucking Wub - That fucking FM wubber!
   * Pedalboard - Send/return bypass buttons for various effects, to simulate the utility of a guitar's pedalboard. Maybe add dry wets for fun.
   * Fretboard - 'Quantum' for people who play the guitar, not the piano..
   * Counters - 4x counters that trigger in/out (for structuring tracks)
   * PaulStretch/PADSynth
-  * [SeqUFD](https://cavisynth.com/product/seq-ufd/) clone
-  * Trigger Switch
+  * ~[SeqUFD](https://cavisynth.com/product/seq-ufd/) clone~
+  * ~Trigger Switch~
+  * Ghetto Pog - Bootleg of EHX POG module
 
 ## Building
 
