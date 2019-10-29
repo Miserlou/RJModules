@@ -68,6 +68,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelOctaves);
     p->addModel(modelBuffers);
     p->addModel(modelChord);
+    p->addModel(modelPlayableChord);
     p->addModel(modelSucculent);
 
     // Sequencer

@@ -280,7 +280,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * ~[SeqUFD](https://cavisynth.com/product/seq-ufd/) clone~
   * ~Trigger Switch~
   * Ghetto Pog - Bootleg of EHX POG module
-  * Playable Chord - turn a note into a chord!
+  * ~Playable Chord - turn a note into a chord!~
 
 ## Building
 

@@ -74,6 +74,15 @@
       ]
     },
     {
+      "slug": "PlayableChord",
+      "name": "Playable Chord",
+      "description": "Generates chords in various positions, and accepts input via V/OCT with octave control.",
+      "tags": [
+        "MIDI",
+        "Utility"
+      ]
+    },
+    {
       "slug": "Floats",
       "name": "Floats",
       "description": "",

@@ -38,6 +38,7 @@ extern Model *modelRandomFilter;
 extern Model *modelBuffers;
 extern Model *modelChord;
 extern Model *modelChordSeq;
+extern Model *modelPlayableChord;
 // extern Model *modelThreeXOSC;
 extern Model *modelGlides;
 extern Model *modelMetaKnob;
