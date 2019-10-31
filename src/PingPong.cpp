@@ -27,7 +27,7 @@ struct PingPongSmallStringDisplayWidget : TransparentWidget {
   {
 
     // Shadow
-    NVGcolor backgroundColorS = nvgRGB(0x80, 0x80, 0x80);
+    NVGcolor backgroundColorS = nvgRGB(0xA0, 0xA0, 0xA0);
     nvgBeginPath(vg);
     nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y + 2.0, 4.0);
     nvgFillColor(vg, backgroundColorS);
@@ -118,7 +118,7 @@ struct PingPong : Module {
     };
 
     // Display
-    std::string rate_display = "1/2";
+    std::string rate_display = "1/4";
 
     // From AS + Koral
     // BPM detector variables
@@ -205,8 +205,20 @@ struct PingPong : Module {
     const float fade_speed_right = 0.001f;
     float thisWet_right = 0.0f;
 
-    /* */
+    /* Menu Settings*/
+    int feedback_mode_index = 0;
+    int poly_mode_index = 0;
+    int last_poly_mode_index = 0;
 
+    /* Input Caching */
+    int param_counter = 7;
+    float FEEDBACK_PARAM_value;
+    float MIX_PARAM_value;
+    float RATE_PARAM_value;
+    float NUDGE_PARAM_value;
+    float COLOR_PARAM_value;
+
+    /* */
     void calculateValues(float bpm){
         millisecondsPerBeat = millisecs/bpm;
         millisecondsPerMeasure = millisecondsPerBeat * 4;
@@ -252,15 +264,26 @@ struct PingPong : Module {
 
     PingPong() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(PingPong::RATE_PARAM, 0, 15, 2, "Rate");
+        configParam(PingPong::RATE_PARAM, 0, 15, 5, "Rate");
         configParam(PingPong::FEEDBACK_PARAM, 0.0f, 1.0f, 0.5f, "Feedback");
-        configParam(PingPong::NUDGE_PARAM, 0.0f, 1.0f, 0.0f, "Nudge");
+        configParam(PingPong::NUDGE_PARAM, -.025f, .025f, 0.0f, "Nudge");
         configParam(PingPong::COLOR_PARAM, 0.0f, 1.0f, 0.5f, "Color");
         configParam(PingPong::MIX_PARAM, 0.0f, 1.0f, 1.0f, "Mix");
     }
 
     void process(const ProcessArgs &args) override {
 
+    /* Get the values every 8 steps */
+    if(param_counter>=7){
+        FEEDBACK_PARAM_value = params[FEEDBACK_PARAM].getValue();
+        MIX_PARAM_value = params[MIX_PARAM].getValue();;
+        RATE_PARAM_value = params[RATE_PARAM].getValue();
+        NUDGE_PARAM_value = params[NUDGE_PARAM].getValue();
+        COLOR_PARAM_value = params[COLOR_PARAM].getValue();
+        param_counter = 0;
+    } else{
+        param_counter++;
+    }
 
     /* Clock Detector */
     float deltaTime = args.sampleTime;
@@ -335,7 +358,7 @@ struct PingPong : Module {
     }
 
     /* Rate Detector */
-    int rate = params[RATE_PARAM].getValue();
+    int rate = RATE_PARAM_value;
     rate_display = selections[rate];
     float selected_value = 0.0f;
     switch(rate) {
@@ -389,12 +412,17 @@ struct PingPong : Module {
           break;
     }
     selected_value = rescale(selected_value, 0.0f, 10000.0f, 0.0f, 10.0f);
+    //float nudge = rescale(NUDGE_PARAM_value, -7500.0f, 7500.0f, -1.0f, 1.0f);
+    selected_value = selected_value + NUDGE_PARAM_value;
 
     /* Left Channel */
 
     // Get input to delay block
     float signal_input = inputs[IN_INPUT].getVoltage();
-    float feedback = clamp(params[FEEDBACK_PARAM].getValue() + inputs[FEEDBACK_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    float feedback = clamp(FEEDBACK_PARAM_value + inputs[FEEDBACK_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    if(feedback_mode_index != 0){
+        feedback = feedback * 2;
+    }
     float dry = signal_input + (thisWet_right * feedback);
 
     // Compute delay time in seconds
@@ -446,7 +474,7 @@ struct PingPong : Module {
     if (outputs[COLOR_SEND].isConnected() == false) {
         //internal color
         // Apply color to delay wet output
-        float color = clamp(params[COLOR_PARAM].getValue() + inputs[COLOR_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+        float color = clamp(COLOR_PARAM_value + inputs[COLOR_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
         float lowpassFreq = 10000.0f * powf(10.0f, clamp(2.0*color, 0.0f, 1.0f));
         lowpassFilter.setCutoff(lowpassFreq / args.sampleRate);
         lowpassFilter.process(wet);
@@ -462,7 +490,7 @@ struct PingPong : Module {
         wet = inputs[COLOR_RETURN].getVoltage();
     }
     lastWet = wet;
-    mix = clamp(params[MIX_PARAM].getValue() + inputs[MIX_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    mix = clamp(MIX_PARAM_value + inputs[MIX_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
     out = crossfade(signal_input, wet, mix);
     fade_in_fx += fade_speed;
     if ( fade_in_fx > 1.0f ) {
@@ -473,12 +501,11 @@ struct PingPong : Module {
         fade_out_dry = 0.0f;
     }
     float left_output = ( signal_input * fade_out_dry ) + ( out * fade_in_fx ) ;
-    outputs[LEFT_OUTPUT].setVoltage(left_output);
 
     /* Right Channel! */
     // Get input to delay block
     float signal_input_right = left_output;
-    float feedback_right = clamp(params[FEEDBACK_PARAM].getValue() + inputs[FEEDBACK_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    float feedback_right = clamp(FEEDBACK_PARAM_value + inputs[FEEDBACK_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
     float dry_right = signal_input_right;// + (lastWet * feedback_right);
 
     // Number of delay samples
@@ -520,7 +547,7 @@ struct PingPong : Module {
     if (outputs[COLOR_SEND_RIGHT].isConnected() == false) {
         //internal color
         // Apply color to delay wet output
-        float color_right = clamp(params[COLOR_PARAM].getValue() + inputs[COLOR_INPUT_RIGHT].getVoltage() / 10.0f, 0.0f, 1.0f);
+        float color_right = clamp(COLOR_PARAM_value + inputs[COLOR_INPUT_RIGHT].getVoltage() / 10.0f, 0.0f, 1.0f);
         float lowpassFreq_right = 10000.0f * powf(10.0f, clamp(2.0*color_right, 0.0f, 1.0f));
         lowpassFilter_right.setCutoff(lowpassFreq_right / args.sampleRate);
         lowpassFilter_right.process(wet_right);
@@ -536,7 +563,7 @@ struct PingPong : Module {
         wet_right = inputs[COLOR_RETURN_RIGHT].getVoltage();
     }
     lastWet_right = wet_right;
-    mix_right = clamp(params[MIX_PARAM].getValue() + inputs[MIX_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    mix_right = clamp(MIX_PARAM_value + inputs[MIX_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
     out_right = crossfade(signal_input_right, wet_right, mix_right);
     fade_in_fx_right += fade_speed_right;
     if ( fade_in_fx_right > 1.0f ) {
@@ -548,6 +575,21 @@ struct PingPong : Module {
     }
     thisWet_right = ( signal_input_right * fade_out_dry_right ) + ( out_right * fade_in_fx_right );
     outputs[RIGHT_OUTPUT].setVoltage(thisWet_right);
+
+    if(poly_mode_index != 0){
+        if(poly_mode_index != last_poly_mode_index){
+            outputs[LEFT_OUTPUT].setChannels(2);
+            last_poly_mode_index = poly_mode_index;
+        }
+        outputs[LEFT_OUTPUT].setVoltage(left_output, 0);
+        outputs[LEFT_OUTPUT].setVoltage(thisWet_right, 1);
+    } else{
+        if(poly_mode_index != last_poly_mode_index){
+            outputs[LEFT_OUTPUT].setChannels(1);
+            last_poly_mode_index = poly_mode_index;
+        }
+        outputs[LEFT_OUTPUT].setVoltage(left_output);
+    }
 
     }
 };
@@ -588,16 +630,112 @@ struct PingPongWidget : ModuleWidget {
     addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, PingPong::MIX_PARAM));
 
     // Inputs and Knobs
-    addInput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::INPUT, module, PingPong::COLOR_SEND));
-    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, PingPong::COLOR_RETURN_RIGHT));
+    addOutput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND));
+    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, PingPong::COLOR_RETURN));
     addOutput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND_RIGHT));
-    addOutput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND_RIGHT));
+    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, PingPong::COLOR_RETURN_RIGHT));
 
     addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, PingPong::IN_INPUT));
     addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, PingPong::CLOCK_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, PingPong::LEFT_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, PingPong::RIGHT_OUTPUT));
     }
+
+    // blah needs getters and setters
+    // json_t *toJson() override {
+    //     json_t *rootJ = ModuleWidget::toJson();
+    //     json_object_set_new(rootJ, "feed", json_real(feedback_mode_index));
+    //     json_object_set_new(rootJ, "poly", json_real(poly_mode_index));
+    //     return rootJ;
+    // }
+
+    // void fromJson(json_t *rootJ) override {
+    //     ModuleWidget::fromJson(rootJ);
+    //     json_t *feedJ = json_object_get(rootJ, "feed");
+    //     if (feedJ)
+    //         feedback_mode_index = json_number_value(feedJ);
+    //     json_t *polyJ = json_object_get(rootJ, "poly");
+    //     if (polyJ)
+    //         poly_mode_index = json_number_value(polyJ);
+    // }
+
+    void appendContextMenu(Menu *menu) override
+    {
+        PingPong *module = dynamic_cast<PingPong *>(this->module);
+
+        struct FeedbackIndexItem : MenuItem
+        {
+            PingPong *module;
+            int index;
+            void onAction(const event::Action &e) override
+            {
+                module->feedback_mode_index = index;
+            }
+        };
+
+        struct FeedbackItem : MenuItem
+        {
+            PingPong *module;
+            Menu *createChildMenu() override
+            {
+                Menu *menu = new Menu();
+                const std::string feedbackLabels[] = {
+                    "0\% - 100\%",
+                    "0\% - 200\%"
+                };
+                for (int i = 0; i < (int)LENGTHOF(feedbackLabels); i++)
+                {
+                    FeedbackIndexItem *item = createMenuItem<FeedbackIndexItem>(feedbackLabels[i], CHECKMARK(module->feedback_mode_index == i));
+                    item->module = module;
+                    item->index = i;
+                    menu->addChild(item);
+                }
+                return menu;
+            }
+        };
+
+        struct PolyIndexItem : MenuItem
+        {
+            PingPong *module;
+            int index;
+            void onAction(const event::Action &e) override
+            {
+                module->poly_mode_index = index;
+            }
+        };
+
+        struct PolyItem : MenuItem
+        {
+            PingPong *module;
+            Menu *createChildMenu() override
+            {
+                Menu *menu = new Menu();
+                const std::string polyLabels[] = {
+                    "Mono Out",
+                    "Poly Out"
+                };
+                for (int i = 0; i < (int)LENGTHOF(polyLabels); i++)
+                {
+                    PolyIndexItem *item = createMenuItem<PolyIndexItem>(polyLabels[i], CHECKMARK(module->poly_mode_index == i));
+                    item->module = module;
+                    item->index = i;
+                    menu->addChild(item);
+                }
+                return menu;
+            }
+        };
+
+        menu->addChild(new MenuEntry);
+
+        FeedbackItem *feedbackItem = createMenuItem<FeedbackItem>("Feedback Mode", ">");
+        feedbackItem->module = module;
+        menu->addChild(feedbackItem);
+
+        PolyItem *polyItem = createMenuItem<PolyItem>("Poly Mode", ">");
+        polyItem->module = module;
+        menu->addChild(polyItem);
+    }
+
 };
 
 Model *modelPingPong = createModel<PingPong, PingPongWidget>("PingPong");
