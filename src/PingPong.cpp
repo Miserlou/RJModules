@@ -254,9 +254,9 @@ struct PingPong : Module {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(PingPong::RATE_PARAM, 0, 15, 2, "Rate");
         configParam(PingPong::FEEDBACK_PARAM, 0.0f, 1.0f, 0.5f, "Feedback");
-        configParam(PingPong::NUDGE_PARAM, 0, 50, 0, "Nudge");
+        configParam(PingPong::NUDGE_PARAM, 0.0f, 1.0f, 0.0f, "Nudge");
         configParam(PingPong::COLOR_PARAM, 0.0f, 1.0f, 0.5f, "Color");
-        configParam(PingPong::MIX_PARAM, 0.0f, 1.0f, 0.5f, "Mix");
+        configParam(PingPong::MIX_PARAM, 0.0f, 1.0f, 1.0f, "Mix");
     }
 
     void process(const ProcessArgs &args) override {
