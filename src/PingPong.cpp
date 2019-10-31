@@ -579,18 +579,20 @@ struct PingPongWidget : ModuleWidget {
     // Knobs
     int LEFT = 14;
     int RIGHT = 65;
-    int DIST = 100;
+    int DIST = 82;
     int BASE = 115;
     addParam(createParam<PingPongRoundBlackSnapKnob>(Vec(100, 50), module, PingPong::RATE_PARAM));
-
     addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT, BASE), module, PingPong::FEEDBACK_PARAM));
     addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE), module, PingPong::NUDGE_PARAM));
-
     addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT, BASE + DIST), module, PingPong::COLOR_PARAM));
     addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, PingPong::MIX_PARAM));
 
-
     // Inputs and Knobs
+    addInput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::INPUT, module, PingPong::COLOR_SEND));
+    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, PingPong::COLOR_RETURN_RIGHT));
+    addOutput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND_RIGHT));
+    addOutput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND_RIGHT));
+
     addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, PingPong::IN_INPUT));
     addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, PingPong::CLOCK_INPUT));
     addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, PingPong::LEFT_OUTPUT));
