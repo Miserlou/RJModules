@@ -29,6 +29,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelStutter);
     p->addModel(modelGlides);
     p->addModel(modelPolySidechain);
+    p->addModel(modelPingPong);
 
     // Filters
     p->addModel(modelFilter);
@@ -70,6 +71,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelChord);
     p->addModel(modelPlayableChord);
     p->addModel(modelSucculent);
+    p->addModel(modelSoundpipe);
 
     // Sequencer
     p->addModel(modelChordSeq);

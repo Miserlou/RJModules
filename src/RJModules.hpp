@@ -56,3 +56,5 @@ extern Model *modelMutateSeq;
 extern Model *modelNotes;
 extern Model *modelSequential;
 extern Model *modelSucculent;
+extern Model *modelSoundpipe;
+extern Model *modelPingPong;

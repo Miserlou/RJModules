@@ -25,6 +25,14 @@ struct PingPongSmallStringDisplayWidget : TransparentWidget {
 
   void draw(NVGcontext *vg) override
   {
+
+    // Shadow
+    NVGcolor backgroundColorS = nvgRGB(0x80, 0x80, 0x80);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y + 2.0, 4.0);
+    nvgFillColor(vg, backgroundColorS);
+    nvgFill(vg);
+
     // Background
     NVGcolor backgroundColor = nvgRGB(0xC0, 0xC0, 0xC0);
     nvgBeginPath(vg);
@@ -47,21 +55,62 @@ struct PingPongSmallStringDisplayWidget : TransparentWidget {
   }
 };
 
+struct PingPongRoundLargeBlackKnob : RoundLargeBlackKnob
+{
+    PingPongRoundLargeBlackKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+    }
+};
+
+struct PingPongRoundBlackSnapKnob : RoundBlackKnob
+{
+    PingPongRoundBlackSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
 /*
 Widget
 */
 
 struct PingPong : Module {
     enum ParamIds {
+        RATE_PARAM,
+        FEEDBACK_PARAM,
+        NUDGE_PARAM,
+        COLOR_PARAM,
+        MIX_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
+        IN_INPUT,
         CLOCK_INPUT,
+
+        TIME_INPUT,
+        FEEDBACK_INPUT,
+        COLOR_INPUT,
+        COLOR_INPUT_RIGHT,
+
+        COLOR_RETURN,
+        COLOR_RETURN_RIGHT,
+
+        MIX_INPUT,
+        BYPASS_CV_INPUT,
+
         NUM_INPUTS
     };
     enum OutputIds {
         LEFT_OUTPUT,
         RIGHT_OUTPUT,
+
+        COLOR_SEND,
+        COLOR_SEND_RIGHT,
+
         NUM_OUTPUTS
     };
     enum LightIds {
@@ -69,7 +118,7 @@ struct PingPong : Module {
     };
 
     // Display
-    std::string rate_display = "1";
+    std::string rate_display = "1/2";
 
     // From AS + Koral
     // BPM detector variables
@@ -116,7 +165,9 @@ struct PingPong : Module {
     float trth_note = 1.0f;
     float trth_note_t = 1.0f;
 
-    /* Delays */
+    std::string selections[16] = {"1", "1/2d", "1/2", "1/2t", "1/4d", "1/4", "1/4t", "1/8d", "1/8", "1/8t", "1/16d", "1/16", "1/16t", "1/32d", "1/32", "1/32t"};
+
+    /* Delays - Left*/
     dsp::RCFilter lowpassFilter;
     dsp::RCFilter highpassFilter;
 
@@ -124,6 +175,37 @@ struct PingPong : Module {
     dsp::DoubleRingBuffer<float, 16> outBuffer;
 
     dsp::SampleRateConverter<1> src;
+
+    dsp::SchmittTrigger bypass_button_trig;
+    dsp::SchmittTrigger bypass_cv_trig;
+
+    int lcd_tempo = 0;
+    bool fx_bypass = false;
+    float lastWet = 0.0f;
+
+    float fade_in_fx = 0.0f;
+    float fade_in_dry = 0.0f;
+    float fade_out_fx = 1.0f;
+    float fade_out_dry = 1.0f;
+    const float fade_speed = 0.001f;
+
+    /* Delays - Right */
+    dsp::RCFilter lowpassFilter_right;
+    dsp::RCFilter highpassFilter_right;
+
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer_right;
+    dsp::DoubleRingBuffer<float, 16> outBuffer_right;
+
+    dsp::SampleRateConverter<1> src_right;
+    float lastWet_right = 0.0f;
+    float fade_in_fx_right = 0.0f;
+    float fade_in_dry_right = 0.0f;
+    float fade_out_fx_right = 1.0f;
+    float fade_out_dry_right = 1.0f;
+    const float fade_speed_right = 0.001f;
+    float thisWet_right = 0.0f;
+
+    /* */
 
     void calculateValues(float bpm){
         millisecondsPerBeat = millisecs/bpm;
@@ -170,10 +252,15 @@ struct PingPong : Module {
 
     PingPong() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-
+        configParam(PingPong::RATE_PARAM, 0, 15, 2, "Rate");
+        configParam(PingPong::FEEDBACK_PARAM, 0.0f, 1.0f, 0.5f, "Feedback");
+        configParam(PingPong::NUDGE_PARAM, 0, 50, 0, "Nudge");
+        configParam(PingPong::COLOR_PARAM, 0.0f, 1.0f, 0.5f, "Color");
+        configParam(PingPong::MIX_PARAM, 0.0f, 1.0f, 0.5f, "Mix");
     }
 
     void process(const ProcessArgs &args) override {
+
 
     /* Clock Detector */
     float deltaTime = args.sampleTime;
@@ -247,23 +334,220 @@ struct PingPong : Module {
       }
     }
 
-    //OUTPUTS: MS to 10V scaled values
-    // outputs[MS_OUTPUT+0].setVoltage(rescale(bar,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+1].setVoltage(rescale(half_note_d,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+2].setVoltage(rescale(half_note,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+3].setVoltage(rescale(half_note_t,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+4].setVoltage(rescale(qt_note_d,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+5].setVoltage(rescale(qt_note,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+6].setVoltage(rescale(qt_note_t,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+7].setVoltage(rescale(eight_note_d,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+8].setVoltage(rescale(eight_note,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+9].setVoltage(rescale(eight_note_t,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+10].setVoltage(rescale(sixth_note_d,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+11].setVoltage(rescale(sixth_note,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+12].setVoltage(rescale(sixth_note_t,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+13].setVoltage(rescale(trth_note_d,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+14].setVoltage(rescale(trth_note,0.0f,10000.0f,0.0f,10.0f));
-    // outputs[MS_OUTPUT+15].setVoltage(rescale(trth_note_t,0.0f,10000.0f,0.0f,10.0f));
+    /* Rate Detector */
+    int rate = params[RATE_PARAM].getValue();
+    rate_display = selections[rate];
+    float selected_value = 0.0f;
+    switch(rate) {
+       case 0:
+          selected_value = bar;
+          break;
+       case 1:
+          selected_value = half_note_d;
+          break;
+       case 2:
+          selected_value = half_note;
+          break;
+       case 3:
+          selected_value = half_note_t;
+          break;
+       case 4:
+          selected_value = qt_note_d;
+          break;
+       case 5:
+          selected_value = qt_note;
+          break;
+       case 6:
+          selected_value = qt_note_t;
+          break;
+       case 7:
+          selected_value = eight_note_d;
+          break;
+       case 8:
+          selected_value = eight_note;
+          break;
+       case 9:
+          selected_value = eight_note_t;
+          break;
+       case 10:
+          selected_value = sixth_note_d;
+          break;
+       case 11:
+          selected_value = sixth_note;
+          break;
+       case 12:
+          selected_value = sixth_note_t;
+          break;
+       case 13:
+          selected_value = trth_note_d;
+          break;
+       case 14:
+          selected_value = trth_note;
+          break;
+       case 15:
+          selected_value = trth_note_t;
+          break;
+    }
+    selected_value = rescale(selected_value, 0.0f, 10000.0f, 0.0f, 10.0f);
+
+    /* Left Channel */
+
+    // Get input to delay block
+    float signal_input = inputs[IN_INPUT].getVoltage();
+    float feedback = clamp(params[FEEDBACK_PARAM].getValue() + inputs[FEEDBACK_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    float dry = signal_input + (thisWet_right * feedback);
+
+    // Compute delay time in seconds
+    //float delay = 1e-3 * powf(10.0 / 1e-3, clampf(params[TIME_PARAM].getValue() + inputs[TIME_INPUT].getVoltage() / 10.0, 0.0, 1.0));
+    //float delay = clamp(params[TIME_PARAM].getValue() + inputs[TIME_INPUT].getVoltage(), 0.0f, 10.0f);
+    float delay = clamp(selected_value, 0.0f, 10.0f);
+    // std::cout << rate << " rate \n";
+    // std::cout << selected_value << " sel\n";
+    // std::cout << delay << "\n";
+
+    //LCD display tempo  - show value as ms
+    lcd_tempo = std::round(delay*1000);
+    // Number of delay samples
+    float index = delay * args.sampleRate;
+
+    // Push dry sample into history buffer
+    if (!historyBuffer.full()) {
+        historyBuffer.push(dry);
+    }
+
+    // How many samples do we need consume to catch up?
+    float consume = index - historyBuffer.size();
+
+    if (outBuffer.empty()) {
+        double ratio = 1.0;
+        if (consume <= -16)
+            ratio = 0.5;
+        else if (consume >= 16)
+            ratio = 2.0;
+
+        float inSR = args.sampleRate;
+        float outSR = ratio * inSR;
+
+        int inFrames = fmin(historyBuffer.size(), 16);
+        int outFrames = outBuffer.capacity();
+        src.setRates(inSR, outSR);
+        src.process((const dsp::Frame<1>*)historyBuffer.startData(), &inFrames, (dsp::Frame<1>*)outBuffer.endData(), &outFrames);
+        historyBuffer.startIncr(inFrames);
+        outBuffer.endIncr(outFrames);
+    }
+
+    float out;
+    float mix;
+    float wet = 0.0f;
+    if (!outBuffer.empty()) {
+        wet = outBuffer.shift();
+    }
+
+    if (outputs[COLOR_SEND].isConnected() == false) {
+        //internal color
+        // Apply color to delay wet output
+        float color = clamp(params[COLOR_PARAM].getValue() + inputs[COLOR_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+        float lowpassFreq = 10000.0f * powf(10.0f, clamp(2.0*color, 0.0f, 1.0f));
+        lowpassFilter.setCutoff(lowpassFreq / args.sampleRate);
+        lowpassFilter.process(wet);
+        wet = lowpassFilter.lowpass();
+        float highpassFreq = 10.0f * powf(100.0f, clamp(2.0f*color - 1.0f, 0.0f, 1.0f));
+        highpassFilter.setCutoff(highpassFreq / args.sampleRate);
+        highpassFilter.process(wet);
+        wet = highpassFilter.highpass();
+        //lastWet = wet;
+    }else {
+        //external color, to filter the wet delay signal outside of the module, or to feed another module
+        outputs[COLOR_SEND].setVoltage(wet);
+        wet = inputs[COLOR_RETURN].getVoltage();
+    }
+    lastWet = wet;
+    mix = clamp(params[MIX_PARAM].getValue() + inputs[MIX_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    out = crossfade(signal_input, wet, mix);
+    fade_in_fx += fade_speed;
+    if ( fade_in_fx > 1.0f ) {
+        fade_in_fx = 1.0f;
+    }
+    fade_out_dry -= fade_speed;
+    if ( fade_out_dry < 0.0f ) {
+        fade_out_dry = 0.0f;
+    }
+    float left_output = ( signal_input * fade_out_dry ) + ( out * fade_in_fx ) ;
+    outputs[LEFT_OUTPUT].setVoltage(left_output);
+
+    /* Right Channel! */
+    // Get input to delay block
+    float signal_input_right = left_output;
+    float feedback_right = clamp(params[FEEDBACK_PARAM].getValue() + inputs[FEEDBACK_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    float dry_right = signal_input_right;// + (lastWet * feedback_right);
+
+    // Number of delay samples
+    float index_right = delay * args.sampleRate;
+
+    // Push dry sample into history buffer
+    if (!historyBuffer_right.full()) {
+        historyBuffer_right.push(dry_right);
+    }
+
+    // How many samples do we need consume to catch up?
+    float consume_right = index_right - historyBuffer_right.size();
+
+    if (outBuffer_right.empty()) {
+        double ratio_right = 1.0;
+        if (consume_right <= -16)
+            ratio_right = 0.5;
+        else if (consume_right >= 16)
+            ratio_right = 2.0;
+
+        float inSR_right = args.sampleRate;
+        float outSR_right = ratio_right * inSR_right;
+
+        int inFrames_right = fmin(historyBuffer_right.size(), 16);
+        int outFrames_right = outBuffer_right.capacity();
+        src_right.setRates(inSR_right, outSR_right);
+        src_right.process((const dsp::Frame<1>*)historyBuffer_right.startData(), &inFrames_right, (dsp::Frame<1>*)outBuffer_right.endData(), &outFrames_right);
+        historyBuffer_right.startIncr(inFrames_right);
+        outBuffer_right.endIncr(outFrames_right);
+    }
+
+    float out_right;
+    float mix_right;
+    float wet_right = 0.0f;
+    if (!outBuffer_right.empty()) {
+        wet_right = outBuffer_right.shift();
+    }
+
+    if (outputs[COLOR_SEND_RIGHT].isConnected() == false) {
+        //internal color
+        // Apply color to delay wet output
+        float color_right = clamp(params[COLOR_PARAM].getValue() + inputs[COLOR_INPUT_RIGHT].getVoltage() / 10.0f, 0.0f, 1.0f);
+        float lowpassFreq_right = 10000.0f * powf(10.0f, clamp(2.0*color_right, 0.0f, 1.0f));
+        lowpassFilter_right.setCutoff(lowpassFreq_right / args.sampleRate);
+        lowpassFilter_right.process(wet_right);
+        wet_right = lowpassFilter_right.lowpass();
+        float highpassFreq_right = 10.0f * powf(100.0f, clamp(2.0f*color_right - 1.0f, 0.0f, 1.0f));
+        highpassFilter_right.setCutoff(highpassFreq_right / args.sampleRate);
+        highpassFilter_right.process(wet_right);
+        wet_right = highpassFilter_right.highpass();
+        //lastWet = wet;
+    }else {
+        //external color, to filter the wet delay signal outside of the module, or to feed another module
+        outputs[COLOR_SEND_RIGHT].setVoltage(wet_right);
+        wet_right = inputs[COLOR_RETURN_RIGHT].getVoltage();
+    }
+    lastWet_right = wet_right;
+    mix_right = clamp(params[MIX_PARAM].getValue() + inputs[MIX_INPUT].getVoltage() / 10.0f, 0.0f, 1.0f);
+    out_right = crossfade(signal_input_right, wet_right, mix_right);
+    fade_in_fx_right += fade_speed_right;
+    if ( fade_in_fx_right > 1.0f ) {
+        fade_in_fx_right = 1.0f;
+    }
+    fade_out_dry_right -= fade_speed_right;
+    if ( fade_out_dry_right < 0.0f ) {
+        fade_out_dry_right = 0.0f;
+    }
+    thisWet_right = ( signal_input_right * fade_out_dry_right ) + ( out_right * fade_in_fx_right );
+    outputs[RIGHT_OUTPUT].setVoltage(thisWet_right);
 
     }
 };
@@ -286,17 +570,30 @@ struct PingPongWidget : ModuleWidget {
     // Displays
     if(module != NULL){
         PingPongSmallStringDisplayWidget *fileDisplay = new PingPongSmallStringDisplayWidget();
-        fileDisplay->box.pos = Vec(28, 70);
-        fileDisplay->box.size = Vec(100, 40);
+        fileDisplay->box.pos = Vec(20, 50);
+        fileDisplay->box.size = Vec(70, 40);
         fileDisplay->value = &module->rate_display;
         addChild(fileDisplay);
     }
 
     // Knobs
+    int LEFT = 14;
+    int RIGHT = 65;
+    int DIST = 100;
+    int BASE = 115;
+    addParam(createParam<PingPongRoundBlackSnapKnob>(Vec(100, 50), module, PingPong::RATE_PARAM));
+
+    addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT, BASE), module, PingPong::FEEDBACK_PARAM));
+    addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE), module, PingPong::NUDGE_PARAM));
+
+    addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT, BASE + DIST), module, PingPong::COLOR_PARAM));
+    addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, PingPong::MIX_PARAM));
+
 
     // Inputs and Knobs
-    addInput(createPort<PJ301MPort>(Vec(16, 320), PortWidget::INPUT, module, PingPong::CLOCK_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(75.5, 320), PortWidget::OUTPUT, module, PingPong::LEFT_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, PingPong::IN_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, PingPong::CLOCK_INPUT));
+    addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, PingPong::LEFT_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, PingPong::RIGHT_OUTPUT));
     }
 };
