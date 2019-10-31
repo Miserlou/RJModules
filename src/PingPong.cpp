@@ -604,10 +604,11 @@ struct PingPongWidget : ModuleWidget {
     panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/PingPong.svg")));
     addChild(panel);
 
-    addChild(createWidget<ScrewSilver>(Vec(15, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
-    addChild(createWidget<ScrewSilver>(Vec(15, 365)));
-    addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
+    // Magnets
+    // addChild(createWidget<ScrewSilver>(Vec(15, 0)));
+    // addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
+    // addChild(createWidget<ScrewSilver>(Vec(15, 365)));
+    // addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
     // Displays
     if(module != NULL){

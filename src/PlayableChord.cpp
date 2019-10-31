@@ -9,6 +9,17 @@
 
 
 // Displays
+struct PCRoundLargeBlackSnapKnob : RoundLargeBlackKnob
+{
+    PCRoundLargeBlackSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
 struct StringDisplayWidget : TransparentWidget {
 
   std::string *value;
@@ -286,8 +297,8 @@ PlayableChordWidget::PlayableChordWidget(PlayableChord *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<LargeSnapKnob>(Vec(47, 143), module, PlayableChord::OCTAVE_PARAM));
-    addParam(createParam<LargeSnapKnob>(Vec(47, 228), module, PlayableChord::SHAPE_PARAM));
+    addParam(createParam<PCRoundLargeBlackSnapKnob>(Vec(47, 143), module, PlayableChord::OCTAVE_PARAM));
+    addParam(createParam<PCRoundLargeBlackSnapKnob>(Vec(47, 228), module, PlayableChord::SHAPE_PARAM));
 
     addInput(createPort<PJ301MPort>(Vec(22, 130), PortWidget::INPUT, module, PlayableChord::INPUT_INPUT));
 
