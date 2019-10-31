@@ -91,6 +91,14 @@
       ]
     },
     {
+      "slug": "Soundpipe",
+      "name": "Soundpipe",
+      "description": "Soundpipe",
+      "tags": [
+        "Utility"
+      ]
+    },
+    {
       "slug": "Octaves",
       "name": "Octaves",
       "description": "",
@@ -412,6 +420,23 @@
       "name": "Succulent",
       "description": "r/synthesizercirclejerk",
       "tags": [
+        "Utility"
+      ]
+    },
+    {
+      "slug": "PingPong",
+      "name": "Clock Synced Ping Pong Delay",
+      "description": "Clock Synced Ping Pong Delay",
+      "tags": [
+        "Effect"
+      ]
+    },
+    {
+      "slug": "Drumpler",
+      "name": "Drumpler",
+      "description": "Rich Jones' Private Stock of Drums. Kicks, snares, claps, hats, 808s and more!",
+      "tags": [
+        "Synth voice",
         "Utility"
       ]
     }
