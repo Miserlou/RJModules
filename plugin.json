@@ -432,6 +432,14 @@
       ]
     },
     {
+      "slug": "Brickwall",
+      "name": "Brick Wall Limiter",
+      "description": "Brick Wall Limiter",
+      "tags": [
+        "Effect"
+      ]
+    },
+    {
       "slug": "Drumpler",
       "name": "Drumpler",
       "description": "Rich Jones' Private Stock of Drums. Kicks, snares, claps, hats, 808s and more!",
