@@ -13,7 +13,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelRangeLFO);
     p->addModel(modelAcid);
     p->addModel(modelEssEff);
-    p->addModel(modelDrumpler);
+    // p->addModel(modelDrumpler);
 
     // p->addModel(modelRiser);
     // p->addModel(modelThreeXOSC);
@@ -28,8 +28,9 @@ void init(rack::Plugin *p) {
     p->addModel(modelSidechain);
     p->addModel(modelStutter);
     p->addModel(modelGlides);
-    p->addModel(modelPolySidechain);
+    // p->addModel(modelPolySidechain);
     p->addModel(modelPingPong);
+    p->addModel(modelBrickwall);
 
     // Filters
     p->addModel(modelFilter);
@@ -71,7 +72,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelChord);
     p->addModel(modelPlayableChord);
     p->addModel(modelSucculent);
-    p->addModel(modelSoundpipe);
+    // p->addModel(modelSoundpipe);
 
     // Sequencer
     p->addModel(modelChordSeq);
