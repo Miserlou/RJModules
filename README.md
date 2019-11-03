@@ -282,7 +282,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Ghetto Pog - Bootleg of EHX POG module
   * ~Playable Chord - turn a note into a chord!~
   * ~Brick Wall Limiter~
-  * Multi-Tap Delay (lol that super expensive digital one)
+  * Multi-Tap Delay (lol that super expensive digital one) - dry//75/150/225/300/375/450/525/600 + [.1x:2x] modifier, individual outputs + mixed, pingpong, odd/even outs, feedback
   * Slapback Delay
 
 ## Building
