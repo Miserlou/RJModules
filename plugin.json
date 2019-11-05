@@ -430,6 +430,14 @@
       "tags": [
         "Effect"
       ]
+    },
+    {
+      "slug": "Slapback",
+      "name": "Dual Slap Back Delay",
+      "description": "An opinionated dual slapback delay",
+      "tags": [
+        "Effect"
+      ]
     }
   ]
 }

@@ -59,3 +59,4 @@ extern Model *modelSucculent;
 // extern Model *modelSoundpipe;
 extern Model *modelPingPong;
 extern Model *modelBrickwall;
+extern Model *modelSlapback;

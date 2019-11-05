@@ -10,6 +10,14 @@
 #include <sstream>
 #include <iomanip>
 
+struct BrickwallRoundSmallBlackKnob : RoundSmallBlackKnob
+{
+    BrickwallRoundSmallBlackKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+    }
+};
+
 struct Brickwall : Module {
     enum ParamIds {
         LEVEL_PARAM,
@@ -168,13 +176,13 @@ struct BrickwallWidget : ModuleWidget {
         addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Brickwall::DEPTH_PARAM));
+        addParam(createParam<BrickwallRoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Brickwall::DEPTH_PARAM));
         addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), PortWidget::INPUT, module, Brickwall::DEPTH_INPUT));
 
-        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 65.9593)), module, Brickwall::PREAMP_PARAM));
+        addParam(createParam<BrickwallRoundSmallBlackKnob>(mm2px(Vec(3.5, 65.9593)), module, Brickwall::PREAMP_PARAM));
         // addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), PortWidget::INPUT, module, Brickwall::EXP_INPUT));
 
-        addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 81.9593)), module, Brickwall::POSTAMP_PARAM));
+        addParam(createParam<BrickwallRoundSmallBlackKnob>(mm2px(Vec(3.5, 81.9593)), module, Brickwall::POSTAMP_PARAM));
 
         // addChild(createLight<SmallLight<GreenRedLight>>(Vec(3, 84), module, Brickwall::ACTIVE_LIGHT));
         // addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), PortWidget::INPUT, module, Brickwall::GATE_INPUT));

@@ -31,6 +31,7 @@ void init(rack::Plugin *p) {
     // p->addModel(modelPolySidechain);
     p->addModel(modelPingPong);
     p->addModel(modelBrickwall);
+    p->addModel(modelSlapback);
 
     // Filters
     p->addModel(modelFilter);
