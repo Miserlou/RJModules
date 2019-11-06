@@ -90,11 +90,11 @@ Also has a shape wheel for mixing the sin/saw shape, and has knobs for offset an
 
 #### Noise
 <img src="https://i.imgur.com/l9yj0jt.png" width="25%">
-Noise generates pink and white noise! It also has an integreted high pass and low pass filter. Everything is voltage controlled, and there's a bonus volume knob.
+Noise generates pink and white noise! It also has an integrated high pass and low pass filter. Everything is voltage controlled, and there's a bonus volume knob.
 
 #### Range LFO
 <img src="https://i.imgur.com/wtTzimg.png" width="50%" />
-Range LFO is an LFO which can be explictly mapped to a specific (controllable) range. Very handy!
+Range LFO is an LFO which can be explicitly mapped to a specific (controllable) range. Very handy!
 
 ### FX
 
@@ -123,7 +123,7 @@ It's a digital glitch effect! Use the main on/off button (and related input) to 
 
 #### Filter
 <img src="https://i.imgur.com/xv2GyWO.png" width="25%">
-Filter is a voltage-controlled integrated high-pass and low-pass filter. Also includes a voltage-controlled res and mix paramater knobs. It's a really good VCF.
+Filter is a voltage-controlled integrated high-pass and low-pass filter. Also includes a voltage-controlled res and mix parameter knobs. It's a really good VCF.
 
 #### Filters
 <img src="https://i.imgur.com/ApBCVaC.png" width="25%">
@@ -211,7 +211,7 @@ It's a really big knob! Unipolar, bipolar and range-controlled modes.
 
 #### ReplayKnob
 <img src="https://i.imgur.com/5z6xiwB.png" width="25%" />
-Replay Knob is a knob with an integratd recorder and looper. Has a reset button, start/end controls, comes in unipolar and bipolar modes, and can be used as a looper for arbitrary inputs. Great for looping human-sounding controls.
+Replay Knob is a knob with an integrated recorder and looper. Has a reset button, start/end controls, comes in unipolar and bipolar modes, and can be used as a looper for arbitrary inputs. Great for looping human-sounding controls.
 
 ### Utilities
 
@@ -288,7 +288,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
 ## Building
 
 Steps since 0.6.0 (Mac):
-   * Download and install Rack to Applications
+   * Download and install Rack to `Applications`
    * Download the Rack SDK
    * Clone this repo
    * `RACK_DIR=~/Downloads/Rack-SDK/ make dist`
