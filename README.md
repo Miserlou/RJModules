@@ -288,6 +288,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Smooth MIDI Map - MIDI Map where knob movements are tweened to avoid stepping. Also, pages.
   * Progress - Progression generator that works with PlayableChord. Knobs for four-chord progression, (`I, IV, I, V` form). Presets. Clock in, "clock every".
   * MIDI Octave Splitter - So you can play left hand notes on one voice, and right hand notes on another voice.
+  * Dual Bidirectional Stereo<->Poly converter
 
 ## Building
 
