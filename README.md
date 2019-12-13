@@ -285,6 +285,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Multi-Tap Delay (lol that super expensive digital one) - dry//75/150/225/300/375/450/525/600 + [.1x:2x] modifier, individual outputs + mixed, pingpong, odd/even outs, feedback
   * ~Slapback Delay~
   * Downsampler
+  * Smooth MIDI Map - MIDI Map where knob movements are tweened to avoid stepping. Also, pages.
+  * Progress - Progression generator that works with PlayableChord. Knobs for four-chord progression, (`I, IV, I, V` form). Presets. Clock in, "clock every".
+  * MIDI Octave Splitter - So you can play left hand notes on one voice, and right hand notes on another voice.
 
 ## Building
 
