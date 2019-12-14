@@ -73,6 +73,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelChord);
     p->addModel(modelPlayableChord);
     p->addModel(modelSucculent);
+    p->addModel(modelLeftHandRightHand);
     // p->addModel(modelSoundpipe);
 
     // Sequencer

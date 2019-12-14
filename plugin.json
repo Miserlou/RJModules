@@ -438,6 +438,14 @@
       "tags": [
         "Effect"
       ]
+    },
+    {
+      "slug": "LeftHandRightHand",
+      "name": "Split Keyboard MIDI-CV",
+      "description": "MIDI to CV for Splitting a Keyboard into Left and Right Hands",
+      "tags": [
+        "Utility"
+      ]
     }
   ]
 }

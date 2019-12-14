@@ -60,3 +60,4 @@ extern Model *modelSucculent;
 extern Model *modelPingPong;
 extern Model *modelBrickwall;
 extern Model *modelSlapback;
+extern Model *modelLeftHandRightHand;
