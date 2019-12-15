@@ -289,7 +289,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Progress - Progression generator that works with PlayableChord. Knobs for four-chord progression, (`I, IV, I, V` form). Presets. Clock in, "clock every".
   * MIDI Octave Splitter - So you can play left hand notes on one voice, and right hand notes on another voice.
   * Dual Bidirectional Stereo<->Poly converter
-  * [Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm)
+  * [Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm) - Knobs for E(X, Y) + I. Presets for Bossa, etc
 
 ## Building
 
