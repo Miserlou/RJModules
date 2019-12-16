@@ -61,3 +61,4 @@ extern Model *modelPingPong;
 extern Model *modelBrickwall;
 extern Model *modelSlapback;
 extern Model *modelLeftHandRightHand;
+extern Model *modelEuclidian;

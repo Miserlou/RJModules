@@ -1,12 +1,7 @@
 /*
-A C I D
+DRUMPLER
 
-aka BADDrumpler
-
-2x Wave + Envelope/VCA + FM Filter + Drumpler
-
-Elements pinched from Lindenberg + dBiZ
-
+It's got drums!
 */
 
 #include "RJModules.hpp"
