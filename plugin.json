@@ -446,6 +446,14 @@
       "tags": [
         "Utility"
       ]
+    },
+    {
+      "slug": "Euclidian",
+      "name": "Euclidian - Euclidian Rhythm Generator",
+      "description": "Euclidian - Euclidian Rhythm Generator in E(m, k) + i format, with presets.",
+      "tags": [
+        "Sequencer"
+      ]
     }
   ]
 }
