@@ -100,20 +100,20 @@ struct Euclidian : Module {
         K_PARAM,
         N_PARAM,
         I_PARAM,
+        J_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
         CLOCK_INPUT,
         RESET_INPUT,
-
         NUM_INPUTS
     };
     enum OutputIds {
         OUTPUT,
-
         NUM_OUTPUTS
     };
     enum LightIds {
+        ENUMS(PATTERN_LIGHT, 16),
         NUM_LIGHTS
     };
 
@@ -214,9 +214,10 @@ struct Euclidian : Module {
 
     Euclidian() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Euclidian::K_PARAM, 0, 128, 5, "k");
-        configParam(Euclidian::N_PARAM, 0, 128, 8, "n");
+        configParam(Euclidian::K_PARAM, 0, 128, 4, "k");
+        configParam(Euclidian::N_PARAM, 0, 128, 12, "n");
         configParam(Euclidian::I_PARAM, 0, 16, 0, "i");
+        configParam(Euclidian::J_PARAM, 1, 15, 1, "j");
     }
 
     // From https://bitbucket.org/sjcastroe/bjorklunds-algorithm/src/master/
@@ -271,12 +272,22 @@ struct Euclidian : Module {
         return rhythm;
     }
 
-    // In-place rotates s towards left by d
-    void rotate(std::string &s, int d)
+    void rotate(std::string &a, int d){
+        if(d>=a.length()){
+            return;
+        }
+        std::rotate(a.rbegin(), a.rbegin() + d, a.rend());
+    }
+
+    void multiply(std::string &s, int d)
     {
-        reverse(s.begin(), s.begin() + d);
-        reverse(s.begin()+d, s.end());
-        reverse(s.begin(), s.end());
+        std::string new_s = "";
+        for(char& c : s) {
+            for(int i=0; i<d; i++){
+                new_s = new_s + c;
+            }
+        }
+        s = new_s;
     }
 
     void process(const ProcessArgs &args) override {
@@ -284,16 +295,35 @@ struct Euclidian : Module {
         int K = (int)params[K_PARAM].getValue();
         int N = (int)params[N_PARAM].getValue();
         int I = (int)params[I_PARAM].getValue();
+        int J = (int)params[J_PARAM].getValue();
 
         k_display = std::to_string(K);
         n_display = std::to_string(N);
 
         std::string bork = bjorklund(K, N);
-        std::cout << bork << "\n";
-
         rotate(bork, I);
-        std::cout << bork << "\n";
+        multiply(bork, J);
+        std::string final_string = bork;
 
+        for(int li=0;li<16;li++){
+            if(li>final_string.length()){
+                lights[PATTERN_LIGHT + li].setBrightness(0);
+                continue;
+            }
+            if(final_string[li] == "1"[0]){
+                lights[PATTERN_LIGHT + li].setBrightness(.5);
+            } else{
+                lights[PATTERN_LIGHT + li].setBrightness(0);
+            }
+        }
+
+    }
+};
+
+template <typename BASE>
+struct EuclidianLight : BASE {
+    EuclidianLight() {
+        this->box.size = mm2px(Vec(3.0, 3.0));
     }
 };
 
@@ -332,7 +362,7 @@ struct EuclidianWidget : ModuleWidget {
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT, BASE), module, Euclidian::K_PARAM));
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT + RIGHT, BASE), module, Euclidian::N_PARAM));
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT, BASE + DIST), module, Euclidian::I_PARAM));
-    // addParam(createParam<EuclidianRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, Euclidian::MIX_PARAM));
+    addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, Euclidian::J_PARAM));
 
     // Inputs and Knobs
     // addOutput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::OUTPUT, module, Euclidian::COLOR_SEND));
@@ -343,7 +373,15 @@ struct EuclidianWidget : ModuleWidget {
     addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, Euclidian::CLOCK_INPUT));
     addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Euclidian::RESET_INPUT));
 
+    for(int j=0;j<8;j++){
+        addChild(createLight<EuclidianLight<WhiteLight>>(Vec(j * 16 + 15, 265), module, Euclidian::PATTERN_LIGHT + j));
+    }
+    for(int k=0;k<8;k++){
+        addChild(createLight<EuclidianLight<WhiteLight>>(Vec(k * 16 + 15, 285), module, Euclidian::PATTERN_LIGHT + (k + 8)));
+    }
+
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, Euclidian::OUTPUT));
+
     }
 
     // blah needs getters and setters
