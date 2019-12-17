@@ -121,85 +121,15 @@ struct Euclidian : Module {
     std::string k_display = "4";
     std::string n_display = "12";
 
-    // From AS + Koral
-    // BPM detector variables
-    bool inMemory = false;
-    bool beatLock = false;
-    float beatTime = 0.0f;
-    int beatCount = 0;
-    int beatCountMemory = 0;
-    float beatOld = 0.0f;
-    std::string tempo = "---";
-    dsp::SchmittTrigger clockTrigger;
-    dsp::PulseGenerator LightPulse;
-    bool pulse = false;
-
-    // Calculator variables
-    float bpm = 120;
-    float last_bpm = 0;
-    float millisecs = 60000;
-    float mult = 1000;
-    float millisecondsPerBeat;
-    float millisecondsPerMeasure;
-    float bar = 1.0f;
-    float secondsPerBeat = 0.0f;
-    float secondsPerMeasure = 0.0f;
-
-    //ms variables
-    float half_note_d = 1.0f;
-    float half_note = 1.0f;
-    float half_note_t =1.0f;
-
-    float qt_note_d = 1.0f;
-    float qt_note = 1.0f;
-    float qt_note_t = 1.0f;
-
-    float eight_note_d = 1.0f;
-    float eight_note =1.0f;
-    float eight_note_t = 1.0f;
-
-    float sixth_note_d =1.0f;
-    float sixth_note = 1.0f;
-    float sixth_note_t = 1.0f;
-
-    float trth_note_d = 1.0f;
-    float trth_note = 1.0f;
-    float trth_note_t = 1.0f;
-
-    /* Delays - Left*/
-    dsp::RCFilter lowpassFilter;
-    dsp::RCFilter highpassFilter;
-
-    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-    dsp::DoubleRingBuffer<float, 16> outBuffer;
-
-    dsp::SampleRateConverter<1> src;
-
-    dsp::SchmittTrigger bypass_button_trig;
-    dsp::SchmittTrigger bypass_cv_trig;
-
-    int lcd_tempo = 0;
-    bool fx_bypass = false;
-    float lastWet = 0.0f;
-
-    float fade_in_fx = 0.0f;
-    float fade_in_dry = 0.0f;
-    float fade_out_fx = 1.0f;
-    float fade_out_dry = 1.0f;
-    const float fade_speed = 0.001f;
-
-    /* Menu Settings*/
-    int feedback_mode_index = 0;
-    int poly_mode_index = 0;
-    int last_poly_mode_index = 0;
-
-    /* Input Caching */
-    int param_counter = 7;
-    float FEEDBACK_PARAM_value;
-    float MIX_PARAM_value;
-    float RATE_PARAM_value;
-    float NUDGE_PARAM_value;
-    float COLOR_PARAM_value;
+    // Player
+    int head = -1;
+    SchmittTrigger clockTrigger;
+    SchmittTrigger resetTrigger;
+    int old_K;
+    int old_J;
+    int old_I;
+    int old_N;
+    std::string old_final_string;
 
     void refreshDetector() {
     }
@@ -215,7 +145,7 @@ struct Euclidian : Module {
     Euclidian() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(Euclidian::K_PARAM, 0, 128, 4, "k");
-        configParam(Euclidian::N_PARAM, 0, 128, 12, "n");
+        configParam(Euclidian::N_PARAM, 1, 128, 12, "n");
         configParam(Euclidian::I_PARAM, 0, 16, 0, "i");
         configParam(Euclidian::J_PARAM, 1, 15, 1, "j");
     }
@@ -276,7 +206,7 @@ struct Euclidian : Module {
         if(d>=a.length()){
             return;
         }
-        std::rotate(a.rbegin(), a.rbegin() + d, a.rend());
+        std::rotate(a.begin(), a.begin() + d, a.end());
     }
 
     void multiply(std::string &s, int d)
@@ -299,21 +229,63 @@ struct Euclidian : Module {
 
         k_display = std::to_string(K);
         n_display = std::to_string(N);
+        std::string final_string;
 
-        std::string bork = bjorklund(K, N);
-        rotate(bork, I);
-        multiply(bork, J);
-        std::string final_string = bork;
+        if( (old_K == K) && (old_J == J) && (old_I == I) && (old_N == N) ){
+            final_string = old_final_string;
+        } else{
+            std::string bork = bjorklund(K, N);
+            rotate(bork, I);
+            multiply(bork, J);
+            final_string = bork;
+        }
+
+        old_final_string = final_string;
+        old_K = K;
+        old_N = N;
+        old_I = I;
+        old_J = J;
+
+        if (resetTrigger.process(inputs[RESET_INPUT].value)) {
+            head = -1;
+        }
+
+        if (clockTrigger.process(inputs[CLOCK_INPUT].value)) {
+            if (head >= final_string.length() -1){
+                head = -1;
+            }
+            head += 1;
+            if(final_string[head] == "1"[0]){
+                outputs[OUTPUT].value = 12.0f;
+            } else{
+                outputs[OUTPUT].value = 0.0f;
+            }
+        } else{
+            outputs[OUTPUT].value = 0.0f;
+        }
 
         for(int li=0;li<16;li++){
             if(li>final_string.length()){
                 lights[PATTERN_LIGHT + li].setBrightness(0);
                 continue;
             }
+
+            if(li==head){
+                continue;
+            }
+
             if(final_string[li] == "1"[0]){
                 lights[PATTERN_LIGHT + li].setBrightness(.5);
             } else{
                 lights[PATTERN_LIGHT + li].setBrightness(0);
+            }
+        }
+
+        if(head<16){
+            if(final_string[head] == "1"[0]){
+                lights[PATTERN_LIGHT + head].setBrightness(1.0f);
+            } else{
+                lights[PATTERN_LIGHT + head].setBrightness(0.75f);
             }
         }
 
@@ -363,13 +335,6 @@ struct EuclidianWidget : ModuleWidget {
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT + RIGHT, BASE), module, Euclidian::N_PARAM));
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT, BASE + DIST), module, Euclidian::I_PARAM));
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, Euclidian::J_PARAM));
-
-    // Inputs and Knobs
-    // addOutput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::OUTPUT, module, Euclidian::COLOR_SEND));
-    // addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, Euclidian::COLOR_RETURN));
-    // addOutput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::OUTPUT, module, Euclidian::COLOR_SEND_RIGHT));
-    // addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, Euclidian::COLOR_RETURN_RIGHT));
-
     addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, Euclidian::CLOCK_INPUT));
     addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Euclidian::RESET_INPUT));
 
@@ -384,82 +349,157 @@ struct EuclidianWidget : ModuleWidget {
 
     }
 
-    // blah needs getters and setters
-    // json_t *toJson() override {
-    //     json_t *rootJ = ModuleWidget::toJson();
-    //     json_object_set_new(rootJ, "feed", json_real(feedback_mode_index));
-    //     json_object_set_new(rootJ, "poly", json_real(poly_mode_index));
-    //     return rootJ;
-    // }
-
-    // void fromJson(json_t *rootJ) override {
-    //     ModuleWidget::fromJson(rootJ);
-    //     json_t *feedJ = json_object_get(rootJ, "feed");
-    //     if (feedJ)
-    //         feedback_mode_index = json_number_value(feedJ);
-    //     json_t *polyJ = json_object_get(rootJ, "poly");
-    //     if (polyJ)
-    //         poly_mode_index = json_number_value(polyJ);
-    // }
-
     void appendContextMenu(Menu *menu) override
     {
         Euclidian *module = dynamic_cast<Euclidian *>(this->module);
 
-        struct FeedbackIndexItem : MenuItem
+        struct PattIndexItem : MenuItem
         {
             Euclidian *module;
             int index;
             void onAction(const event::Action &e) override
             {
-                module->feedback_mode_index = index;
-            }
-        };
-
-        struct FeedbackItem : MenuItem
-        {
-            Euclidian *module;
-            Menu *createChildMenu() override
-            {
-                Menu *menu = new Menu();
-                const std::string feedbackLabels[] = {
-                    "0\% - 100\%",
-                    "0\% - 200\%"
-                };
-                for (int i = 0; i < (int)LENGTHOF(feedbackLabels); i++)
-                {
-                    FeedbackIndexItem *item = createMenuItem<FeedbackIndexItem>(feedbackLabels[i], CHECKMARK(module->feedback_mode_index == i));
-                    item->module = module;
-                    item->index = i;
-                    menu->addChild(item);
+                if(index == 0){
+                    module->params[Euclidian::K_PARAM].setValue(4);
+                    module->params[Euclidian::N_PARAM].setValue(12);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
                 }
-                return menu;
+                if(index == 1){
+                    module->params[Euclidian::K_PARAM].setValue(2);
+                    module->params[Euclidian::N_PARAM].setValue(3);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 2){
+                    module->params[Euclidian::K_PARAM].setValue(2);
+                    module->params[Euclidian::N_PARAM].setValue(5);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 3){
+                    module->params[Euclidian::K_PARAM].setValue(3);
+                    module->params[Euclidian::N_PARAM].setValue(4);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 4){
+                    module->params[Euclidian::K_PARAM].setValue(3);
+                    module->params[Euclidian::N_PARAM].setValue(7);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 5){
+                    module->params[Euclidian::K_PARAM].setValue(3);
+                    module->params[Euclidian::N_PARAM].setValue(8);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 6){
+                    module->params[Euclidian::K_PARAM].setValue(4);
+                    module->params[Euclidian::N_PARAM].setValue(9);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 7){
+                    module->params[Euclidian::K_PARAM].setValue(4);
+                    module->params[Euclidian::N_PARAM].setValue(11);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 8){
+                    module->params[Euclidian::K_PARAM].setValue(5);
+                    module->params[Euclidian::N_PARAM].setValue(6);
+                    module->params[Euclidian::I_PARAM].setValue(4);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 9){
+                    module->params[Euclidian::K_PARAM].setValue(5);
+                    module->params[Euclidian::N_PARAM].setValue(7);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 10){
+                    module->params[Euclidian::K_PARAM].setValue(5);
+                    module->params[Euclidian::N_PARAM].setValue(8);
+                    module->params[Euclidian::I_PARAM].setValue(4);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 11){
+                    module->params[Euclidian::K_PARAM].setValue(5);
+                    module->params[Euclidian::N_PARAM].setValue(9);
+                    module->params[Euclidian::I_PARAM].setValue(4);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 12){
+                    module->params[Euclidian::K_PARAM].setValue(5);
+                    module->params[Euclidian::N_PARAM].setValue(16);
+                    module->params[Euclidian::I_PARAM].setValue(6);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 13){
+                    module->params[Euclidian::K_PARAM].setValue(7);
+                    module->params[Euclidian::N_PARAM].setValue(8);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 14){
+                    module->params[Euclidian::K_PARAM].setValue(7);
+                    module->params[Euclidian::N_PARAM].setValue(12);
+                    module->params[Euclidian::I_PARAM].setValue(0);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 15){
+                    module->params[Euclidian::K_PARAM].setValue(7);
+                    module->params[Euclidian::N_PARAM].setValue(16);
+                    module->params[Euclidian::I_PARAM].setValue(5);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 16){
+                    module->params[Euclidian::K_PARAM].setValue(9);
+                    module->params[Euclidian::N_PARAM].setValue(16);
+                    module->params[Euclidian::I_PARAM].setValue(4);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
+                if(index == 17){
+                    module->params[Euclidian::K_PARAM].setValue(13);
+                    module->params[Euclidian::N_PARAM].setValue(24);
+                    module->params[Euclidian::I_PARAM].setValue(8);
+                    module->params[Euclidian::J_PARAM].setValue(1);
+                }
             }
         };
 
-        struct PolyIndexItem : MenuItem
-        {
-            Euclidian *module;
-            int index;
-            void onAction(const event::Action &e) override
-            {
-                module->poly_mode_index = index;
-            }
-        };
-
-        struct PolyItem : MenuItem
+        struct PattItem : MenuItem
         {
             Euclidian *module;
             Menu *createChildMenu() override
             {
                 Menu *menu = new Menu();
                 const std::string polyLabels[] = {
-                    "Mono Out",
-                    "Poly Out"
+                    "Flamenco", // E(4, 12)
+                    "Swing Tumbao", // E(2, 3)
+                    "Khafif-e-ramal", //E(2, 5)
+                    "Cumbia / Calypso", // E(3, 4)
+                    "Ruchenitza", // E(3, 7)
+                    "Tresillo", // E(3, 8)
+                    "Aksak", // E(4,9)
+                    "Zappa", // E(4,11)
+                    "York-Samai", //E(5,6) + 4
+                    "Nawakhat", //E(5,7)
+                    "Cinquillo / Tango", // E(5,8) + 4
+                    "Venda", // E(5,8) + 2
+                    "Bossa Nova", // E(5,16) + 6
+                    "Tuareg - Bendir", // E(7,8)
+                    "Bell - Ashanti", // E(7,12)
+                    "Samba", // E(7,16) + 5
+                    "West/Central Africa", // E(9,16) + 4
+                    "Aka", // E(12,24)
+                    "Aka 2", // E(13,24)
                 };
                 for (int i = 0; i < (int)LENGTHOF(polyLabels); i++)
                 {
-                    PolyIndexItem *item = createMenuItem<PolyIndexItem>(polyLabels[i], CHECKMARK(module->poly_mode_index == i));
+                    PattIndexItem *item = createMenuItem<PattIndexItem>(polyLabels[i], CHECKMARK(1 == 2));
                     item->module = module;
                     item->index = i;
                     menu->addChild(item);
@@ -470,11 +510,7 @@ struct EuclidianWidget : ModuleWidget {
 
         menu->addChild(new MenuEntry);
 
-        FeedbackItem *feedbackItem = createMenuItem<FeedbackItem>("Feedback Mode", ">");
-        feedbackItem->module = module;
-        menu->addChild(feedbackItem);
-
-        PolyItem *polyItem = createMenuItem<PolyItem>("Poly Mode", ">");
+        PattItem *polyItem = createMenuItem<PattItem>("Preset Pattern", ">");
         polyItem->module = module;
         menu->addChild(polyItem);
     }

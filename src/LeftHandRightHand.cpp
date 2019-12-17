@@ -1,13 +1,92 @@
 #include "plugin.hpp"
 #include <algorithm>
 #include "RJModules.hpp"
+#include "common.hpp"
 #include "dsp/digital.hpp"
 #include <iostream>
 #include <cmath>
+#include <sstream>
+#include <iomanip>
+#include <unistd.h>
 
+/*
+Display
+*/
+
+struct LeftHandRightHandSmallStringDisplayWidget : TransparentWidget {
+
+  std::string *value;
+  std::shared_ptr<Font> font;
+
+  LeftHandRightHandSmallStringDisplayWidget() {
+    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
+  };
+
+  void draw(NVGcontext *vg) override
+  {
+
+    // Shadow
+    NVGcolor backgroundColorS = nvgRGB(0xA0, 0xA0, 0xA0);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y + 2.0, 4.0);
+    nvgFillColor(vg, backgroundColorS);
+    nvgFill(vg);
+
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0xC0, 0xC0, 0xC0);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(vg, backgroundColor);
+    nvgFill(vg);
+
+    // text
+    nvgFontSize(vg, 20);
+    nvgFontFaceId(vg, font->handle);
+    nvgTextLetterSpacing(vg, 0.4);
+
+    std::stringstream to_display;
+    to_display << std::setw(3) << *value;
+
+    Vec textPos = Vec(6.0f, 24.0f);
+    NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
+    nvgFillColor(vg, textColor);
+    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
+  }
+};
+
+struct LeftHandRightHandRoundLargeBlackKnob : RoundLargeBlackKnob
+{
+    LeftHandRightHandRoundLargeBlackKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+    }
+};
+
+struct LeftHandRightHandRoundLargeBlackSnapKnob : RoundLargeBlackKnob
+{
+    LeftHandRightHandRoundLargeBlackSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
+struct LeftHandRightHandRoundBlackSnapKnob : RoundBlackKnob
+{
+    LeftHandRightHandRoundBlackSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
 
 struct LeftHandRightHand : Module {
     enum ParamIds {
+        SPLIT_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
@@ -69,6 +148,8 @@ struct LeftHandRightHand : Module {
     uint8_t velocities[16];
     uint8_t aftertouches[16];
     std::vector<uint8_t> heldNotes;
+    bool leftHandMessage = false;
+    bool rightHandMessage = false;
 
     int rotateIndex;
 
@@ -85,8 +166,12 @@ struct LeftHandRightHand : Module {
     dsp::PulseGenerator stopPulse;
     dsp::PulseGenerator continuePulse;
 
+    // Display
+    std::string k_display = "60";
+
     LeftHandRightHand() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+        configParam(LeftHandRightHand::SPLIT_PARAM, 0, 127, 60, "Split Note");
         heldNotes.reserve(128);
         for (int c = 0; c < 16; c++) {
             pitchFilters[c].setTau(1 / 30.f);
@@ -130,42 +215,47 @@ struct LeftHandRightHand : Module {
         outputs[CV_OUTPUT].setChannels(channels);
         outputs[GATE_OUTPUT].setChannels(channels);
         outputs[VELOCITY_OUTPUT].setChannels(channels);
+
+        outputs[CV_OUTPUT_2].setChannels(channels);
+        outputs[GATE_OUTPUT_2].setChannels(channels);
+        outputs[VELOCITY_OUTPUT_2].setChannels(channels);
+
         outputs[AFTERTOUCH_OUTPUT].setChannels(channels);
         outputs[RETRIGGER_OUTPUT].setChannels(channels);
-        for (int c = 0; c < channels; c++) {
-            outputs[CV_OUTPUT].setVoltage((notes[c] - 60.f) / 12.f, c);
-            outputs[GATE_OUTPUT].setVoltage(gates[c] ? 10.f : 0.f, c);
-            outputs[VELOCITY_OUTPUT].setVoltage(rescale(velocities[c], 0, 127, 0.f, 10.f), c);
-            outputs[AFTERTOUCH_OUTPUT].setVoltage(rescale(aftertouches[c], 0, 127, 0.f, 10.f), c);
-            outputs[RETRIGGER_OUTPUT].setVoltage(retriggerPulses[c].process(args.sampleTime) ? 10.f : 0.f, c);
-        }
 
-        if (polyMode == MPE_MODE) {
+        int split = (int)params[SPLIT_PARAM].getValue();
+        k_display = std::to_string(split);
+
+        if(leftHandMessage){
             for (int c = 0; c < channels; c++) {
-                outputs[PITCH_OUTPUT].setChannels(channels);
-                outputs[MOD_OUTPUT].setChannels(channels);
-                outputs[PITCH_OUTPUT].setVoltage(pitchFilters[c].process(args.sampleTime, rescale(pitches[c], 0, 1 << 14, -5.f, 5.f)), c);
-                outputs[MOD_OUTPUT].setVoltage(modFilters[c].process(args.sampleTime, rescale(mods[c], 0, 127, 0.f, 10.f)), c);
+                outputs[CV_OUTPUT].setVoltage((notes[c] - 60.f) / 12.f, c);
+                outputs[GATE_OUTPUT].setVoltage(gates[c] ? 10.f : 0.f, c);
+                outputs[VELOCITY_OUTPUT].setVoltage(rescale(velocities[c], 0, 127, 0.f, 10.f), c);
+                outputs[RETRIGGER_OUTPUT].setVoltage(retriggerPulses[c].process(args.sampleTime) ? 10.f : 0.f, c);
             }
         }
-        else {
-            outputs[PITCH_OUTPUT].setChannels(1);
-            outputs[MOD_OUTPUT].setChannels(1);
-            outputs[PITCH_OUTPUT].setVoltage(pitchFilters[0].process(args.sampleTime, rescale(pitches[0], 0, 1 << 14, -5.f, 5.f)));
-            outputs[MOD_OUTPUT].setVoltage(modFilters[0].process(args.sampleTime, rescale(mods[0], 0, 127, 0.f, 10.f)));
+        else{
+            for (int c = 0; c < channels; c++) {
+                outputs[CV_OUTPUT_2].setVoltage((notes[c] - 60.f) / 12.f, c);
+                outputs[GATE_OUTPUT_2].setVoltage(gates[c] ? 10.f : 0.f, c);
+                outputs[VELOCITY_OUTPUT_2].setVoltage(rescale(velocities[c], 0, 127, 0.f, 10.f), c);
+                outputs[RETRIGGER_OUTPUT_2].setVoltage(retriggerPulses[c].process(args.sampleTime) ? 10.f : 0.f, c);
+            }
         }
-
-        outputs[CLOCK_OUTPUT].setVoltage(clockPulse.process(args.sampleTime) ? 10.f : 0.f);
-        outputs[CLOCK_DIV_OUTPUT].setVoltage(clockDividerPulse.process(args.sampleTime) ? 10.f : 0.f);
-        outputs[START_OUTPUT].setVoltage(startPulse.process(args.sampleTime) ? 10.f : 0.f);
-        outputs[STOP_OUTPUT].setVoltage(stopPulse.process(args.sampleTime) ? 10.f : 0.f);
-        outputs[CONTINUE_OUTPUT].setVoltage(continuePulse.process(args.sampleTime) ? 10.f : 0.f);
     }
 
     void processMessage(midi::Message msg) {
-        DEBUG("MIDI: %01x %01x %02x %02x", msg.getStatus(), msg.getChannel(), msg.getNote(), msg.getValue());
+        // DEBUG("MIDI: %01x %01x %02x %02x", msg.getStatus(), msg.getChannel(), msg.getNote(), msg.getValue());
+        // DEBUG("NOTE: %03x", msg.getNote());
 
-        DEBUG("NOTE: %03x", msg.getNote());
+        if(msg.getNote() < 60){
+            leftHandMessage = true;
+            rightHandMessage = false;
+        }
+        else{
+            leftHandMessage = false;
+            rightHandMessage = true;
+        }
 
         switch (msg.getStatus()) {
             // note off
@@ -556,17 +646,32 @@ struct LeftHandRightHandWidget : ModuleWidget {
         panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/LeftHandRightHand.svg")));
         addChild(panel);
 
+        // Displays
+        if(module != NULL){
+            LeftHandRightHandSmallStringDisplayWidget *k_Display = new LeftHandRightHandSmallStringDisplayWidget();
+            k_Display->box.pos = Vec(20, 140);
+            k_Display->box.size = Vec(35, 35);
+            k_Display->value = &module->k_display;
+            addChild(k_Display);
+        }
+        addParam(createParam<LeftHandRightHandRoundLargeBlackSnapKnob>(Vec(60, 140), module, LeftHandRightHand::SPLIT_PARAM));
+
         // addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.61505, 60.1445)), module, LeftHandRightHand::CV_OUTPUT));
         // addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 60.1445)), module,  LeftHandRightHand::GATE_OUTPUT));
         // addOutput(createOutput<PJ301MPort>(mm2px(Vec(27.8143, 60.1445)), module, LeftHandRightHand::VELOCITY_OUTPUT));
+
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.61505, 76.1449)), module, LeftHandRightHand::CV_OUTPUT));
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 76.1449)), module,  LeftHandRightHand::GATE_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 86.1449)), module, LeftHandRightHand::RETRIGGER_OUTPUT));
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(27.8143, 76.1449)), module, LeftHandRightHand::VELOCITY_OUTPUT));
+
         // addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.61505, 92.1439)), module, LeftHandRightHand::CLOCK_OUTPUT));
         // addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 92.1439)), module, LeftHandRightHand::CLOCK_DIV_OUTPUT));
         // addOutput(createOutput<PJ301MPort>(mm2px(Vec(27.8143, 92.1439)), module, LeftHandRightHand::RETRIGGER_OUTPUT));
+
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(4.61505, 108.144)), module, LeftHandRightHand::CV_OUTPUT_2));
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 108.144)), module,  LeftHandRightHand::GATE_OUTPUT_2));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 118.1449)), module, LeftHandRightHand::RETRIGGER_OUTPUT_2));
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(27.8143, 108.144)), module, LeftHandRightHand::VELOCITY_OUTPUT_2));
 
         MidiWidget* midiWidget = createWidget<MidiWidget>(mm2px(Vec(3.41891, 14.8373)));
