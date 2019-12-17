@@ -59,6 +59,46 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 ## Contents
 
+### New Stuff!
+
+#### Euclidian [sic]
+<img src='https://i.imgur.com/HoEumI7.png' width="50%" />
+Euclidian [sic] uses [ancient math and nuclear physics to generate tribal rhythms](http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf?fbclid=IwAR3V-5daja3fenLy3BaZ5e2sD8gx1kE_Aab4pO70GcBzUsj-3ppk80mnA3s). Cool! Right click menu provides a bunch of world rhythms out of the box.
+
+Video/audio demo [here](https://www.reddit.com/r/vcvrack/comments/ebn4ml/exploring_the_sacred_geometry_with_my_new/).
+
+#### Left Hand Right Hand
+<img src="https://i.imgur.com/ceIn1c8.png" width="25%">
+Left Hand Right Hand is kind of a strange expierment. It's a MIDI input device with a "split" knob that allows you two divide your MIDI instrument into two separate signal paths. This lets you play separate voices on your left and right hands on a single MIDI keyboard. An experiment, feedback welcome.
+
+#### Ping Pong
+<img src="https://i.imgur.com/9RxOChc.png" width="25%">
+
+Ping Pong is a clock-synced ping pong delay. Includes dotted and triplet time signatures, a "nudge" knob for making slightly-off delays, and a 0-200% feedback mode which allows you to create amazing - but dangerout - feedback swells.
+
+#### PlayableChord
+<img src="https://i.imgur.com/0dudvPA.png" width="25%">
+Turns a note into a chord. Octave and position controls.
+
+#### MutateSeq / Notes / Sequential
+<img src="https://i.imgur.com/PFUjLNd.png" width="50%">
+A suite of sequencing tools.
+
+MutateSeq lets you build a sequence that mutates over time. Can lock notes and change rate of mutation.
+Notes and Sequential work together to build a simple sequencer with different step modes. Can change mode and size of step.
+
+#### Brickwall
+<img src="https://i.imgur.com/eA37XuY.png" width="25%">
+It's a brick wall limiter! Includes a pre- and post- amplifier. Sounds awesome for making heavy kicks, or throw it on before master output to protect your ears a bit. Stomp.
+
+#### Dry // Wet
+<img src="https://i.imgur.com/bfjukeC.png" width="25%">
+Dual voltage controlled dry-wet knobs! For building effects chains.
+
+#### Triggerswitch
+<img src="https://i.imgur.com/jMRhepg.png" width="25%">
+Dual gate-and-button-based switch. Good for building 'sections'.
+
 ### Synths
 
 #### ACID
@@ -287,9 +327,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Downsampler
   * Smooth MIDI Map - MIDI Map where knob movements are tweened to avoid stepping. Also, pages.
   * Progress - Progression generator that works with PlayableChord. Knobs for four-chord progression, (`I, IV, I, V` form). Presets. Clock in, "clock every".
-  * MIDI Octave Splitter - So you can play left hand notes on one voice, and right hand notes on another voice.
+  * ~MIDI Octave Splitter~ - So you can play left hand notes on one voice, and right hand notes on another voice.
   * Dual Bidirectional Stereo<->Poly converter
-  * [Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm) - Knobs for E(X, Y) + I. Presets for Bossa, etc
+  * ~[Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm)~ - Knobs for E(X, Y) + I. Presets for Bossa, etc
 
 ## Building
 
