@@ -8,6 +8,15 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 
 - [Contents](#contents)
+  - [New Stuff!](#new-stuff)
+    - [Euclidian [sic]](#euclidian-sic)
+    - [Left Hand Right Hand](#left-hand-right-hand)
+    - [Ping Pong](#ping-pong)
+    - [PlayableChord](#playablechord)
+    - [MutateSeq / Notes / Sequential](#mutateseq--notes--sequential)
+    - [Brickwall](#brickwall)
+    - [Dry // Wet](#dry--wet)
+    - [Triggerswitch](#triggerswitch)
   - [Synths](#synths)
     - [ACID](#acid)
     - [EssEff](#esseff)
