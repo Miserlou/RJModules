@@ -339,6 +339,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * ~MIDI Octave Splitter~ - So you can play left hand notes on one voice, and right hand notes on another voice.
   * Dual Bidirectional Stereo<->Poly converter
   * ~[Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm)~ - Knobs for E(X, Y) + I. Presets for Bossa, etc
+  * LF8 - Compact, 8-independent triangle LFOs, inspired by [ochd](https://www.instruomodular.com/product/ochd/)
 
 ## Building
 
