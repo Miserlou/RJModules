@@ -72,7 +72,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 #### Euclidian [sic]
 <img src='https://i.imgur.com/HoEumI7.png' width="50%" />
-Euclidian uses ancient math and nuclear physics to generate tribal rhythms. It's based on this paper: http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf). Cool! The right click menu provides a bunch of world rhythms out of the box.
+Euclidian uses ancient math and nuclear physics to generate tribal rhythms. It's based on this paper: http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf. Cool! The right click menu provides a bunch of world rhythms out of the box.
 
 Video/audio demo [here](https://www.reddit.com/r/vcvrack/comments/ebn4ml/exploring_the_sacred_geometry_with_my_new/).
 
