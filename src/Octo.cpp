@@ -73,8 +73,8 @@ struct OctoLowFrequencyOscillator {
         // if (bipolar)
         //     p += 0.25f;
         T v = 4.f * simd::fabs(p - simd::round(p)) - 1.f;
-        // if (invert)
-        //     v *= -1.f;
+        if (invert)
+            v *= -1.f;
         if (!bipolar)
             v += 1.f;
         return v;
@@ -128,42 +128,70 @@ struct Octo: Module {
     OctoLowFrequencyOscillator<float_4> oscillators[8];
     dsp::ClockDivider lightDivider;
     float multiples[8];
+    int frame_counter = 0;
+    bool force_update = false;
+    int COUNTER_MAX = 5000;
 
     Octo() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Octo::SPEED_PARAM, -10.0, 10.0, 0.0, "");
+        configParam(Octo::SPEED_PARAM, 0.0, 20.0, 5.0, "");
         configParam(Octo::SPEED_ATTEN_PARAM, 0.0, 1.0, 0.5, "");
-        lightDivider.setDivision(128);
+        lightDivider.setDivision(2048);
 
         multiples[0] = 1;
         multiples[1] = .75f;
+        oscillators[1].invert = true;
         multiples[2] = .501f;
         multiples[3] = .24f;
+        oscillators[3].invert = true;
         multiples[4] = .12f;
         multiples[5] = .04f;
+        oscillators[5].invert = true;
         multiples[6] = .005f;
-        multiples[7] = .0001f;
+        multiples[7] = .001f;
+        oscillators[7].invert = true;
 
     }
 
     void process(const ProcessArgs& args) override {
 
+        frame_counter++;
+        if (frame_counter >= COUNTER_MAX){
+            frame_counter = 0;
+            force_update = true;
+        }
+
         float pitch = params[SPEED_PARAM].value;
+        bool isOutputConnected = false;
         for (int c = 0; c < 8; c++) {
-            if(outputs[CH_OUTPUT + c].isConnected()){
+            isOutputConnected = outputs[CH_OUTPUT + c].isConnected();
+            if(isOutputConnected || force_update){
                 auto* oscillator = &oscillators[c];
                 oscillator->setPitch(pitch * multiples[c]);
-                oscillator->step(args.sampleTime);
-                outputs[CH_OUTPUT + c].setVoltageSimd(oscillator->tri(), 0);
+                if(isOutputConnected){
+                    oscillator->step(args.sampleTime);
+                } else{
+                    oscillator->step(args.sampleTime * COUNTER_MAX);
+                }
+                outputs[CH_OUTPUT + c].setVoltageSimd(oscillator->tri() * 2.5, 0);
             }
         }
 
-        if (lightDivider.process()) {
+        if (lightDivider.process() || (force_update == true)) {
             for (int c = 0; c < 8; c++) {
                 float lightValue = oscillators[c].light().s[0];
-                lights[CH_LIGHT + c].setSmoothBrightness(lightValue, args.sampleTime * lightDivider.getDivision());
-                lights[CH_NEG_LIGHT + c].setSmoothBrightness(-lightValue, args.sampleTime * lightDivider.getDivision());
+                if(force_update == false){
+                    lights[CH_LIGHT + c].setSmoothBrightness(lightValue, args.sampleTime * lightDivider.getDivision());
+                    lights[CH_NEG_LIGHT + c].setSmoothBrightness(-lightValue, args.sampleTime * lightDivider.getDivision());
+                } else{
+                    lights[CH_LIGHT + c].setBrightness(lightValue);
+                    lights[CH_NEG_LIGHT + c].setBrightness(-lightValue);
+                }
             }
+        }
+
+        if(force_update == true){
+            force_update = false;
         }
 
     }
