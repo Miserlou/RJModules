@@ -14,9 +14,9 @@ void init(rack::Plugin *p) {
     p->addModel(modelAcid);
     p->addModel(modelEssEff);
     // p->addModel(modelDrumpler);
-
     // p->addModel(modelRiser);
     // p->addModel(modelThreeXOSC);
+    p->addModel(modelOcto);
 
     // VCA
     p->addModel(modelPluck);

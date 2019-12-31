@@ -454,6 +454,14 @@
       "tags": [
         "Sequencer"
       ]
+    },
+    {
+      "slug": "Octo",
+      "name": "Octo - 8 Bespokely Phased Triangles",
+      "description": "Octo - 8 Bespokely Phased Triangles",
+      "tags": [
+        "LFO"
+      ]
     }
   ]
 }
