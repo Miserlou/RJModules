@@ -59,8 +59,8 @@ struct OctoLowFrequencyOscillator {
     }
     T sin() {
         T p = phase;
-        if (!bipolar)
-            p -= 0.25f;
+        // if (bipolar)
+        //     p += 0.25f;
         T v = simd::sin(2 * M_PI * p);
         if (invert)
             v *= -1.f;
@@ -81,8 +81,8 @@ struct OctoLowFrequencyOscillator {
     }
     T saw() {
         T p = phase;
-        if (!bipolar)
-            p -= 0.5f;
+        // if (bipolar)
+        //     p += 0.25f;
         T v = 2.f * (p - simd::round(p));
         if (invert)
             v *= -1.f;
