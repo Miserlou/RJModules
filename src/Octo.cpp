@@ -37,7 +37,7 @@ struct OctoLowFrequencyOscillator {
 
     void setPitch(T pitch) {
         pitch = simd::fmin(pitch, 10.f);
-        freq = dsp::approxExp2_taylor5(pitch + 30) / 1073741824;
+        freq = dsp::approxExp2_taylor5(pitch + 30) / 50073741824;
     }
     void setPulseWidth(T pw) {
         const T pwMin = 0.01f;
@@ -120,35 +120,35 @@ struct Octo: Module {
         NUM_OUTPUTS
     };
     enum LightIds {
-        ENUMS(CH_LIGHT, 8),
-        ENUMS(CH_NEG_LIGHT, 8),
+        ENUMS(CH_LIGHT, 16),
         NUM_LIGHTS
     };
 
     OctoLowFrequencyOscillator<float_4> oscillators[8];
     dsp::ClockDivider lightDivider;
     float multiples[8];
+    rack::simd::Vector<float, 4> outs[8];
     int frame_counter = 0;
     bool force_update = false;
     int COUNTER_MAX = 5000;
 
     Octo() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Octo::SPEED_PARAM, 0.0, 20.0, 5.0, "");
-        configParam(Octo::SPEED_ATTEN_PARAM, 0.0, 1.0, 0.5, "");
+        configParam(Octo::SPEED_PARAM, 0.0, 10.0, 5.0, "Speed");
+        configParam(Octo::SPEED_ATTEN_PARAM, -2.0, 2.0, 1.0, "Attenuvertion");
         lightDivider.setDivision(2048);
 
         multiples[0] = 1;
         multiples[1] = .75f;
         oscillators[1].invert = true;
-        multiples[2] = .501f;
-        multiples[3] = .24f;
+        multiples[2] = .601f;
+        multiples[3] = .44f;
         oscillators[3].invert = true;
-        multiples[4] = .12f;
-        multiples[5] = .04f;
+        multiples[4] = .32f;
+        multiples[5] = .26f;
         oscillators[5].invert = true;
-        multiples[6] = .005f;
-        multiples[7] = .001f;
+        multiples[6] = .09f;
+        multiples[7] = .004f;
         oscillators[7].invert = true;
 
     }
@@ -162,30 +162,33 @@ struct Octo: Module {
         }
 
         float pitch = params[SPEED_PARAM].value;
+        float cv_voltage = inputs[SPEED_PARAM].value;
+        float cv_amt = params[SPEED_CV].getValue();
+        cv_amt = cv_amt * cv_voltage;
+
         bool isOutputConnected = false;
         for (int c = 0; c < 8; c++) {
             isOutputConnected = outputs[CH_OUTPUT + c].isConnected();
             if(isOutputConnected || force_update){
                 auto* oscillator = &oscillators[c];
-                oscillator->setPitch(pitch * multiples[c]);
+                oscillator->setPitch((pitch + cv_voltage) * multiples[c]);
                 if(isOutputConnected){
                     oscillator->step(args.sampleTime);
                 } else{
                     oscillator->step(args.sampleTime * COUNTER_MAX);
                 }
-                outputs[CH_OUTPUT + c].setVoltageSimd(oscillator->tri() * 2.5, 0);
+                outs[c] = oscillator->tri();
+                outputs[CH_OUTPUT + c].setVoltageSimd(outs[c] * 2.5, 0);
             }
         }
 
         if (lightDivider.process() || (force_update == true)) {
             for (int c = 0; c < 8; c++) {
-                float lightValue = oscillators[c].light().s[0];
+                float lightValue = outs[c][0];
                 if(force_update == false){
-                    lights[CH_LIGHT + c].setSmoothBrightness(lightValue, args.sampleTime * lightDivider.getDivision());
-                    lights[CH_NEG_LIGHT + c].setSmoothBrightness(-lightValue, args.sampleTime * lightDivider.getDivision());
+                    lights[CH_LIGHT + c].setSmoothBrightness(lightValue / 2.5, args.sampleTime * lightDivider.getDivision());
                 } else{
-                    lights[CH_LIGHT + c].setBrightness(lightValue);
-                    lights[CH_NEG_LIGHT + c].setBrightness(-lightValue);
+                    lights[CH_LIGHT + c].setBrightness(lightValue / 2.5);
                 }
             }
         }
@@ -231,14 +234,14 @@ OctoWidget::OctoWidget(Octo *module) {
     BASE = BASE + 8;
     int RIGHT = 46;
     LEFT = 5;
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(RIGHT, BASE            ), module, Octo::CH_LIGHT + 0));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(LEFT,  BASE + SPACE * 1), module, Octo::CH_LIGHT + 1));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(RIGHT, BASE + SPACE * 2), module, Octo::CH_LIGHT + 2));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(LEFT,  BASE + SPACE * 3), module, Octo::CH_LIGHT + 3));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(RIGHT, BASE + SPACE * 4), module, Octo::CH_LIGHT + 4));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(LEFT,  BASE + SPACE * 5), module, Octo::CH_LIGHT + 5));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(RIGHT, BASE + SPACE * 6), module, Octo::CH_LIGHT + 6));
-    addChild(createLight<MediumLight<GreenRedLight>>(Vec(LEFT,  BASE + SPACE * 7), module, Octo::CH_LIGHT + 7));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE            ), module, Octo::CH_LIGHT + 0));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 1), module, Octo::CH_LIGHT + 1));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 2), module, Octo::CH_LIGHT + 2));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 3), module, Octo::CH_LIGHT + 3));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 4), module, Octo::CH_LIGHT + 4));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 5), module, Octo::CH_LIGHT + 5));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 6), module, Octo::CH_LIGHT + 6));
+    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 7), module, Octo::CH_LIGHT + 7));
 
 }
 
