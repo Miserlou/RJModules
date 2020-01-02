@@ -37,7 +37,7 @@ struct OctoLowFrequencyOscillator {
 
     void setPitch(T pitch) {
         pitch = simd::fmin(pitch, 10.f);
-        freq = dsp::approxExp2_taylor5(pitch + 30) / 50073741824;
+        freq = dsp::approxExp2_taylor5(pitch + 30) / 60073741824;
     }
     void setPulseWidth(T pw) {
         const T pwMin = 0.01f;
@@ -127,27 +127,31 @@ struct Octo: Module {
     OctoLowFrequencyOscillator<float_4> oscillators[8];
     dsp::ClockDivider lightDivider;
     float multiples[8];
+    rack::simd::Vector<float, 4> samples[8];
+    bool hold = false;
+
     rack::simd::Vector<float, 4> outs[8];
     int frame_counter = 0;
     bool force_update = false;
     int COUNTER_MAX = 5000;
+    int wave_mode_index = 0;
 
     Octo() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(Octo::SPEED_PARAM, 0.0, 10.0, 5.0, "Speed");
-        configParam(Octo::SPEED_ATTEN_PARAM, -2.0, 2.0, 1.0, "Attenuvertion");
+        configParam(Octo::SPEED_ATTEN_PARAM, -1.0, 1.0, 1.0, "Attenuvertion");
         lightDivider.setDivision(2048);
 
         multiples[0] = 1;
-        multiples[1] = .75f;
+        multiples[1] = .85f;
         oscillators[1].invert = true;
-        multiples[2] = .601f;
-        multiples[3] = .44f;
+        multiples[2] = .701f;
+        multiples[3] = .54f;
         oscillators[3].invert = true;
-        multiples[4] = .32f;
-        multiples[5] = .26f;
+        multiples[4] = .42f;
+        multiples[5] = .3333f;
         oscillators[5].invert = true;
-        multiples[6] = .09f;
+        multiples[6] = .1f;
         multiples[7] = .004f;
         oscillators[7].invert = true;
 
@@ -162,22 +166,47 @@ struct Octo: Module {
         }
 
         float pitch = params[SPEED_PARAM].value;
-        float cv_voltage = inputs[SPEED_PARAM].value;
-        float cv_amt = params[SPEED_CV].getValue();
+        float cv_voltage = inputs[SPEED_CV].value;
+        float cv_amt = params[SPEED_ATTEN_PARAM].getValue();
+        bool hold_now = false;
+
         cv_amt = cv_amt * cv_voltage;
+        if (cv_amt <= -5.0){
+            hold_now = true;
+        } else {
+            hold = false;
+        }
 
         bool isOutputConnected = false;
         for (int c = 0; c < 8; c++) {
             isOutputConnected = outputs[CH_OUTPUT + c].isConnected();
             if(isOutputConnected || force_update){
                 auto* oscillator = &oscillators[c];
-                oscillator->setPitch((pitch + cv_voltage) * multiples[c]);
+                oscillator->setPitch(clamp( ((pitch + cv_voltage) * multiples[c]), 0.0f, 20.0f));
                 if(isOutputConnected){
                     oscillator->step(args.sampleTime);
                 } else{
                     oscillator->step(args.sampleTime * COUNTER_MAX);
                 }
-                outs[c] = oscillator->tri();
+                if(hold != true){
+                    switch(wave_mode_index){
+                    case 0:
+                        outs[c] = oscillator->tri();
+                        break;
+                    case 1:
+                        outs[c] = oscillator->sqr();
+                        break;
+                    case 2:
+                        outs[c] = oscillator->saw();
+                        break;
+                    case 3:
+                        outs[c] = oscillator->sin();
+                        break;
+                    }
+                    samples[c] = outs[c];
+                } else{
+                    outs[c] = samples[c];
+                }
                 outputs[CH_OUTPUT + c].setVoltageSimd(outs[c] * 2.5, 0);
             }
         }
@@ -196,53 +225,114 @@ struct Octo: Module {
         if(force_update == true){
             force_update = false;
         }
+        if(hold_now == true){
+            hold = true;
+        }
 
     }
 };
 
 struct OctoWidget: ModuleWidget {
-    OctoWidget(Octo *module);
-};
+  OctoWidget(Octo *module) {
+        setModule(module);
+        box.size = Vec(6*10, 380);
 
-OctoWidget::OctoWidget(Octo *module) {
-    setModule(module);
-    box.size = Vec(6*10, 380);
+        {
+            SVGPanel *panel = new SVGPanel();
+            panel->box.size = box.size;
+            panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Octo.svg")));
+            addChild(panel);
+        }
 
-    {
-        SVGPanel *panel = new SVGPanel();
-        panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Octo.svg")));
-        addChild(panel);
+        addParam(createParam<OctoRoundLargeBlackKnob>(Vec(12, 55), module, Octo::SPEED_PARAM));
+        addParam(createParam<OctoRoundSmallBlackKnob>(Vec(5, 100), module, Octo::SPEED_ATTEN_PARAM));
+        addInput(createPort<PJ301MPort>(Vec(32, 99), PortWidget::INPUT, module, Octo::SPEED_CV));
+
+        int SPACE = 30;
+        int BASE = 136;
+        int LEFT = 18;
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE), PortWidget::OUTPUT, module, Octo::CH_OUTPUT));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 1), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 1));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 2), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 2));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 3), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 3));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 4), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 4));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 5), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 5));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 6), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 6));
+        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 7), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 7));
+
+        BASE = BASE + 8;
+        int RIGHT = 46;
+        LEFT = 5;
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE            ), module, Octo::CH_LIGHT + 0));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 1), module, Octo::CH_LIGHT + 1));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 2), module, Octo::CH_LIGHT + 2));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 3), module, Octo::CH_LIGHT + 3));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 4), module, Octo::CH_LIGHT + 4));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 5), module, Octo::CH_LIGHT + 5));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 6), module, Octo::CH_LIGHT + 6));
+        addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 7), module, Octo::CH_LIGHT + 7));
     }
 
-    addParam(createParam<OctoRoundLargeBlackKnob>(Vec(12, 55), module, Octo::SPEED_PARAM));
-    addParam(createParam<OctoRoundSmallBlackKnob>(Vec(5, 100), module, Octo::SPEED_ATTEN_PARAM));
-    addInput(createPort<PJ301MPort>(Vec(32, 99), PortWidget::INPUT, module, Octo::SPEED_CV));
+    json_t *toJson() override {
+        json_t *rootJ = ModuleWidget::toJson();
+        Octo *module = dynamic_cast<Octo *>(this->module);
+        json_object_set_new(rootJ, "wave", json_real(module->wave_mode_index));
+        return rootJ;
+    }
 
-    int SPACE = 30;
-    int BASE = 136;
-    int LEFT = 18;
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE), PortWidget::OUTPUT, module, Octo::CH_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 1), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 1));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 2), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 2));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 3), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 3));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 4), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 4));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 5), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 5));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 6), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 6));
-    addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 7), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 7));
+    void fromJson(json_t *rootJ) override {
+        ModuleWidget::fromJson(rootJ);
+        json_t *waveJ = json_object_get(rootJ, "wave");
+        Octo *module = dynamic_cast<Octo *>(this->module);
+        if (waveJ)
+            module->wave_mode_index = json_number_value(waveJ);
+    }
 
-    BASE = BASE + 8;
-    int RIGHT = 46;
-    LEFT = 5;
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE            ), module, Octo::CH_LIGHT + 0));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 1), module, Octo::CH_LIGHT + 1));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 2), module, Octo::CH_LIGHT + 2));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 3), module, Octo::CH_LIGHT + 3));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 4), module, Octo::CH_LIGHT + 4));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 5), module, Octo::CH_LIGHT + 5));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(RIGHT, BASE + SPACE * 6), module, Octo::CH_LIGHT + 6));
-    addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 7), module, Octo::CH_LIGHT + 7));
+    void appendContextMenu(Menu *menu) override
+    {
+        Octo *module = dynamic_cast<Octo *>(this->module);
 
-}
+        struct WaveIndexItem : MenuItem
+        {
+            Octo *module;
+            int index;
+            void onAction(const event::Action &e) override
+            {
+                module->wave_mode_index = index;
+            }
+        };
+
+        struct WaveItem : MenuItem
+        {
+            Octo *module;
+            Menu *createChildMenu() override
+            {
+                Menu *menu = new Menu();
+                const std::string feedbackLabels[] = {
+                    "Triangle",
+                    "Square",
+                    "Saw",
+                    "Sin"
+                };
+                for (int i = 0; i < (int)LENGTHOF(feedbackLabels); i++)
+                {
+                    WaveIndexItem *item = createMenuItem<WaveIndexItem>(feedbackLabels[i], CHECKMARK(module->wave_mode_index == i));
+                    item->module = module;
+                    item->index = i;
+                    menu->addChild(item);
+                }
+                return menu;
+            }
+        };
+
+        menu->addChild(new MenuEntry);
+
+        WaveItem *waveItem = createMenuItem<WaveItem>("Wave Mode", ">");
+        waveItem->module = module;
+        menu->addChild(waveItem);
+
+    }
+
+};
 
 Model *modelOcto = createModel<Octo, OctoWidget>("Octo");

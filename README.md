@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [New Stuff!](#new-stuff)
+    - [Octo](#octo)
     - [Euclidian [sic]](#euclidian-sic)
     - [Left Hand Right Hand](#left-hand-right-hand)
     - [Ping Pong](#ping-pong)
@@ -70,20 +71,32 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 ### New Stuff!
 
+#### Octo
+<img src='https://i.imgur.com/Z4F4fr3.png' width="25%">
+**Octo** is a bespokely tuned voltage source for organic modulation.
+
+It provides eight phasing waves (0-5v) ranging from quite fast to incredibly slow. There's an integrated attenuvertet so that you can generate complex, self-modifying oscillations.
+
+It also functions as a track-and-hold, as it will sustain the current output values while a -5 attenuated CV input is given, which can be used to create cool stepping effects.
+
+Additionally, in the right click menu, there are multiple waveform types. Square waves can be used to generate random gate/clock signals, which is fun too.
+
+The module is also quite efficient and doesn't use very much CPU considering the number of outputs it has!
+
 #### Euclidian [sic]
 <img src='https://i.imgur.com/HoEumI7.png' width="50%" />
-Euclidian uses ancient math and nuclear physics to generate tribal rhythms. It's based on this paper: http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf. Cool! The right click menu provides a bunch of world rhythms out of the box.
+**Euclidian** uses ancient math and nuclear physics to generate tribal rhythms. It's based on this paper: http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf. Cool! The right click menu provides a bunch of world rhythms out of the box.
 
 Video/audio demo [here](https://www.reddit.com/r/vcvrack/comments/ebn4ml/exploring_the_sacred_geometry_with_my_new/).
 
 #### Left Hand Right Hand
 <img src="https://i.imgur.com/ceIn1c8.png" width="25%">
-Left Hand Right Hand is kind of a strange expierment. It's a MIDI input device with a "split" knob that allows you two divide your MIDI instrument into two separate signal paths. This lets you play separate voices on your left and right hands on a single MIDI keyboard. An experiment, feedback welcome.
+**Left Hand Right Hand** is kind of a strange expierment. It's a MIDI input device with a "split" knob that allows you two divide your MIDI instrument into two separate signal paths. This lets you play separate voices on your left and right hands on a single MIDI keyboard. An experiment, feedback welcome.
 
 #### Ping Pong
 <img src="https://i.imgur.com/9RxOChc.png" width="25%">
 
-Ping Pong is a clock-synced ping pong delay. Includes dotted and triplet time signatures, a "nudge" knob for making slightly-off delays, and a 0-200% feedback mode which allows you to create amazing - but dangerout - feedback swells.
+**Ping Pong** is a clock-synced ping pong delay. Includes dotted and triplet time signatures, a "nudge" knob for making slightly-off delays, and a 0-200% feedback mode which allows you to create amazing - but dangerout - feedback swells.
 
 #### PlayableChord
 <img src="https://i.imgur.com/0dudvPA.png" width="25%">
@@ -93,7 +106,7 @@ Turns a note into a chord. Octave and position controls.
 <img src="https://i.imgur.com/PFUjLNd.png" width="50%">
 A suite of sequencing tools.
 
-MutateSeq lets you build a sequence that mutates over time. Can lock notes and change rate of mutation.
+**MutateSeq** lets you build a sequence that mutates over time. Can lock notes and change rate of mutation.
 Notes and Sequential work together to build a simple sequencer with different step modes. Can change mode and size of step.
 
 #### Brickwall
