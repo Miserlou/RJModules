@@ -72,7 +72,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 ### New Stuff!
 
 #### Octo
-<img src='https://i.imgur.com/Z4F4fr3.png' width="25%">
+<img src='https://i.imgur.com/Z4F4fr3.png' width="8%">
 **Octo** is a bespokely tuned voltage source for organic modulation.
 
 It provides eight phasing waves (0-5v) ranging from quite fast to incredibly slow. There's an integrated attenuvertet so that you can generate complex, self-modifying oscillations.
@@ -82,6 +82,8 @@ It also functions as a track-and-hold, as it will sustain the current output val
 Additionally, in the right click menu, there are multiple waveform types. Square waves can be used to generate random gate/clock signals, which is fun too.
 
 The module is also quite efficient and doesn't use very much CPU considering the number of outputs it has!
+
+Octo is inspired by DivKid's ''Ochd'', which you should buy for your hardware modular.
 
 #### Euclidian [sic]
 <img src='https://i.imgur.com/HoEumI7.png' width="50%" />
