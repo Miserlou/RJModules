@@ -6,7 +6,7 @@ extern Plugin *pluginInstance;
 
 extern Model *modelSupersaw;
 extern Model *modelTwinLFO;
-// extern Model *modelNoise;
+extern Model *modelNoise;
 extern Model *modelRangeLFO;
 extern Model *modelBitCrush;
 extern Model *modelWidener;

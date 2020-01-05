@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [New Stuff!](#new-stuff)
+    - [Chorus](#chorus)
     - [Octo](#octo)
     - [Euclidian [sic]](#euclidian-sic)
     - [Left Hand Right Hand](#left-hand-right-hand)
@@ -71,20 +72,15 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 ### New Stuff!
 
+#### Chorus
+<img src=""
+
 #### Octo
-<img src='https://i.imgur.com/Z4F4fr3.png' width="8%">
+<img src='https://i.imgur.com/gaiWFMh.png' width="8%">
 
-**Octo** is a bespokely tuned voltage source for organic modulation.
+**Chorus** is a simple 3HP chorus effect with CV-adjustable delay time, frequency and depth.
 
-It provides eight phasing waves (0-5v) ranging from quite fast to incredibly slow. There's an integrated attenuvertet so that you can generate complex, self-modifying oscillations.
-
-It also functions as a track-and-hold, as it will sustain the current output values while a -5 attenuated CV input is given, which can be used to create cool stepping effects.
-
-Additionally, in the right click menu, there are multiple waveform types. Square waves can be used to generate random gate/clock signals, which is fun too.
-
-The module is also quite efficient and doesn't use very much CPU considering the number of outputs it has!
-
-Octo is inspired by DivKid's ''Ochd'', which you should buy for your hardware modular.
+Chorus is the first of a few modules based on the "STK" synthesis library.
 
 #### Euclidian [sic]
 <img src='https://i.imgur.com/HoEumI7.png' width="50%" />

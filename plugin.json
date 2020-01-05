@@ -74,6 +74,14 @@
       ]
     },
     {
+      "slug": "Noise",
+      "name": "Noise",
+      "description": "Filtered Noise Generator",
+      "tags": [
+        "Utility"
+      ]
+    },
+    {
       "slug": "PlayableChord",
       "name": "Playable Chord",
       "description": "Generates chords in various positions, and accepts input via V/OCT with octave control.",

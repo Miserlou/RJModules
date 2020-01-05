@@ -40,7 +40,6 @@ struct RJChorus : Module {
     };
     enum OutputIds {
         OUT_OUTPUT,
-        OUT_OUTPUT_2,
         NUM_OUTPUTS
     };
     enum LightIds {
@@ -63,15 +62,15 @@ struct RJChorus : Module {
     void process(const ProcessArgs &args) override {
 
         float input = inputs[IN_INPUT].value;
-        int delay = params[DELAY_PARAM].value;
+        int delay = params[DELAY_PARAM].value * clamp(inputs[DELAY_CV].normalize(1.0f) / 1.0f, 0.0f, 1.0f);
 
         if(delay != lastDelay){
             chorus = stk::Chorus(delay);
             lastDelay = delay;
         }
 
-        chorus.setModFrequency( params[FREQ_PARAM].value );
-        chorus.setModDepth( params[DEPTH_PARAM].value );
+        chorus.setModFrequency( params[FREQ_PARAM].value * clamp(inputs[FREQ_CV].normalize(1.0f) / 1.0f, 0.0f, 1.0f) );
+        chorus.setModDepth( params[DEPTH_PARAM].value * clamp(inputs[DEPTH_CV].normalize(1.0f) / 1.0f, 0.0f, 1.0f) );
         float processed = chorus.tick( input );
         outputs[OUT_OUTPUT].value = processed;
 
