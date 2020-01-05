@@ -9,7 +9,7 @@ void init(rack::Plugin *p) {
     // Generators
     p->addModel(modelSupersaw);
     p->addModel(modelTwinLFO);
-    p->addModel(modelNoise);
+    // p->addModel(modelNoise);
     p->addModel(modelRangeLFO);
     p->addModel(modelAcid);
     p->addModel(modelEssEff);
@@ -32,6 +32,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelPingPong);
     p->addModel(modelBrickwall);
     p->addModel(modelSlapback);
+    p->addModel(modelRJChorus);
 
     // Filters
     p->addModel(modelFilter);

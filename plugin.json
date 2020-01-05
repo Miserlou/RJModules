@@ -337,14 +337,6 @@
       ]
     },
     {
-      "slug": "Noise",
-      "name": "Noise",
-      "description": "Generates different types of noise.",
-      "tags": [
-        "Noise"
-      ]
-    },
-    {
       "slug": "Pluck",
       "name": "Pluck",
       "description": "Integrated ADSR/VCA. Makes a pluck noise.",
@@ -461,6 +453,14 @@
       "description": "Octo - 8 Bespokely Phased Triangles",
       "tags": [
         "LFO"
+      ]
+    },
+    {
+      "slug": "RJChorus",
+      "name": "Chorus - It's a Chorus",
+      "description": "Chorus",
+      "tags": [
+        "Effect"
       ]
     }
   ]

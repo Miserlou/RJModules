@@ -131,17 +131,6 @@ struct Euclidian : Module {
     int old_N;
     std::string old_final_string;
 
-    void refreshDetector() {
-    }
-
-    void onReset() override {
-        refreshDetector();
-    }
-
-    void onInitialize() {
-        refreshDetector();
-    }
-
     Euclidian() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(Euclidian::K_PARAM, 0, 128, 4, "k");
