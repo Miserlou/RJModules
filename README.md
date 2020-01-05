@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [New Stuff!](#new-stuff)
+    - [Chorus](#chorus)
     - [Octo](#octo)
     - [Euclidian [sic]](#euclidian-sic)
     - [Left Hand Right Hand](#left-hand-right-hand)
