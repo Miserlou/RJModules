@@ -12,7 +12,7 @@ LDFLAGS +=
 # Add .cpp and .c files to the build
 SOURCES += $(wildcard src/*.cpp)
 
-DISTRIBUTABLES += $(wildcard LICENSE*) res soundfonts samples
+DISTRIBUTABLES += $(wildcard LICENSE*) res soundfonts samples rawwaves
 
 FLAGS += -w
 

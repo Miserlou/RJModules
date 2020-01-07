@@ -17,6 +17,7 @@ void init(rack::Plugin *p) {
     // p->addModel(modelRiser);
     // p->addModel(modelThreeXOSC);
     p->addModel(modelOcto);
+    p->addModel(modelInstro);
 
     // VCA
     p->addModel(modelPluck);

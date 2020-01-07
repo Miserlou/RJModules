@@ -470,6 +470,14 @@
       "tags": [
         "Effect"
       ]
+    },
+    {
+      "slug": "Instro",
+      "name": "Instro - Various Voices",
+      "description": "Instro - Various Voices",
+      "tags": [
+        "VCO"
+      ]
     }
   ]
 }
