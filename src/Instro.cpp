@@ -181,10 +181,10 @@ struct Instro : Module {
 
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(Instro::INSTRO_PARAM, 0, 23, 0, "Instrument");
-        configParam(Instro::PARAM_1, 0.0f, 1.0f, 0.5f, "Param 1");
-        configParam(Instro::PARAM_2, 0.0f, 1.0f, 0.5f, "Param 2");
-        configParam(Instro::PARAM_3, 0.0f, 1.0f, 0.5f, "Param 3");
-        configParam(Instro::PARAM_4, 0.0f, 1.0f, 0.5f, "Param 4");
+        configParam(Instro::PARAM_1, 0, 128, 1, "Param 1");
+        configParam(Instro::PARAM_2, 0, 128, 1, "Param 2");
+        configParam(Instro::PARAM_3, 0, 128, 1, "Param 3");
+        configParam(Instro::PARAM_4, 0, 128, 1, "Param 4");
     }
 
     // Pitchies
@@ -226,6 +226,13 @@ struct Instro : Module {
         }
 
         if(instrument_choice == 0){
+            // Control
+            flute.controlChange(2, param_1);
+            flute.controlChange(4, param_2);
+            flute.controlChange(1, param_3);
+            flute.controlChange(11, param_4);
+
+            // Gating
             if(!gate_connected){
                 flute.noteOn(cvToFrequency(voct), 1.0);
             } else{
@@ -237,6 +244,8 @@ struct Instro : Module {
                     note_on = false;
                 }
             }
+
+            // Tick
             processed = flute.tick( );
             voice_display = "Flute";
         } else if (instrument_choice == 1){
