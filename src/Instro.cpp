@@ -117,7 +117,7 @@ struct Instro : Module {
     };
     enum InputIds {
         IN_INPUT,
-        CLOCK_INPUT,
+        GATE_INPUT,
 
         TIME_INPUT,
         FEEDBACK_INPUT,
@@ -147,6 +147,9 @@ struct Instro : Module {
 
     // Display
     std::string voice_display = "Flute";
+
+    // State
+    bool note_on = false;
 
     // Instros
     stk::Flute flute = stk::Flute(60.0f);
@@ -202,8 +205,38 @@ struct Instro : Module {
         float processed = 0.0;
         int  instrument_choice = params[INSTRO_PARAM].value;
 
+        // parameters
+        float param_1 = params[PARAM_1].value;
+        float param_2 = params[PARAM_2].value;
+        float param_3 = params[PARAM_3].value;
+        float param_4 = params[PARAM_4].value;
+
+        // gate
+        bool gate_connected = inputs[GATE_INPUT].isConnected();
+        float gate_value = inputs[GATE_INPUT].value;
+        bool turn_note_on = false;
+        bool turn_note_off = false;
+        if(gate_connected){
+            if(note_on && gate_value == 0.0){
+                turn_note_off = true;
+            }
+            if(!note_on && gate_value != 0.0){
+                turn_note_on = true;
+            }
+        }
+
         if(instrument_choice == 0){
-            flute.noteOn(cvToFrequency(voct), 1.0);
+            if(!gate_connected){
+                flute.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    flute.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    flute.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = flute.tick( );
             voice_display = "Flute";
         } else if (instrument_choice == 1){
@@ -342,8 +375,8 @@ struct InstroWidget : ModuleWidget {
     addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, Instro::COLOR_RETURN_RIGHT));
 
     addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, Instro::IN_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Instro::CLOCK_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, Instro::LEFT_OUTPUT));
+    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Instro::GATE_INPUT));
+    // addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, Instro::LEFT_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, Instro::RIGHT_OUTPUT));
     }
 
