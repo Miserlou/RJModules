@@ -249,95 +249,470 @@ struct Instro : Module {
             processed = flute.tick( );
             voice_display = "Flute";
         } else if (instrument_choice == 1){
-            rhodey.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            rhodey.controlChange(2, param_1);
+            rhodey.controlChange(4, param_2);
+            rhodey.controlChange(11, param_3);
+            rhodey.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                rhodey.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    rhodey.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    rhodey.noteOff(1.0);
+                    note_on = false;
+                }
+            }
+
             processed = rhodey.tick( );
             voice_display = "Rhodes";
         } else if (instrument_choice == 2){
-            brass.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            brass.controlChange(2, param_1);
+            brass.controlChange(4, param_2);
+            brass.controlChange(11, param_3);
+            brass.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                brass.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    brass.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    brass.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = brass.tick( );
             voice_display = "Brass";
         } else if (instrument_choice == 3){
-            saxofony.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            saxofony.controlChange(29, param_1);
+            saxofony.controlChange(4, param_2);
+            saxofony.controlChange(11, param_3);
+            saxofony.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                saxofony.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    saxofony.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    saxofony.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = saxofony.tick( );
             voice_display = "Sax";
         } else if (instrument_choice == 4){
-            blowbotl.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            blowbotl.controlChange(4, param_1);
+            blowbotl.controlChange(11, param_2);
+            blowbotl.controlChange(1, param_3);
+            blowbotl.controlChange(128, param_4);
+
+            // Gating
+            if(!gate_connected){
+                blowbotl.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    blowbotl.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    blowbotl.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = blowbotl.tick( );
             voice_display = "Bottle";
         } else if (instrument_choice == 5){
-            blowhole.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            blowhole.controlChange(2, param_1);
+            blowhole.controlChange(4, param_2);
+            blowhole.controlChange(11, param_3);
+            blowhole.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                blowhole.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    blowhole.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    blowhole.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = blowhole.tick( );
             voice_display = "Hole";
         } else if (instrument_choice == 6){
-            bowed.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            bowed.controlChange(2, param_1);
+            bowed.controlChange(4, param_2);
+            bowed.controlChange(11, param_3);
+            bowed.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                bowed.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    bowed.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    bowed.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = bowed.tick( );
             voice_display = "Bow";
         } else if (instrument_choice == 7){
-            clarinet.noteOn(cvToFrequency(voct), 1.0);
-            processed = bowed.tick( );
+            // Control
+            clarinet.controlChange(2, param_1);
+            clarinet.controlChange(4, param_2);
+            clarinet.controlChange(11, param_3);
+            clarinet.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                clarinet.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    clarinet.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    clarinet.noteOff(1.0);
+                    note_on = false;
+                }
+            }
+            processed = clarinet.tick( );
             voice_display = "Clarinet";
         } else if (instrument_choice == 8){
             drummer.noteOn(cvToFrequency(voct), 1.0);
             processed = drummer.tick( );
             voice_display = "Drums";
         } else if (instrument_choice == 9){
-            fmvoices.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            fmvoices.controlChange(4, param_1);
+            fmvoices.controlChange(2, param_2);
+            fmvoices.controlChange(11, param_3);
+            fmvoices.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                fmvoices.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    fmvoices.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    fmvoices.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = fmvoices.tick( );
             voice_display = "Voices";
         } else if (instrument_choice == 10){
-            guitar.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            guitar.controlChange(4, param_1);
+            guitar.controlChange(2, param_2);
+            guitar.controlChange(11, param_3);
+            guitar.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                guitar.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    guitar.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    guitar.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = guitar.tick( );
             voice_display = "Guitar";
         } else if (instrument_choice == 11){
-            heavy.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            heavy.controlChange(2, param_1);
+            heavy.controlChange(4, param_2);
+            heavy.controlChange(11, param_3);
+            heavy.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                heavy.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    heavy.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    heavy.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = heavy.tick( );
             voice_display = "Heavy";
         } else if (instrument_choice == 12){
-            mandolin.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            mandolin.controlChange(2, param_1);
+            mandolin.controlChange(4, param_2);
+            mandolin.controlChange(11, param_3);
+            mandolin.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                mandolin.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    mandolin.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    mandolin.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = mandolin.tick( );
             voice_display = "Mandolin";
         } else if (instrument_choice == 13){
-            modalbar.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            modalbar.controlChange(2, param_1);
+            modalbar.controlChange(4, param_2);
+            modalbar.controlChange(8, param_3);
+            modalbar.controlChange(11, param_4);
+
+            // Gating
+            if(!gate_connected){
+                modalbar.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    modalbar.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    modalbar.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = modalbar.tick( );
             voice_display = "Bar";
         } else if (instrument_choice == 14){
-            moog.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            moog.controlChange(2, param_1);
+            moog.controlChange(4, param_2);
+            moog.controlChange(1, param_3);
+            moog.controlChange(11, param_4);
+
+            // Gating
+            if(!gate_connected){
+                moog.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    moog.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    moog.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = moog.tick( );
             voice_display = "Moog";
         } else if (instrument_choice == 15){
-            percflut.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            percflut.controlChange(2, param_1);
+            percflut.controlChange(4, param_2);
+            percflut.controlChange(11, param_3);
+            percflut.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                percflut.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    percflut.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    percflut.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = percflut.tick( );
             voice_display = "Flute 2";
         } else if (instrument_choice == 16){
-            plucked.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            plucked.controlChange(2, param_1);
+            plucked.controlChange(4, param_2);
+            plucked.controlChange(11, param_3);
+            plucked.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                plucked.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    plucked.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    plucked.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = plucked.tick( );
             voice_display = "Plucked";
         } else if (instrument_choice == 17){
-            recorder.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            recorder.controlChange(2, param_1);
+            recorder.controlChange(4, param_2);
+            recorder.controlChange(16, param_3);
+            recorder.controlChange(11, param_4);
+
+            // Gating
+            if(!gate_connected){
+                recorder.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    recorder.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    recorder.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = recorder.tick( );
             voice_display = "Recrdr";
         } else if (instrument_choice == 18){
-            shakers.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            shakers.controlChange(2, param_1);
+            shakers.controlChange(4, param_2);
+            shakers.controlChange(11, param_3);
+            shakers.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                shakers.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    shakers.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    shakers.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = shakers.tick( );
             voice_display = "Shakers";
         } else if (instrument_choice == 19){
-            sitar.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            sitar.controlChange(2, param_1);
+            sitar.controlChange(4, param_2);
+            sitar.controlChange(11, param_3);
+            sitar.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                sitar.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    sitar.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    sitar.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = sitar.tick( );
             voice_display = "Sitar";
         } else if (instrument_choice == 20){
-            stifkarp.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            stifkarp.controlChange(2, param_1);
+            stifkarp.controlChange(4, param_2);
+            stifkarp.controlChange(11, param_3);
+            stifkarp.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                stifkarp.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    stifkarp.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    stifkarp.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = stifkarp.tick( );
             voice_display = "StfKarp";
         } else if (instrument_choice == 21){
-            tubebell.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            tubebell.controlChange(2, param_1);
+            tubebell.controlChange(4, param_2);
+            tubebell.controlChange(11, param_3);
+            tubebell.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                tubebell.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    tubebell.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    tubebell.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = tubebell.tick( );
             voice_display = "TbBell";
         } else if (instrument_choice == 22){
-            whistle.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            whistle.controlChange(2, param_1);
+            whistle.controlChange(4, param_2);
+            whistle.controlChange(11, param_3);
+            whistle.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                whistle.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    whistle.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    whistle.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = whistle.tick( );
             voice_display = "Whistl";
         } else if (instrument_choice == 23){
-            wurley.noteOn(cvToFrequency(voct), 1.0);
+            // Control
+            wurley.controlChange(2, param_1);
+            wurley.controlChange(4, param_2);
+            wurley.controlChange(11, param_3);
+            wurley.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                wurley.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    wurley.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    wurley.noteOff(1.0);
+                    note_on = false;
+                }
+            }
             processed = wurley.tick( );
             voice_display = "Wurley";
         }
