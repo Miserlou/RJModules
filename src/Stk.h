@@ -1,6 +1,8 @@
 #ifndef STK_STK_H
 #define STK_STK_H
 
+#include "common.hpp"
+
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -171,10 +173,10 @@ public:
     class basis.
   */
   void ignoreSampleRateChange( bool ignore = true ) { ignoreSampleRateChange_ = ignore; };
-  
+
   //! Static method that frees memory from alertList_.
   static void  clear_alertList(){std::vector<Stk *>().swap(alertList_);};
-  
+
   //! Static method that returns the current rawwave path.
   static std::string rawwavePath(void) { return rawwavepath_; }
 
@@ -306,7 +308,7 @@ public:
     checking is performed unless _STK_DEBUG_ is defined.
   */
   StkFloat operator[] ( size_t n ) const;
-    
+
   //! Sum operator
   /*!
     The dimensions of the argument are expected to be the same as
@@ -359,7 +361,7 @@ public:
   StkFloat interpolate( StkFloat frame, unsigned int channel = 0 ) const;
 
   //! Returns the total number of audio samples represented by the object.
-  size_t size() const { return size_; }; 
+  size_t size() const { return size_; };
 
   //! Returns \e true if the object size is zero and \e false otherwise.
   bool empty() const;
@@ -488,7 +490,7 @@ inline StkFloat StkFrames :: operator() ( size_t frame, unsigned int channel ) c
 
   return data_[ frame * nChannels_ + channel ];
 }
-    
+
 inline StkFrames StkFrames::operator+(const StkFrames &f) const
 {
 #if defined(_STK_DEBUG_)
@@ -567,7 +569,7 @@ const unsigned int RT_BUFFER_SIZE = 512;
 // move the rawwaves directory to a different location in your file
 // system, you will need to set this path definition appropriately.
 #if !defined(RAWWAVE_PATH)
-  #define RAWWAVE_PATH "../../rawwaves/"
+  #define RAWWAVE_PATH "./plugins/RJModules/rawwaves/"
 #endif
 
 const StkFloat PI           = 3.14159265358979;
