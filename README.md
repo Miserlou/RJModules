@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [New Stuff!](#new-stuff)
+    - [Instro](#instro)
     - [Chorus](#chorus)
     - [Octo](#octo)
     - [Euclidian [sic]](#euclidian-sic)
@@ -71,6 +72,13 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 ## Contents
 
 ### New Stuff!
+
+#### Instro
+<img src="https://i.imgur.com/EMYzw9B.png" width="25%">
+
+**Instro** is a multi-instrument voice generator using the "STK" voices. Uses a variety of different algorithms for different instruments, including FM synthesis and an enhanced Karplus-Strong algorithm.
+
+There is a "gate" input which is required for the plucked instruments (guitar, mandolin, etc.), and there are four different parameter controls for each instrument. Finally, there is a simple wave based drum sampler.
 
 #### Chorus
 <img src='https://i.imgur.com/gaiWFMh.png' width="8%">
