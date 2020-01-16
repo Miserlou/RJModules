@@ -119,16 +119,10 @@ struct Instro : Module {
         IN_INPUT,
         GATE_INPUT,
 
-        TIME_INPUT,
-        FEEDBACK_INPUT,
-        COLOR_INPUT,
-        COLOR_INPUT_RIGHT,
-
-        COLOR_RETURN,
-        COLOR_RETURN_RIGHT,
-
-        MIX_INPUT,
-        BYPASS_CV_INPUT,
+        PARAM_1_CV,
+        PARAM_2_CV,
+        PARAM_3_CV,
+        PARAM_4_CV,
 
         NUM_INPUTS
     };
@@ -146,7 +140,7 @@ struct Instro : Module {
     };
 
     // Display
-    std::string voice_display = "Flute";
+    std::string voice_display = "Rhodes";
 
     // State
     bool note_on = false;
@@ -206,10 +200,10 @@ struct Instro : Module {
         int  instrument_choice = params[INSTRO_PARAM].value;
 
         // parameters
-        float param_1 = params[PARAM_1].value;
-        float param_2 = params[PARAM_2].value;
-        float param_3 = params[PARAM_3].value;
-        float param_4 = params[PARAM_4].value;
+        float param_1 = params[PARAM_1].value * rescale(inputs[PARAM_1_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
+        float param_2 = params[PARAM_2].value * rescale(inputs[PARAM_2_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
+        float param_3 = params[PARAM_3].value * rescale(inputs[PARAM_3_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
+        float param_4 = params[PARAM_4].value * rescale(inputs[PARAM_4_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
 
         // gate
         bool gate_connected = inputs[GATE_INPUT].isConnected();
@@ -219,13 +213,15 @@ struct Instro : Module {
         if(gate_connected){
             if(note_on && gate_value == 0.0){
                 turn_note_off = true;
+                turn_note_on = false;
             }
             if(!note_on && gate_value != 0.0){
                 turn_note_on = true;
+                turn_note_off = false;
             }
         }
 
-        if(instrument_choice == 0){
+        if(instrument_choice == 1){
             // Control
             flute.controlChange(2, param_1);
             flute.controlChange(4, param_2);
@@ -248,7 +244,7 @@ struct Instro : Module {
             // Tick
             processed = flute.tick( );
             voice_display = "Flute";
-        } else if (instrument_choice == 1){
+        } else if (instrument_choice == 0){
             // Control
             rhodey.controlChange(2, param_1);
             rhodey.controlChange(4, param_2);
@@ -397,9 +393,26 @@ struct Instro : Module {
             processed = clarinet.tick( );
             voice_display = "Clarinet";
         } else if (instrument_choice == 8){
-            drummer.noteOn(cvToFrequency(voct), 1.0);
-            processed = drummer.tick( );
-            voice_display = "Drums";
+            // Control
+            wurley.controlChange(2, param_1);
+            wurley.controlChange(4, param_2);
+            wurley.controlChange(11, param_3);
+            wurley.controlChange(1, param_4);
+
+            // Gating
+            if(!gate_connected){
+                wurley.noteOn(cvToFrequency(voct), 1.0);
+            } else{
+                if(turn_note_on){
+                    wurley.noteOn(cvToFrequency(voct), 1.0);
+                    note_on = true;
+                } else if (turn_note_off){
+                    wurley.noteOff(1.0);
+                    note_on = false;
+                }
+            }
+            processed = wurley.tick( );
+            voice_display = "Wurley";
         } else if (instrument_choice == 9){
             // Control
             fmvoices.controlChange(4, param_1);
@@ -549,46 +562,47 @@ struct Instro : Module {
             voice_display = "Flute 2";
         } else if (instrument_choice == 16){
             // Control
-            plucked.controlChange(2, param_1);
-            plucked.controlChange(4, param_2);
-            plucked.controlChange(11, param_3);
-            plucked.controlChange(1, param_4);
+            // plucked.controlChange(2, param_1);
+            // plucked.controlChange(4, param_2);
+            // plucked.controlChange(11, param_3);
+            // plucked.controlChange(1, param_4);
 
-            // Gating
-            if(!gate_connected){
-                plucked.noteOn(cvToFrequency(voct), 1.0);
-            } else{
-                if(turn_note_on){
-                    plucked.noteOn(cvToFrequency(voct), 1.0);
-                    note_on = true;
-                } else if (turn_note_off){
-                    plucked.noteOff(1.0);
-                    note_on = false;
-                }
-            }
-            processed = plucked.tick( );
-            voice_display = "Plucked";
+            // // Gating
+            // if(!gate_connected){
+            //     plucked.noteOn(cvToFrequency(voct), 1.0);
+            // } else{
+            //     if(turn_note_on){
+            //         plucked.noteOn(cvToFrequency(voct), 1.0);
+            //         note_on = true;
+            //     } else if (turn_note_off){
+            //         plucked.noteOff(1.0);
+            //         note_on = false;
+            //     }
+            // }
+            // processed = plucked.tick( );
+            // voice_display = "Plucked";
+            voice_display = "XXX";
         } else if (instrument_choice == 17){
             // Control
-            recorder.controlChange(2, param_1);
-            recorder.controlChange(4, param_2);
-            recorder.controlChange(16, param_3);
-            recorder.controlChange(11, param_4);
+            // recorder.controlChange(2, param_1);
+            // recorder.controlChange(4, param_2);
+            // recorder.controlChange(16, param_3);
+            // recorder.controlChange(11, param_4);
 
-            // Gating
-            if(!gate_connected){
-                recorder.noteOn(cvToFrequency(voct), 1.0);
-            } else{
-                if(turn_note_on){
-                    recorder.noteOn(cvToFrequency(voct), 1.0);
-                    note_on = true;
-                } else if (turn_note_off){
-                    recorder.noteOff(1.0);
-                    note_on = false;
-                }
-            }
-            processed = recorder.tick( );
-            voice_display = "Recrdr";
+            // // Gating
+            // if(!gate_connected){
+            //     recorder.noteOn(cvToFrequency(voct), 1.0);
+            // } else{
+            //     if(turn_note_on){
+            //         recorder.noteOn(cvToFrequency(voct), 1.0);
+            //         note_on = true;
+            //     } else if (turn_note_off){
+            //         recorder.noteOff(1.0);
+            //         note_on = false;
+            //     }
+            // }
+            // processed = recorder.tick( );
+            voice_display = "XXX";
         } else if (instrument_choice == 18){
             // Control
             shakers.controlChange(2, param_1);
@@ -695,29 +709,23 @@ struct Instro : Module {
             processed = whistle.tick( );
             voice_display = "Whistl";
         } else if (instrument_choice == 23){
-            // Control
-            wurley.controlChange(2, param_1);
-            wurley.controlChange(4, param_2);
-            wurley.controlChange(11, param_3);
-            wurley.controlChange(1, param_4);
-
             // Gating
             if(!gate_connected){
-                wurley.noteOn(cvToFrequency(voct), 1.0);
+                drummer.noteOn(cvToFrequency(voct), 1.0);
             } else{
                 if(turn_note_on){
-                    wurley.noteOn(cvToFrequency(voct), 1.0);
+                    drummer.noteOn(cvToFrequency(voct), 1.0);
                     note_on = true;
                 } else if (turn_note_off){
-                    wurley.noteOff(1.0);
+                    drummer.noteOff(1.0);
                     note_on = false;
                 }
             }
-            processed = wurley.tick( );
-            voice_display = "Wurley";
+            processed = drummer.tick( );
+            voice_display = "Drums";
         }
 
-        outputs[RIGHT_OUTPUT].value = processed;
+        outputs[RIGHT_OUTPUT].value = processed * 3; // Boost as default volumes are too low
 
     }
 };
@@ -753,10 +761,10 @@ struct InstroWidget : ModuleWidget {
     addParam(createParam<InstroRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, Instro::PARAM_4));
 
     // Inputs and Knobs
-    addOutput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::OUTPUT, module, Instro::COLOR_SEND));
-    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, Instro::COLOR_RETURN));
-    addOutput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::OUTPUT, module, Instro::COLOR_SEND_RIGHT));
-    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, Instro::COLOR_RETURN_RIGHT));
+    addInput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::INPUT, module, Instro::PARAM_1_CV));
+    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, Instro::PARAM_2_CV));
+    addInput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::INPUT, module, Instro::PARAM_3_CV));
+    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, Instro::PARAM_4_CV));
 
     addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, Instro::IN_INPUT));
     addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Instro::GATE_INPUT));
