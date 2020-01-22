@@ -17,82 +17,7 @@ using namespace std;
 #define HISTORY_SIZE (1<<21)
 
 /*
-Display
-*/
-
-struct EuclidianSmallStringDisplayWidget : TransparentWidget {
-
-  std::string *value;
-  std::shared_ptr<Font> font;
-
-  EuclidianSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
-
-  void draw(NVGcontext *vg) override
-  {
-
-    // Shadow
-    NVGcolor backgroundColorS = nvgRGB(0xA0, 0xA0, 0xA0);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y + 2.0, 4.0);
-    nvgFillColor(vg, backgroundColorS);
-    nvgFill(vg);
-
-    // Background
-    NVGcolor backgroundColor = nvgRGB(0xC0, 0xC0, 0xC0);
-    nvgBeginPath(vg);
-    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
-    nvgFillColor(vg, backgroundColor);
-    nvgFill(vg);
-
-    // text
-    nvgFontSize(vg, 20);
-    nvgFontFaceId(vg, font->handle);
-    nvgTextLetterSpacing(vg, 0.4);
-
-    std::stringstream to_display;
-    to_display << std::setw(3) << *value;
-
-    Vec textPos = Vec(6.0f, 24.0f);
-    NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
-    nvgFillColor(vg, textColor);
-    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
-  }
-};
-
-struct EuclidianRoundLargeBlackKnob : RoundLargeBlackKnob
-{
-    EuclidianRoundLargeBlackKnob()
-    {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
-    }
-};
-
-struct EuclidianRoundLargeBlackSnapKnob : RoundLargeBlackKnob
-{
-    EuclidianRoundLargeBlackSnapKnob()
-    {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
-        minAngle = -0.83 * M_PI;
-        maxAngle = 0.83 * M_PI;
-        snap = true;
-    }
-};
-
-struct EuclidianRoundBlackSnapKnob : RoundBlackKnob
-{
-    EuclidianRoundBlackSnapKnob()
-    {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
-        minAngle = -0.83 * M_PI;
-        maxAngle = 0.83 * M_PI;
-        snap = true;
-    }
-};
-
-/*
-Widget
+Module
 */
 
 struct Euclidian : Module {
@@ -118,8 +43,8 @@ struct Euclidian : Module {
     };
 
     // Display
-    std::string k_display = "4";
-    std::string n_display = "12";
+    int k_display = 4;
+    int n_display = 12;
 
     // Player
     int head = -1;
@@ -130,6 +55,14 @@ struct Euclidian : Module {
     int old_I;
     int old_N;
     std::string old_final_string;
+
+    json_t *dataToJson() override {
+        json_t *rootJ = json_object();
+        return rootJ;
+    }
+
+    void dataFromJson(json_t *rootJ) override { }
+    ;
 
     Euclidian() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -216,8 +149,8 @@ struct Euclidian : Module {
         int I = (int)params[I_PARAM].getValue();
         int J = (int)params[J_PARAM].getValue();
 
-        k_display = std::to_string(K);
-        n_display = std::to_string(N);
+        k_display = K;
+        n_display = N;
         std::string final_string;
 
         if( (old_K == K) && (old_J == J) && (old_I == I) && (old_N == N) ){
@@ -288,6 +221,93 @@ struct EuclidianLight : BASE {
     }
 };
 
+/*
+Display
+*/
+
+struct EuclidianSmallStringDisplayWidget : TransparentWidget {
+
+  Euclidian *module;
+  bool is_left = true;
+  std::shared_ptr<Font> font;
+
+  EuclidianSmallStringDisplayWidget() {
+    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
+  };
+
+  void draw(NVGcontext *vg) override
+  {
+
+    // Shadow
+    NVGcolor backgroundColorS = nvgRGB(0xA0, 0xA0, 0xA0);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y + 2.0, 4.0);
+    nvgFillColor(vg, backgroundColorS);
+    nvgFill(vg);
+
+    // Background
+    NVGcolor backgroundColor = nvgRGB(0xC0, 0xC0, 0xC0);
+    nvgBeginPath(vg);
+    nvgRoundedRect(vg, 0.0, 0.0, box.size.x, box.size.y, 4.0);
+    nvgFillColor(vg, backgroundColor);
+    nvgFill(vg);
+
+    // text
+    nvgFontSize(vg, 20);
+    nvgFontFaceId(vg, font->handle);
+    nvgTextLetterSpacing(vg, 0.4);
+
+    if (!module)
+        return;
+
+    std::stringstream to_display;
+    if(is_left){
+        to_display << std::setw(3) << std::to_string(module->k_display);
+    } else{
+        to_display << std::setw(3) << std::to_string(module->n_display);
+    }
+
+    Vec textPos = Vec(6.0f, 24.0f);
+    NVGcolor textColor = nvgRGB(0x00, 0x00, 0x00);
+    nvgFillColor(vg, textColor);
+    nvgText(vg, textPos.x, textPos.y, to_display.str().c_str(), NULL);
+  }
+};
+
+struct EuclidianRoundLargeBlackKnob : RoundLargeBlackKnob
+{
+    EuclidianRoundLargeBlackKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+    }
+};
+
+struct EuclidianRoundLargeBlackSnapKnob : RoundLargeBlackKnob
+{
+    EuclidianRoundLargeBlackSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
+struct EuclidianRoundBlackSnapKnob : RoundBlackKnob
+{
+    EuclidianRoundBlackSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
+/*
+Widget
+*/
+
 struct EuclidianWidget : ModuleWidget {
   EuclidianWidget(Euclidian *module) {
     setModule(module);
@@ -298,19 +318,23 @@ struct EuclidianWidget : ModuleWidget {
     panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Euclidian.svg")));
     addChild(panel);
 
+    if (!module)
+        return;
+
     // Displays
     if(module != NULL){
         EuclidianSmallStringDisplayWidget *k_Display = new EuclidianSmallStringDisplayWidget();
         k_Display->box.pos = Vec(45, 48);
         k_Display->box.size = Vec(35, 35);
-        k_Display->value = &module->k_display;
+        k_Display->module = module;
         addChild(k_Display);
     }
     if(module != NULL){
         EuclidianSmallStringDisplayWidget *n_Display = new EuclidianSmallStringDisplayWidget();
         n_Display->box.pos = Vec(100, 48);
         n_Display->box.size = Vec(35, 35);
-        n_Display->value = &module->n_display;
+        n_Display->module = module;
+        n_Display->is_left = false;
         addChild(n_Display);
     }
 
@@ -503,7 +527,6 @@ struct EuclidianWidget : ModuleWidget {
         polyItem->module = module;
         menu->addChild(polyItem);
     }
-
 };
 
 Model *modelEuclidian = createModel<Euclidian, EuclidianWidget>("Euclidian");
