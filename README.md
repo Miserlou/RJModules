@@ -73,6 +73,11 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 ### New Stuff!
 
+#### Gaussian
+<img src="https://i.imgur.com/dBThKyJ.png" width="10%">
+
+**Gaussian** is a normal distribution generator! It has 9 trigger outputs, which will turn on randomly when ever a trigger signal or a button press is received, based on the distribution illustrated by the left-hand column of lights, which can be controlled using the Mu and Sigma knobs.
+
 #### Instro
 <img src="https://i.imgur.com/EMYzw9B.png" width="25%">
 

@@ -72,6 +72,9 @@ struct Gaussian: Module {
     float genny = 0.0;
     std::random_device rd{};
     std::mt19937 gen{rd()};
+    SchmittTrigger inTrigger;
+    SchmittTrigger btnTrigger;
+    int lightValue = 0.0;
 
     int result = -1;
     bool triggered = false;
@@ -96,12 +99,7 @@ struct Gaussian: Module {
         float mu = params[MU_PARAM].value;
         float sigma = params[SIGMA_PARAM].value;
 
-        // Reset
-        if (params[BUTTON_PARAM].value > 0 || inputs[TRIGGER_INPUT].value > 0) {
-        }
-
         std::normal_distribution<double> d{mu, sigma};
-        int result = std::round(d(gen));
 
         // Distribution visualizer
         if(mu != last_mu || sigma != last_sigma){
@@ -109,26 +107,37 @@ struct Gaussian: Module {
                 hist[i] = 0;
             }
             for(int n=0; n<100; ++n) {
-                hist[std::lrint(d(gen))]++;
+                hist[std::lrint(d(gen)) - 1]++;
             }
             for (int i=0; i<9; i++) {
-                lights[8 + CH_LIGHT + i].setBrightness(hist[i]/10.0f);
+                lights[9 + CH_LIGHT + i].setBrightness(hist[i]/10.0f);
             }
         }
 
-        bool lightValue;
-        if (lightDivider.process() || (force_update == true)) {
-            for (int c = 0; c < 8; c++) {
+        // Meat
+        if (btnTrigger.process(params[BUTTON_PARAM].value) || inTrigger.process(inputs[TRIGGER_INPUT].value)) {
+
+            bool good = false;
+            int result;
+
+            while(!good){
+                result = std::round(d(gen)) - 1;
+                if(result < 0 || result > 9){
+                    good = false;
+                } else{
+                    good = true;
+                }
+            }
+
+            for (int c = 0; c < 9; c++) {
                 if(c == result){
-                    lightValue = 10.0;
+                    lightValue = 1.0;
+                    outputs[CH_OUTPUT + c].value = 5.0;
                 } else{
                     lightValue = 0.0;
+                    outputs[CH_OUTPUT + c].value = 0.0;
                 }
-                if(force_update == false){
-                    lights[CH_LIGHT + c].setSmoothBrightness(lightValue / 2.5, args.sampleTime * lightDivider.getDivision());
-                } else{
-                    lights[CH_LIGHT + c].setBrightness(lightValue / 2.5);
-                }
+                lights[CH_LIGHT + c].setBrightness(lightValue);
             }
         }
 
