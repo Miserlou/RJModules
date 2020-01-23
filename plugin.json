@@ -478,6 +478,14 @@
       "tags": [
         "VCO"
       ]
+    },
+    {
+      "slug": "Gaussian",
+      "name": "Gaussian - Normal Distribution Gate Generator",
+      "description": "Gaussian - Normal Distribution Gate Generator",
+      "tags": [
+        "Sequencer"
+      ]
     }
   ]
 }

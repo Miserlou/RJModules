@@ -83,6 +83,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelMutateSeq);
     p->addModel(modelSequential);
     p->addModel(modelEuclidian);
+    p->addModel(modelGaussian);
 
     // Quantizer
     p->addModel(modeluQuant);

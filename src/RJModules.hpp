@@ -65,3 +65,4 @@ extern Model *modelEuclidian;
 extern Model *modelOcto;
 extern Model *modelRJChorus;
 extern Model *modelInstro;
+extern Model *modelGaussian;
