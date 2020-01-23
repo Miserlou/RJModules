@@ -5,6 +5,7 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <random>
 
 using simd::float_4;
 
@@ -25,16 +26,23 @@ struct GaussianRoundSmallBlackKnob : RoundSmallBlackKnob
     }
 };
 
+template <typename BASE>
+struct LittleLight : BASE {
+        LittleLight() {
+                this->box.size = mm2px(Vec(34, 34));
+        }
+};
+
 // MODULE
 struct Gaussian: Module {
     enum ParamIds {
-        SPEED_PARAM,
-        SPEED_ATTEN_PARAM,
-        RESET_PARAM,
+        MU_PARAM,
+        SIGMA_PARAM,
+        BUTTON_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
-        SPEED_CV,
+        TRIGGER_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
@@ -43,6 +51,7 @@ struct Gaussian: Module {
     };
     enum LightIds {
         ENUMS(CH_LIGHT, 36),
+        BUTTON_LIGHT,
         NUM_LIGHTS
     };
 
@@ -57,10 +66,22 @@ struct Gaussian: Module {
     int COUNTER_MAX = 5000;
     int wave_mode_index = 0;
 
+    float last_mu = -1;
+    float last_sigma = -1;
+    int hist[9] = {0,0,0,0,0,0,0,0,0};
+    float genny = 0.0;
+    std::random_device rd{};
+    std::mt19937 gen{rd()};
+
+    int result = -1;
+    bool triggered = false;
+    const float lightLambda = 0.075;
+
     Gaussian() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-        configParam(Gaussian::SPEED_PARAM, 0.0, 10.0, 5.0, "Speed");
-        configParam(Gaussian::SPEED_ATTEN_PARAM, -1.0, 1.0, 1.0, "Attenuvertion");
+        configParam(Gaussian::MU_PARAM, 0.0f, 10.0f, 5.0f, "Mu");
+        configParam(Gaussian::SIGMA_PARAM, .5f, 6.0f, 1.5f, "Sigma");
+        configParam(Gaussian::BUTTON_PARAM, 0.0f, 1.0f, 0.0f, "Button");
         lightDivider.setDivision(2048);
     }
 
@@ -72,14 +93,37 @@ struct Gaussian: Module {
             force_update = true;
         }
 
-        float pitch = params[SPEED_PARAM].value;
-        float cv_voltage = inputs[SPEED_CV].value;
-        float cv_amt = params[SPEED_ATTEN_PARAM].getValue();
-        bool hold_now = false;
+        float mu = params[MU_PARAM].value;
+        float sigma = params[SIGMA_PARAM].value;
 
+        // Reset
+        if (params[BUTTON_PARAM].value > 0 || inputs[TRIGGER_INPUT].value > 0) {
+        }
+
+        std::normal_distribution<double> d{mu, sigma};
+        int result = std::round(d(gen));
+
+        // Distribution visualizer
+        if(mu != last_mu || sigma != last_sigma){
+            for (int i=0; i<9; i++) {
+                hist[i] = 0;
+            }
+            for(int n=0; n<100; ++n) {
+                hist[std::lrint(d(gen))]++;
+            }
+            for (int i=0; i<9; i++) {
+                lights[8 + CH_LIGHT + i].setBrightness(hist[i]/10.0f);
+            }
+        }
+
+        bool lightValue;
         if (lightDivider.process() || (force_update == true)) {
             for (int c = 0; c < 8; c++) {
-                float lightValue = outs[c][0];
+                if(c == result){
+                    lightValue = 10.0;
+                } else{
+                    lightValue = 0.0;
+                }
                 if(force_update == false){
                     lights[CH_LIGHT + c].setSmoothBrightness(lightValue / 2.5, args.sampleTime * lightDivider.getDivision());
                 } else{
@@ -91,9 +135,8 @@ struct Gaussian: Module {
         if(force_update == true){
             force_update = false;
         }
-        if(hold_now == true){
-            hold = true;
-        }
+        last_sigma = sigma;
+        last_mu = mu;
 
     }
 };
@@ -110,14 +153,12 @@ struct GaussianWidget: ModuleWidget {
             addChild(panel);
         }
 
-        // addParam(createParam<GaussianRoundLargeBlackKnob>(Vec(12, 55), module, Gaussian::SPEED_PARAM));
+        addParam(createParam<GaussianRoundSmallBlackKnob>(Vec(5, 35), module, Gaussian::MU_PARAM));
+        addParam(createParam<GaussianRoundSmallBlackKnob>(Vec(33, 35), module, Gaussian::SIGMA_PARAM));
 
-
-        addParam(createParam<GaussianRoundSmallBlackKnob>(Vec(5, 35), module, Gaussian::SPEED_ATTEN_PARAM));
-        addParam(createParam<GaussianRoundSmallBlackKnob>(Vec(33, 35), module, Gaussian::SPEED_ATTEN_PARAM));
-
-        addParam(createParam<GaussianRoundSmallBlackKnob>(Vec(5, 75), module, Gaussian::SPEED_ATTEN_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(32, 75 - 1), PortWidget::INPUT, module, Gaussian::SPEED_CV));
+        addParam(createParam<LEDButton>(Vec(8, 76), module, Gaussian::BUTTON_PARAM));
+        addChild(createLight<MediumLight<GreenLight>>(Vec(12.4, 80.4), module, Gaussian::BUTTON_LIGHT));
+        addInput(createPort<PJ301MPort>(Vec(32, 75 - 1), PortWidget::INPUT, module, Gaussian::TRIGGER_INPUT));
 
         int SPACE = 30;
         int BASE = 106;
