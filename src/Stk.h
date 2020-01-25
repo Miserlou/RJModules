@@ -569,7 +569,7 @@ const unsigned int RT_BUFFER_SIZE = 512;
 // move the rawwaves directory to a different location in your file
 // system, you will need to set this path definition appropriately.
 #if !defined(RAWWAVE_PATH)
-  #define RAWWAVE_PATH "./plugins/RJModules/rawwaves/"
+  #define RAWWAVE_PATH "./plugins-v1/RJModules/rawwaves/"
 #endif
 
 const StkFloat PI           = 3.14159265358979;
