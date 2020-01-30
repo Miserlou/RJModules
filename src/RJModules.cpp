@@ -1,10 +1,13 @@
 #include "RJModules.hpp"
 #include "VAStateVariableFilter.h"
+#include "Stk.h"
 
 Plugin *pluginInstance;
 
 void init(rack::Plugin *p) {
 	pluginInstance = p;
+
+	stk::Stk::setRawwavePath(assetPlugin(pluginInstance, "rawwaves/"));
 
     // Generators
     p->addModel(modelSupersaw);
