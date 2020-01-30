@@ -203,7 +203,7 @@ struct Euclidian : Module {
             }
         }
 
-        if(head<16){
+        if((head<16)&&(head>=0)){
             if(final_string[head] == "1"[0]){
                 lights[PATTERN_LIGHT + head].setBrightness(1.0f);
             } else{
