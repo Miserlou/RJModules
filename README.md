@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [New Stuff!](#new-stuff)
+    - [Gaussian](#gaussian)
     - [Instro](#instro)
     - [Chorus](#chorus)
     - [Octo](#octo)
