@@ -380,7 +380,8 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Dual Bidirectional Stereo<->Poly converter
   * ~[Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm)~ - Knobs for E(X, Y) + I. Presets for Bossa, etc
   * ~LF8 - Compact, 8-independent triangle LFOs, inspired by [ochd](https://www.instruomodular.com/product/ochd/)~
-  * Gaussian - 1 input, 9 outputs, 1 'max' knob - (can maybe re-use Octo) - using `std::normal_distribution`
+  * ~Gaussian - 1 input, 9 outputs, 1 'max' knob - (can maybe re-use Octo) - using `std::normal_distribution`~
+  * Mega Divider - 1-128 clock dividers.
 
 ## Building
 
