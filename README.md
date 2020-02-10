@@ -396,6 +396,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * ~LF8 - Compact, 8-independent triangle LFOs, inspired by [ochd](https://www.instruomodular.com/product/ochd/)~
   * ~Gaussian - 1 input, 9 outputs, 1 'max' knob - (can maybe re-use Octo) - using `std::normal_distribution`~
   * ~Mega Divider - 1-128 clock dividers.~
+  * Webcam - Webcam theramin [ala Vorso](https://twitter.com/vorsomusic/status/1141287757517639680)
 
 ## Building
 
