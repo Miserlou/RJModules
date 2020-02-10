@@ -260,14 +260,14 @@ struct MegaDivider: Module {
             }
         }
 
-        if (states[A] || states[B]){
+        if (states[A - 1] || states[B - 1]){
             outputs[MULTI_A].value = in;
             lights[A_LIGHT].value = 1.0f;
         } else{
             outputs[MULTI_A].value = 0;
             lights[A_LIGHT].value = 0.0f;
         }
-        if (states[C] || states[D]){
+        if (states[C - 1] || states[D - 1]){
             outputs[MULTI_B].value = in;
             lights[B_LIGHT].value = 1.0f;
         } else{
