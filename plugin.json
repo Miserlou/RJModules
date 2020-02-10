@@ -486,6 +486,21 @@
       "tags": [
         "Sequencer"
       ]
+    },
+    {
+      "slug": "GlutenFree",
+      "name": "Gluten Free - Granular Synthesis",
+      "description": "Gluten Free - A Granular Synthesis Module",
+      "tags": [
+        "VCO"
+      ]
+    },
+    {
+      "slug": "MegaDivider",
+      "name": "Mega Divider - Massive Clock Divider",
+      "description": "Mega Divider - Massive Clock Divider",
+      "tags": [
+      ]
     }
   ]
 }

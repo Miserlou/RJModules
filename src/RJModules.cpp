@@ -21,6 +21,7 @@ void init(rack::Plugin *p) {
     // p->addModel(modelThreeXOSC);
     p->addModel(modelOcto);
     p->addModel(modelInstro);
+    p->addModel(modelGlutenFree);
 
     // VCA
     p->addModel(modelPluck);
@@ -87,6 +88,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelSequential);
     p->addModel(modelEuclidian);
     p->addModel(modelGaussian);
+    p->addModel(modelMegaDivider);
 
     // Quantizer
     p->addModel(modeluQuant);
