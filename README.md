@@ -76,10 +76,10 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 ### New Stuff!
 
-#### GlutenFree
+#### Gluten Free
 <img src="https://i.imgur.com/mah5XUi.png" width="25%">
 
-**GlutenFree** is an STK-based granulator. It makes horrible, horrible noises. It has six knobs, all of which you can play with. It works best if you load short files and turn the voices up.
+**Gluten Free** is an STK-based granulator. It makes horrible, horrible noises. It has six knobs, all of which you can play with. It works best if you load short files and turn the voices up. I wanted to add a V/Oct controller but couldn't figure out how to do that with the framework - want to help?
 
 It's a wild beast, but with enough twiddling, you can tame it and it sounds fucking awesome.
 
@@ -349,7 +349,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Phaser - Pssshheeeeeooooooowwwwwwoooowowwaaaaaahhhhhh
   * Harmonic Saturator
   * Ring Modulator
-  * Granulator
+  * ~Granulator~
   * Shepard Tone Generator
   * BPM LFO - LFO with integrated divisible BPM (including triplets), for triplet wubs
   * Wobbler - Selectable classic wobble automation shapes
@@ -395,7 +395,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * ~[Euclidian rhythm generator](https://en.wikipedia.org/wiki/Euclidean_rhythm)~ - Knobs for E(X, Y) + I. Presets for Bossa, etc
   * ~LF8 - Compact, 8-independent triangle LFOs, inspired by [ochd](https://www.instruomodular.com/product/ochd/)~
   * ~Gaussian - 1 input, 9 outputs, 1 'max' knob - (can maybe re-use Octo) - using `std::normal_distribution`~
-  * Mega Divider - 1-128 clock dividers.
+  * ~Mega Divider - 1-128 clock dividers.~
 
 ## Building
 
