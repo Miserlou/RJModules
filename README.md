@@ -76,7 +76,8 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 ### New Stuff!
 
 #### MegaDivider
-<img src="https://i.imgur.com/JXEdoY1.png" width="50%">
+<img src="https://i.imgur.com/ik0hlxq.png" width="50%">
+
 **Mega Divider** is a 1:64 clock divider! Also includes two 'multi' divisions, which will generate signals when either of the two divisions are active.
 
 #### Gaussian
