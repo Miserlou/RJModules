@@ -9,6 +9,7 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 
 - [Contents](#contents)
   - [New Stuff!](#new-stuff)
+    - [GlutenFree](#glutenfree)
     - [MegaDivider](#megadivider)
     - [Gaussian](#gaussian)
     - [Instro](#instro)
@@ -74,6 +75,13 @@ Various DIY modules made by Rich Jones for use with [VCV Rack](https://github.co
 ## Contents
 
 ### New Stuff!
+
+#### GlutenFree
+<img src="https://i.imgur.com/mah5XUi.png" width="25%">
+
+**GlutenFree** is an STK-based granulator. It makes horrible, horrible noises. It has six knobs, all of which you can play with. It works best if you load short files and turn the voices up.
+
+It's a wild beast, but with enough twiddling, you can tame it and it sounds fucking awesome.
 
 #### MegaDivider
 <img src="https://i.imgur.com/ik0hlxq.png" width="50%">

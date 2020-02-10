@@ -166,7 +166,7 @@ void EssEff::loadFile(std::string path){
     this->output_set = true;
 
     std::string path_str(path);
-    path_str = path_str.substr(path_str.length()-14, path_str.length()-1);
+    path_str = path_str.substr(path_str.length()-12, path_str.length()-1);
     this->file_name = path_str;
 
 }

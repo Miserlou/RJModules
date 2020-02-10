@@ -45,7 +45,7 @@ struct GlutenFreeSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
-    nvgFontSize(vg, 20);
+    nvgFontSize(vg, 16);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
 
@@ -71,7 +71,7 @@ struct GlutenFreeRoundBlackSnapKnob : RoundBlackKnob
 {
     GlutenFreeRoundBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -85,6 +85,7 @@ Widget
 struct GlutenFree : Module {
     enum ParamIds {
         GlutenFree_PARAM,
+        VOICE_PARAM,
         PARAM_1,
         PARAM_2,
         PARAM_3,
@@ -94,8 +95,7 @@ struct GlutenFree : Module {
         NUM_PARAMS
     };
     enum InputIds {
-        IN_INPUT,
-        GATE_INPUT,
+        RESET_INPUT,
 
         PARAM_1_CV,
         PARAM_2_CV,
@@ -120,6 +120,7 @@ struct GlutenFree : Module {
     };
 
     // Display
+    std::string voice_full = "Load! ->";
     std::string voice_display = "Load! ->";
 
     // State
@@ -132,6 +133,7 @@ struct GlutenFree : Module {
 
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
         configParam(GlutenFree::GlutenFree_PARAM, 0, 23, 0, "Instrument");
+        configParam(GlutenFree::VOICE_PARAM, 1, 8, 2, "Voices");
         configParam(GlutenFree::PARAM_1, 0, .97, .1, "Param 1");
         configParam(GlutenFree::PARAM_2, 0, 100, 0, "Param 2");
         configParam(GlutenFree::PARAM_3, 5, 100, 5, "Param 3");
@@ -150,6 +152,8 @@ struct GlutenFree : Module {
 
     // State
     bool fileLoaded = false;
+    SchmittTrigger resetTrigger;
+    int lastVoices = 2;
 
     float cvToFrequency(float cv) {
         return powf(2.0, cv) * referenceFrequency;
@@ -157,8 +161,9 @@ struct GlutenFree : Module {
 
     void loadFile(std::string path){
         granulate.openFile(path);
-        granulate.setVoices(3);
-        voice_display = path;
+        granulate.setVoices(2);
+        voice_full = path;
+        voice_display = path.substr(path.length()-8, path.length()-1);;
         fileLoaded = true;
     }
 
@@ -168,34 +173,35 @@ struct GlutenFree : Module {
             return;
         }
 
-        float voct = inputs[IN_INPUT].value;
+        if (resetTrigger.process(inputs[RESET_INPUT].value)) {
+            granulate.reset();
+        }
+
         float processed = 0.0;
         int  instrument_choice = params[GlutenFree_PARAM].value;
 
         // parameters
-        float param_1 = params[PARAM_1].value * rescale(inputs[PARAM_1_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
-        float param_2 = params[PARAM_2].value * rescale(inputs[PARAM_2_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
-        float param_3 = params[PARAM_3].value * rescale(inputs[PARAM_3_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
-        float param_4 = params[PARAM_4].value * rescale(inputs[PARAM_4_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
-        float param_5 = params[PARAM_5].value * rescale(inputs[PARAM_5_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
-        float param_6 = params[PARAM_6].value * rescale(inputs[PARAM_6_CV].normalize(1.0f), 0.f, 5.f, 0.f, 1.f);
+        float voices = params[VOICE_PARAM].value;
+        if (voices != lastVoices){
+            granulate.setVoices(voices);
+            granulate.reset();
+            lastVoices = voices;
+        }
 
-        // gate
-        bool gate_connected = inputs[GATE_INPUT].isConnected();
-        float gate_value = inputs[GATE_INPUT].value;
+        float param_1 = params[PARAM_1].value * clamp(inputs[PARAM_1_CV].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
+        float param_2 = params[PARAM_2].value * clamp(inputs[PARAM_2_CV].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
+        float param_3 = params[PARAM_3].value * clamp(inputs[PARAM_3_CV].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
+        float param_4 = params[PARAM_4].value * clamp(inputs[PARAM_4_CV].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
+        float param_5 = params[PARAM_5].value * clamp(inputs[PARAM_5_CV].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
+        float param_6 = params[PARAM_6].value * clamp(inputs[PARAM_6_CV].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
 
         // Settings
         granulate.setRandomFactor( param_1 );
         granulate.setStretch( param_2 );
-
-        // unsigned int    duration = 30,
-        // unsigned int    rampPercent = 50,
-        // int     offset = 0,
-        // unsigned int    delay = 0
+        //setGrainParameters (unsigned int duration=30, unsigned int rampPercent=50, int offset=0, unsigned int delay=0)
         granulate.setGrainParameters( param_3, param_4, param_5, param_6 );
 
         // Tick
-        // granulate.setFrequency(voct);
         processed = granulate.tick();
 
         outputs[RIGHT_OUTPUT].value = processed * 3; // Boost as default volumes are too low
@@ -250,11 +256,13 @@ struct GlutenFreeWidget : ModuleWidget {
     }
 
     // Knobs
-    int LEFT = 14;
+    int LEFT = 22;
     int RIGHT = 65;
-    int DIST = 82;
+    int DIST = 65;
     int BASE = 115;
-    addParam(createParam<LoadWavButton>(Vec(100, 50), module, GlutenFree::GlutenFree_PARAM));
+    addParam(createParam<LoadWavButton>(Vec(97, 45), module, GlutenFree::GlutenFree_PARAM));
+    addParam(createParam<GlutenFreeRoundBlackSnapKnob>(Vec(94, 68), module, GlutenFree::VOICE_PARAM));
+
     addParam(createParam<GlutenFreeRoundLargeBlackKnob>(Vec(LEFT, BASE), module, GlutenFree::PARAM_1));
     addParam(createParam<GlutenFreeRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE), module, GlutenFree::PARAM_2));
     addParam(createParam<GlutenFreeRoundLargeBlackKnob>(Vec(LEFT, BASE + DIST), module, GlutenFree::PARAM_3));
@@ -263,15 +271,16 @@ struct GlutenFreeWidget : ModuleWidget {
     addParam(createParam<GlutenFreeRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST + DIST), module, GlutenFree::PARAM_6));
 
     // Inputs and Knobs
-    addInput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::INPUT, module, GlutenFree::PARAM_1_CV));
-    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, GlutenFree::PARAM_2_CV));
-    addInput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::INPUT, module, GlutenFree::PARAM_3_CV));
-    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, GlutenFree::PARAM_4_CV));
-    addInput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::INPUT, module, GlutenFree::PARAM_5_CV));
-    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, GlutenFree::PARAM_6_CV));
+    int KNOB = 32;
+    addInput(createPort<PJ301MPort>(Vec(LEFT + KNOB, BASE + KNOB), PortWidget::INPUT, module, GlutenFree::PARAM_1_CV));
+    addInput(createPort<PJ301MPort>(Vec(LEFT + KNOB + RIGHT, BASE + KNOB), PortWidget::INPUT, module, GlutenFree::PARAM_2_CV));
+    addInput(createPort<PJ301MPort>(Vec(LEFT + KNOB, BASE + KNOB + DIST), PortWidget::INPUT, module, GlutenFree::PARAM_3_CV));
+    addInput(createPort<PJ301MPort>(Vec(LEFT + KNOB + RIGHT, BASE + KNOB + DIST), PortWidget::INPUT, module, GlutenFree::PARAM_4_CV));
+    addInput(createPort<PJ301MPort>(Vec(LEFT + KNOB, BASE + KNOB + DIST + DIST), PortWidget::INPUT, module, GlutenFree::PARAM_5_CV));
+    addInput(createPort<PJ301MPort>(Vec(LEFT + KNOB + RIGHT, BASE + KNOB + DIST + DIST), PortWidget::INPUT, module, GlutenFree::PARAM_6_CV));
 
-    addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, GlutenFree::IN_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, GlutenFree::GATE_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, GlutenFree::RESET_INPUT));
+    // addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, GlutenFree::GATE_INPUT));
     // addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, GlutenFree::LEFT_OUTPUT));
     addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, GlutenFree::RIGHT_OUTPUT));
     }
@@ -279,16 +288,20 @@ struct GlutenFreeWidget : ModuleWidget {
     json_t *toJson() override {
         json_t *rootJ = ModuleWidget::toJson();
         GlutenFree *module = dynamic_cast<GlutenFree *>(this->module);
-        json_object_set_new(rootJ, "wavef", json_string(module->voice_display.c_str()));
+        json_object_set_new(rootJ, "wavef", json_string(module->voice_full.c_str()));
+        json_object_set_new(rootJ, "voices", json_real(module->lastVoices));
         return rootJ;
     }
 
     void fromJson(json_t *rootJ) override {
         ModuleWidget::fromJson(rootJ);
         json_t *waveJ = json_object_get(rootJ, "wavef");
+        json_t *voicesJ = json_object_get(rootJ, "voices");
         GlutenFree *module = dynamic_cast<GlutenFree *>(this->module);
         if (waveJ)
             module->loadFile(json_string_value(waveJ));
+        if (voicesJ)
+            module->lastVoices=json_integer_value(voicesJ);
     }
 
 };
