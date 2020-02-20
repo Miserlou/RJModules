@@ -397,6 +397,8 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * ~Gaussian - 1 input, 9 outputs, 1 'max' knob - (can maybe re-use Octo) - using `std::normal_distribution`~
   * ~Mega Divider - 1-128 clock dividers.~
   * Webcam - Webcam theramin [ala Vorso](https://twitter.com/vorsomusic/status/1141287757517639680)
+  * ComplexVCO - VCO with more complex, parameterized wave functions
+  * DTMF - Dial Tones, baby!
 
 ## Building
 
