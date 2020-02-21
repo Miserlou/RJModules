@@ -399,6 +399,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Webcam - Webcam theramin [ala Vorso](https://twitter.com/vorsomusic/status/1141287757517639680)
   * ComplexVCO - VCO with more complex, parameterized wave functions
   * DTMF - Dial Tones, baby!
+  * BBDVerb - based on [this design](https://www.refusesoftware.com/faq/20)
 
 ## Building
 
