@@ -300,8 +300,11 @@ struct GlutenFreeWidget : ModuleWidget {
         json_t *waveJ = json_object_get(rootJ, "wavef");
         json_t *voicesJ = json_object_get(rootJ, "voices");
         GlutenFree *module = dynamic_cast<GlutenFree *>(this->module);
-        if (waveJ)
-            module->loadFile(json_string_value(waveJ));
+        if (waveJ){
+            #ifdef __APPLE__
+                module->loadFile(json_string_value(waveJ));
+            #endif
+        }
         if (voicesJ)
             module->lastVoices=json_integer_value(voicesJ);
     }
