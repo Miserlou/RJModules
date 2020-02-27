@@ -226,7 +226,7 @@ struct LoadWavButton : SvgSwitch {
             char *path = osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, NULL);
             char* ext;
             ext = strrchr(path, '.');
-            if (path && ( strcmp(ext, ".wav") == 0 || strcmp(ext, ".WAV") == 0)) {
+            if (path && ( strcmp(ext, ".wav") == 0 || strcmp(ext, ".WAV") == 0 || strcmp(ext, ".aiff") == 0 || strcmp(ext, ".aif") == 0)) {
                 module->loadFile(path);
                 // module->last_path = path;
                 // module->file_chosen = true;
