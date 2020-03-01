@@ -403,6 +403,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Pitch Echo - Echo/delay designed for V/Oct signals, each echo adds 1oct (default), etc
   * RJXY - XY Pad with v/oct notes, X/Y/Start/End/Hold/Passthrough
   * Shelf - Duah high/low shelf, taken from MaxMind
+  * RandomLFO - Wobbly, random LFO
 
 ## Building
 
