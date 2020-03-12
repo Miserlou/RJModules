@@ -405,6 +405,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Shelf - Duah high/low shelf, taken from MaxMind
   * RandomLFO - Wobbly, random LFO
   * Orbit - 2D-Three Body Problem CV generator. Wrap-around universe.
+  * Kink - Kick drum module inspired by the 0x0x0 BDSM bareback kick
 
 ## Building
 
