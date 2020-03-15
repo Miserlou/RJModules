@@ -407,6 +407,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Orbit - 2D-Three Body Problem CV generator. Wrap-around universe.
   * Kink - Kick drum module inspired by the 0x0x0 BDSM bareback kick. 3 envs (initial, main, amp), 2 waveform selectable oscillators, mix envelope selector (initial, main, amp, none), offset for 'click', maaaybe a wave folder and shelf filter.
   * RJAuxpander - Auxpander, but with 8 send-returns and CV controlability.
+  * Slow Noise - White noise, but a lot slower.
 
 ## Building
 
