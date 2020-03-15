@@ -409,6 +409,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * RJAuxpander - Auxpander, but with 8 send-returns and CV controlability.
   * Slow Noise - White noise, but a lot slower.
   * Pure Ruiner - Pura Ruina clone
+  * Boost - 3HP amplifier with attenuverted CV (so it can boost and sidechain. Switch to 5v limit.
 
 ## Building
 
