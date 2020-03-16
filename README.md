@@ -408,8 +408,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Kink - Kick drum module inspired by the 0x0x0 BDSM bareback kick. 3 envs (initial, main, amp), 2 waveform selectable oscillators, mix envelope selector (initial, main, amp, none), offset for 'click', maaaybe a wave folder and shelf filter.
   * RJAuxpander - Auxpander, but with 8 send-returns and CV controlability.
   * Slow Noise - White noise, but a lot slower.
-  * Pure Ruiner - Pura Ruina clone
-  * Boost - 3HP amplifier with attenuverted CV (so it can boost and sidechain. Switch to 5v limit.
+  * Pure Ruiner - Pura Ruina clone. Black.
+  * Boost - 3HP amplifier with attenuverted CV (so it can boost and sidechain). Switches to -5/5v, 0-10v limit.
+  * Gravity Slew (Black Hole?) - A physics-based slew limiter slash envelope generator. Slew carries mometum, overshoots and oscillates around a target. Speed, momentum, friction, gravity knobs. Black.
 
 ## Building
 
