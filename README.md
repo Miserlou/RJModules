@@ -412,6 +412,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Boost - 3HP amplifier with attenuverted CV (so it can boost and sidechain). Switches to -5/5v, 0-10v limit.
   * Gravity Slew (Black Hole?) - A physics-based slew limiter slash envelope generator. Slew carries mometum, overshoots and oscillates around a target. Speed, momentum, friction, gravity knobs. Black.
   * Spread Filter - Supersaw-esque, but for filter peaks
+  * Subharmonium - Subharmonic Oscillator (based on that PDF)
 
 ## Building
 
