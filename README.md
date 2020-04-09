@@ -413,6 +413,9 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Gravity Slew (Black Hole?) - A physics-based slew limiter slash envelope generator. Slew carries mometum, overshoots and oscillates around a target. Speed, momentum, friction, gravity knobs. Black.
   * Spread Filter - Supersaw-esque, but for filter peaks
   * Subharmonium - Subharmonic Oscillator (based on that PDF)
+  * Riff Looper - Loop + FX Recorder (Shadesium)
+  * 9 Band White Noise Generator
+  * Effect Delay (Send/Return + BP, clock synced)
 
 ## Building
 
