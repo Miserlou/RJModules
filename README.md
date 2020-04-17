@@ -416,6 +416,7 @@ None of them actually exist yet, but I'm hoping this will project eventually con
   * Riff Looper - Loop + FX Recorder (Shadesium)
   * 9 Band White Noise Generator
   * Effect Delay (Send/Return + BP, clock synced)
+  * State-Variable Wavefolder/Metalizer
 
 ## Building
 
