@@ -501,6 +501,13 @@
       "description": "Mega Divider - Massive Clock Divider",
       "tags": [
       ]
+    },
+    {
+      "slug": "GravityGlide",
+      "name": "Gravity Glide - Physics Simulating Portamento",
+      "description": "Gravity Glide - Physics Simulating Portamento",
+      "tags": [
+      ]
     }
   ]
 }

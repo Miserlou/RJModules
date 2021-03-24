@@ -68,3 +68,4 @@ extern Model *modelInstro;
 extern Model *modelGaussian;
 extern Model *modelGlutenFree;
 extern Model *modelMegaDivider;
+extern Model *modelGravityGlide;
