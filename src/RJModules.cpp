@@ -38,6 +38,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelBrickwall);
     p->addModel(modelSlapback);
     p->addModel(modelRJChorus);
+    p->addModel(modelSubOsc);
 
     // Filters
     p->addModel(modelFilter);

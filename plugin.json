@@ -508,6 +508,13 @@
       "description": "Gravity Glide - Physics Simulating Portamento",
       "tags": [
       ]
+    },
+    {
+      "slug": "SubOsc",
+      "name": "SubOsc - Sub Oscillator",
+      "description": "SubOsc - Sub Oscillator",
+      "tags": [
+      ]
     }
   ]
 }
