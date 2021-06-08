@@ -515,7 +515,7 @@ struct RJ_LightSquare : ColorValueLight
 		icol.a *= 0.25;
 		NVGcolor ocol = outerColor;// color;
 		ocol.a = 0.0;
-		float feather = 2;
+		float feather = 1;
 		// Feather defines how blurry the border of the rectangle is. // Fixed 01/19/2018, made it too tiny before
 		paint = nvgBoxGradient(args.vg, /*x*/ radius - oradius, /*y*/ radius - oradius, /*w*/ 2 * oradius, /*h*/ 2 * oradius,  //args.vg, /*x*/ -5, /*y*/ -5, /*w*/ 2*oradius + 10, /*h*/ 2*oradius + 10, 
 			/*r: corner radius*/ cornerRadius, /*f: feather*/ feather, 
