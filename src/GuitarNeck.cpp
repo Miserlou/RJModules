@@ -4,28 +4,56 @@
 #include <iostream>
 #include <cmath>
 
+struct GuitarSnapKnob : RoundSmallBlackKnob
+{
+    GuitarSnapKnob()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
+struct GuitarSnapKnobLg : RoundLargeBlackKnob
+{
+    GuitarSnapKnobLg()
+    {
+        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        minAngle = -0.83 * M_PI;
+        maxAngle = 0.83 * M_PI;
+        snap = true;
+    }
+};
+
+struct GuitarLEDButton : SVGSwitch {
+        GuitarLEDButton() {
+                addFrame(SVG::load(assetPlugin(pluginInstance, "res/LilLEDButton.svg")));
+                momentary = true;
+        }
+};
+
 struct GuitarNeck: Module {
     enum ParamIds {
         ENUMS(FRET, 64),
+        OCT_PARAM,
+        ROOT_PARAM,
+        RETURN_PARAM,
         NUM_PARAMS
     };
     enum InputIds {
+        OCT_INPUT,
+        ROOT_INPUT,
         NUM_INPUTS
     };
     enum OutputIds {
-        CH1_OUTPUT,
-        CH2_OUTPUT,
-        CH3_OUTPUT,
-        CH4_OUTPUT,
-        CH5_OUTPUT,
-        CH6_OUTPUT,
-        CH7_OUTPUT,
-        CH8_OUTPUT,
-        CH9_OUTPUT,
+        NOTE_OUTPUT,
+        GATE_OUTPUT,
         NUM_OUTPUTS
     };
     enum LightIds {
         ENUMS(LIGHT, 64),
+        RETURN_LIGHT,
         NUM_LIGHTS
     };
     float resetLight = 0.0;
@@ -45,6 +73,9 @@ struct GuitarNeck: Module {
             configParam(GuitarNeck::FRET, 0.0, 1.0, 0.0, "");
             configParam(GuitarNeck::LIGHT, 0.0, 1.0, 0.0, "");
         }
+
+        configParam(GuitarNeck::OCT_PARAM, 0.0, 6.0, 1.0, string::f("Octave", 0));
+        configParam(GuitarNeck::ROOT_PARAM, 0.0, 11.0, 0.0, string::f("Root", 0));
 
     }
     void step() override;
@@ -163,6 +194,24 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
         addChild(panel);
     }
 
+    // Knobs
+    addParam(createParam<GuitarSnapKnobLg>(Vec(368, 40), module, GuitarNeck::ROOT_PARAM));
+    addParam(createParam<GuitarSnapKnobLg>(Vec(368, 120), module, GuitarNeck::OCT_PARAM));
+
+    // CV
+    addInput(createPort<PJ301MPort>(Vec(375, 60), PortWidget::INPUT, module, GuitarNeck::ROOT_INPUT));
+    addInput(createPort<PJ301MPort>(Vec(375, 140), PortWidget::INPUT, module, GuitarNeck::OCT_INPUT));
+
+
+    // Buttons
+    addParam(createParam<GuitarLEDButton>(Vec(378, 200), module, GuitarNeck::RETURN_PARAM));
+    addChild(createLight<MediumLight<GreenLight>>(Vec(378+4.4, 200+4.4), module, GuitarNeck::RETURN_LIGHT));
+
+    // Outputs
+    addOutput(createPort<PJ301MPort>(Vec(375, 280), PortWidget::OUTPUT, module, GuitarNeck::NOTE_OUTPUT));
+    addOutput(createPort<PJ301MPort>(Vec(375, 330), PortWidget::OUTPUT, module, GuitarNeck::GATE_OUTPUT));
+
+    // Pads
     int BASE_X = 37;
     int y = 32;
     int x = BASE_X;
