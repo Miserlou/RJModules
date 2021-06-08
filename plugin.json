@@ -515,6 +515,13 @@
       "description": "SubOsc - Sub Oscillator",
       "tags": [
       ]
+    },
+    {
+      "slug": "GuitarNeck",
+      "name": "GuitarNeck - Guitar Neck Button Controller",
+      "description": "GuitarNeck - Guitar Neck Button Controller",
+      "tags": [
+      ]
     }
   ]
 }

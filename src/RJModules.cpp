@@ -69,6 +69,7 @@ void init(rack::Plugin *p) {
     p->addModel(modelMetaKnob);
     p->addModel(modelReplayKnob);
     p->addModel(modelTriggerSwitch);
+    p->addModel(modelGuitarNeck);
 
     // Util
     p->addModel(modelSplitter);

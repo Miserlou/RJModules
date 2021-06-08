@@ -108,8 +108,6 @@ struct GravityGlide : Module {
         current_speed = current_speed - accelerationY * T;
         current_location = current_location + current_speed * T;
     }
-    std::cout << "Location: " << current_location << "\n";
-    std::cout << "Speed: " << current_speed << "\n";
 
     outputs[OUT_OUTPUT].setVoltage(current_location);
 

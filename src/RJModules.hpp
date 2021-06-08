@@ -70,3 +70,4 @@ extern Model *modelGlutenFree;
 extern Model *modelMegaDivider;
 extern Model *modelGravityGlide;
 extern Model *modelSubOsc;
+extern Model *modelGuitarNeck;
