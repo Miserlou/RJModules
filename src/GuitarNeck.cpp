@@ -204,7 +204,7 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
             // Pad buttons:
             RJ_PadSquare* pad = dynamic_cast<RJ_PadSquare*>(createParam<RJ_PadSquare>(Vec(x, y), module, GuitarNeck::FRET + id));
             pad->box.size = padSize;
-            pad->momentary = false;
+            pad->momentary = true;
             pad->box.pos = Vec(x, y);
             pad->btnId = id;
             pad->groupId = groupId;

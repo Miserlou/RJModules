@@ -405,13 +405,13 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 		{
 			if (momentary)
 			{
-				DEBUG("onDragStart(%d) - Momentary - Set Value to %3.1f.", btnId, paramQuantity->maxValue);
+				DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Momentary - Set Value to %3.1f.", btnId, paramQuantity->maxValue);
 				paramQuantity->setValue(paramQuantity->maxValue); // Trigger Value				
 			}
 			else
 			{
 				float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-				DEBUG("onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
+				DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
 				paramQuantity->setValue(newVal); // Toggle Value
 			}
 		}	
@@ -435,7 +435,7 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 		if (origin && origin != this && origin->groupId == this->groupId && paramQuantity) 
 		{
 			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-			DEBUG("onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);				
+			DEBUG("RJ_PadSvgSwitch onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);				
 			paramQuantity->setValue(newVal); // Toggle Value
 		}		
 		return;
@@ -444,6 +444,7 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
 			return;		
 		SvgSwitch::onDragLeave(e);
+		paramQuantity->setValue(0);
 		return;
 	}
 	void onButton(const event::Button &e) override 
