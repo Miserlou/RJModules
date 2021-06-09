@@ -68,6 +68,11 @@ struct GuitarNeck: Module {
     bool gateOpen;
     float lightValues[64];
     const float lightLambda = 0.06;
+    float pitchVoltage = 0;
+
+    int string = 0;
+    int lastPad;
+    int realPad;
 
     float notes[12] = { 0,  
                         0.08333333333333333333, 
@@ -91,8 +96,8 @@ struct GuitarNeck: Module {
             configParam(GuitarNeck::LIGHT, 0.0, 1.0, 0.0, "");
         }
 
-        configParam(GuitarNeck::OCT_PARAM, 0.0, 6.0, 1.0, string::f("Octave", 0));
-        configParam(GuitarNeck::ROOT_PARAM, 0.0, 11.0, 0.0, string::f("Root", 0));
+        configParam(GuitarNeck::OCT_PARAM, -2.0, 4.0, 1.0, string::f("Octave", 0));
+        configParam(GuitarNeck::ROOT_PARAM, 0.0, 11.0, 4.0, string::f("Root", 0));
 
     }
     void step() override;
@@ -113,6 +118,11 @@ struct MedLight : BASE {
 };
 
 void GuitarNeck::step() {
+
+    // Knobs and CV processing
+
+    int root = params[ROOT_PARAM].value + clamp(inputs[ROOT_INPUT].normalize(5.0f) / 5.0f, 0.0f, 11.0f);
+    int octave = params[OCT_PARAM].value * clamp(inputs[OCT_INPUT].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
 
 
     // Buttons
@@ -136,13 +146,13 @@ void GuitarNeck::step() {
     }
     
     // Get the note and lights
-    int realPad;
     for(int i=0; i<64; i++){
         // Lights
         if(paramQuantities[ParamIds::FRET + i]->getValue() > 0){
             lightValues[i] = 1.0;
             // lol I have no idea how I came up with this
             realPad = ((64-((i/8) * 8)) + (i%8)) - 8;
+            string = 7 - i/8;
         }
 
         lights[LIGHT + i].value = lightValues[i];
@@ -153,10 +163,43 @@ void GuitarNeck::step() {
     }
 
     // Calculate pad output
-    int octave = 0;
-    float pitchVoltage = (notes[realPad%12] + realPad/12) + octave;
-    outputs[NOTE_OUTPUT].value = pitchVoltage;
+    switch(string){
+        case 0:
+            // E
+            pitchVoltage = (float)realPad / (float)12;
+            break;
+        case 1:
+            // A
+            pitchVoltage = ((float)realPad - (float)3) / (float)12;
+            break;
+        case 2:
+            // D
+            pitchVoltage = ((float)realPad - (float)6) / (float)12;
+            break;
+        case 3:
+            // G
+            pitchVoltage = ((float)realPad - (float)9) / (float)12;
+            break;
+        case 4:
+            // B
+            pitchVoltage = ((float)realPad - (float)13) / (float)12;
+            break;
+        case 5:
+            // E
+            pitchVoltage = ((float)realPad - (float)16) / (float)12;
+            break;
+        case 6:
+            // A
+            pitchVoltage = ((float)realPad - (float)19) / (float)12;
+            break;
+        case 7:
+            // D
+            pitchVoltage = ((float)realPad - (float)22) / (float)12;
+            break;
+    }
 
+    pitchVoltage = pitchVoltage + notes[root-1] + octave;
+    outputs[NOTE_OUTPUT].value = pitchVoltage;
 
 }
 

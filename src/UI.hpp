@@ -275,8 +275,6 @@ struct RJ_PadSwitch : Switch {
 	
 	RJ_PadSwitch() : Switch() {
 		momentary = true;
-
-		std::cout << "Tloading RJ_PadSwitch\n";
 		return;
 	}
 	RJ_PadSwitch(Vec size) {
@@ -468,14 +466,12 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 struct RJ_PadSquare : RJ_PadSvgSwitch {
 	RJ_PadSquare() 
 	{
-		std::cout << "Tloading svg\n";
 		this->SvgSwitch::addFrame(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TS_pad_0.svg")));
 		sw->wrap();
 		SvgSwitch::box.size = sw->box.size;
 	}
 	RJ_PadSquare(Vec size)
 	{
-		std::cout << "Tloading svg2\n";
 		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/TS_pad_0.svg")));
 		sw->box.size = size;
 		SvgSwitch::box.size = size;
