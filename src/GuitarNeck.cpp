@@ -121,15 +121,19 @@ void GuitarNeck::step() {
         lights[RETURN_LIGHT].value = -10.0;
     }
     
-    //
+    // Get the note and lights
     for(int i=0; i<64; i++){
+        // Lights
         if(paramQuantities[ParamIds::FRET + i]->getValue() > 0){
             lightValues[i] = 1.0;
         }
-        lights[LIGHT+i].value = lightValues[i];
-        if(lightValues[LIGHT+i] > 0){
-            lightValues[LIGHT+i] -= lightValues[LIGHT+i] / lightLambda / engineGetSampleRate();
+
+        lights[LIGHT + i].value = lightValues[i];
+        if(lightValues[i] > 0){
+            lightValues[i] -= lightValues[i] / lightLambda / engineGetSampleRate();
         }
+
+        
     }
 
     // 

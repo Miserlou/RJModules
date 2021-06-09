@@ -403,17 +403,22 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 		
 		if (paramQuantity)
 		{
-			if (momentary)
-			{
-				DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Momentary - Set Value to %3.1f.", btnId, paramQuantity->maxValue);
-				paramQuantity->setValue(paramQuantity->maxValue); // Trigger Value				
-			}
-			else
-			{
-				float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-				DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
-				paramQuantity->setValue(newVal); // Toggle Value
-			}
+			// if (momentary)
+			// {
+			// 	DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Momentary - Set Value to %3.1f.", btnId, paramQuantity->maxValue);
+			// 	paramQuantity->setValue(paramQuantity->maxValue); // Trigger Value				
+			// }
+			// else
+			// {
+			// 	float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
+			// 	DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
+			// 	paramQuantity->setValue(newVal); // Toggle Value
+			// }
+
+			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
+			DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
+			paramQuantity->setValue(1.0); // Toggle Value
+
 		}	
 		return;
 	}
@@ -432,11 +437,14 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 			return;			
 		// Set these no matter what because if you drag back onto your starting square, you want to toggle it again.
 		RJ_PadSvgSwitch *origin = dynamic_cast<RJ_PadSvgSwitch*>(e.origin);			
-		if (origin && origin != this && origin->groupId == this->groupId && paramQuantity) 
+		// XXX THIS
+		// if (origin && origin != this && origin->groupId == this->groupId && paramQuantity) 
+		// {
+		if (origin->groupId == this->groupId && paramQuantity) 
 		{
 			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
 			DEBUG("RJ_PadSvgSwitch onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);				
-			paramQuantity->setValue(newVal); // Toggle Value
+			paramQuantity->setValue(1.0); // Toggle Value
 		}		
 		return;
 	}
