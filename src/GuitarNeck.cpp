@@ -69,6 +69,20 @@ struct GuitarNeck: Module {
     float lightValues[64];
     const float lightLambda = 0.06;
 
+    float notes[12] = { 0,  
+                        0.08333333333333333333, 
+                        0.16666666666666666667, 
+                        0.25, 
+                        0.33333333333333333333, 
+                        0.41666666666666666667,
+                        0.5, 
+                        0.58333333333333333333, 
+                        0.66666666666666666667, 
+                        0.75, 
+                        0.83333333333333333333, 
+                        0.91666666666666666667
+                    };
+
     GuitarNeck() {
         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 
@@ -122,10 +136,13 @@ void GuitarNeck::step() {
     }
     
     // Get the note and lights
+    int realPad;
     for(int i=0; i<64; i++){
         // Lights
         if(paramQuantities[ParamIds::FRET + i]->getValue() > 0){
             lightValues[i] = 1.0;
+            // lol I have no idea how I came up with this
+            realPad = ((64-((i/8) * 8)) + (i%8)) - 8;
         }
 
         lights[LIGHT + i].value = lightValues[i];
@@ -133,10 +150,13 @@ void GuitarNeck::step() {
             lightValues[i] -= lightValues[i] / lightLambda / engineGetSampleRate();
         }
 
-        
     }
 
-    // 
+    // Calculate pad output
+    int octave = 0;
+    float pitchVoltage = (notes[realPad%12] + realPad/12) + octave;
+    outputs[NOTE_OUTPUT].value = pitchVoltage;
+
 
 }
 

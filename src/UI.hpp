@@ -440,7 +440,7 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 		// XXX THIS
 		// if (origin && origin != this && origin->groupId == this->groupId && paramQuantity) 
 		// {
-		if (origin->groupId == this->groupId && paramQuantity) 
+		if (origin && origin->groupId == this->groupId && paramQuantity) 
 		{
 			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
 			DEBUG("RJ_PadSvgSwitch onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);				
