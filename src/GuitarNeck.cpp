@@ -73,6 +73,7 @@ struct GuitarNeck: Module {
     int string = 0;
     int lastPad;
     int realPad;
+    bool newPad = false;
 
     float notes[12] = { 0,  
                         0.08333333333333333333, 
@@ -120,9 +121,8 @@ struct MedLight : BASE {
 void GuitarNeck::step() {
 
     // Knobs and CV processing
-
     int root = params[ROOT_PARAM].value + clamp(inputs[ROOT_INPUT].normalize(5.0f) / 5.0f, 0.0f, 11.0f);
-    int octave = params[OCT_PARAM].value * clamp(inputs[OCT_INPUT].normalize(5.0f) / 5.0f, 0.0f, 1.0f);
+    int octave = params[OCT_PARAM].value * clamp(inputs[OCT_INPUT].normalize(5.0f) / 5.0f, 0.0f, 5.0f);
 
 
     // Buttons
@@ -153,6 +153,11 @@ void GuitarNeck::step() {
             // lol I have no idea how I came up with this
             realPad = ((64-((i/8) * 8)) + (i%8)) - 8;
             string = 7 - i/8;
+            if(realPad != lastPad){
+                newPad = true;
+                lastPad = newPad;
+            }
+            gateOpen = true;
         }
 
         lights[LIGHT + i].value = lightValues[i];
@@ -200,6 +205,14 @@ void GuitarNeck::step() {
 
     pitchVoltage = pitchVoltage + notes[root-1] + octave;
     outputs[NOTE_OUTPUT].value = pitchVoltage;
+
+    if(gateOpen){
+        outputs[GATE_OUTPUT].value = 10.f;
+    } else{
+        outputs[GATE_OUTPUT].value = 0.f;
+    }
+
+    gateOpen = false;
 
 }
 
