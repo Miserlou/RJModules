@@ -43,8 +43,6 @@ struct Widener : Module {
     float mixed = 0.0;
     float mix_value = 1.0;
 
-    std::random_device rd; // obtain a random number from hardware
-
     float outLP;
     float outHP;
 
