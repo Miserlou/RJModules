@@ -74,6 +74,10 @@ struct GuitarNeck: Module {
     int lastPad;
     int realPad;
     bool newPad = false;
+    bool lastGate = false;
+    bool lastOpen = false;
+    bool pluck = false;
+    bool returnToOpen = false;
 
     float notes[12] = { 0,  
                         0.08333333333333333333, 
@@ -168,6 +172,18 @@ void GuitarNeck::step() {
     }
 
     // Calculate pad output
+    if(RETURN){
+        if(!gateOpen){
+            realPad = string * 8;
+        }
+        if(!gateOpen && lastGate){
+            pluck = true;
+        }
+    } else{
+        pluck = false;
+    }
+
+
     switch(string){
         case 0:
             // E
@@ -203,16 +219,22 @@ void GuitarNeck::step() {
             break;
     }
 
-    pitchVoltage = pitchVoltage + notes[root-1] + octave;
-    outputs[NOTE_OUTPUT].value = pitchVoltage;
+    if(pluck){
+        outputs[NOTE_OUTPUT].value = pitchVoltage + octave;
+    } else{
+        outputs[NOTE_OUTPUT].value = pitchVoltage + notes[root-1] + octave;
+    }
 
-    if(gateOpen){
+    if(gateOpen || pluck){
         outputs[GATE_OUTPUT].value = 10.f;
     } else{
         outputs[GATE_OUTPUT].value = 0.f;
     }
 
+    lastGate = gateOpen;
     gateOpen = false;
+    pluck=false;
+
 
 }
 
@@ -278,9 +300,6 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
     {
         for (int c = 0; c < numCols; c++)
         {           
-
-            std::cout << "Loading Pad!\n";
-
             // Pad buttons:
             RJ_PadSquare* pad = dynamic_cast<RJ_PadSquare*>(createParam<RJ_PadSquare>(Vec(x, y), module, GuitarNeck::FRET + id));
             pad->box.size = padSize;
