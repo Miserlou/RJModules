@@ -43,12 +43,12 @@ struct BlankBaseWidget : ModuleWidget {
         delete bmp;
         loadBitmap();
     }
-    json_t *toJson() override {
+    json_t *toJson() {
         json_t *rootJ = ModuleWidget::toJson();
         json_object_set_new(rootJ, "style", json_real(selected));
         return rootJ;
     }
-    void fromJson(json_t *rootJ) override {
+    void fromJson(json_t *rootJ) {
         ModuleWidget::fromJson(rootJ);
         int sel = selected;
         json_t *styleJ = json_object_get(rootJ, "style");

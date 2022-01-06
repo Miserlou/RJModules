@@ -48,7 +48,7 @@ PolySidechainWidget::PolySidechainWidget(PolySidechain *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/PolySidechain.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/PolySidechain.svg")));
         addChild(panel);
     }
 
@@ -60,12 +60,12 @@ PolySidechainWidget::PolySidechainWidget(PolySidechain *module) {
     addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, PolySidechain::RATIO_PARAM));
     addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, PolySidechain::DECAY_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, PolySidechain::CH1_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, PolySidechain::RATIO_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, PolySidechain::DECAY_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(110, 100), PortWidget::INPUT, module, PolySidechain::TRIGGER_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, PolySidechain::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, PolySidechain::RATIO_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, PolySidechain::DECAY_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(110, 100), module, PolySidechain::TRIGGER_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 305), PortWidget::OUTPUT, module, PolySidechain::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 305), module, PolySidechain::CH1_OUTPUT));
 }
 
 Model *modelPolySidechain = createModel<PolySidechain, PolySidechainWidget>("PolySidechain");

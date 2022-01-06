@@ -20,7 +20,7 @@ struct RJChorusRoundSmallBlackKnob : RoundSmallBlackKnob
 {
     RJChorusRoundSmallBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
     }
 };
 
@@ -80,19 +80,19 @@ struct RJChorus : Module {
 struct RJChorusWidget : ModuleWidget {
     RJChorusWidget(RJChorus *module) {
 		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Chorus.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Chorus.svg")));
 
         int ONE = -4;
         addParam(createParam<RJChorusRoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593 + ONE)), module, RJChorus::DELAY_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + ONE)), PortWidget::INPUT, module, RJChorus::DELAY_CV));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + ONE)), module, RJChorus::DELAY_CV));
         addParam(createParam<RJChorusRoundSmallBlackKnob>(mm2px(Vec(3.51398, 62.3 + ONE)), module, RJChorus::FREQ_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + ONE)), PortWidget::INPUT, module, RJChorus::FREQ_CV));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + ONE)), module, RJChorus::FREQ_CV));
 
         int TWO = 45;
         addParam(createParam<RJChorusRoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593 + TWO)), module, RJChorus::DEPTH_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + TWO)), PortWidget::INPUT, module, RJChorus::DEPTH_CV));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 62.3 + TWO)), PortWidget::INPUT, module, RJChorus::IN_INPUT));
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + TWO)), PortWidget::OUTPUT, module, RJChorus::OUT_OUTPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + TWO)), module, RJChorus::DEPTH_CV));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 62.3 + TWO)), module, RJChorus::IN_INPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + TWO)), module, RJChorus::OUT_OUTPUT));
 
 
     }

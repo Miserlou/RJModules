@@ -29,7 +29,7 @@ struct RandomFilter: Module {
     float resetLight = 0.0;
     float last_press = 999999;
 
-    SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger;
     VAStateVariableFilter *rFilter = new VAStateVariableFilter() ; // create a lpFilter;
 
     RandomFilter() {
@@ -42,7 +42,7 @@ struct RandomFilter: Module {
 
 struct BigAssLEDButton : SVGSwitch {
         BigAssLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/BigLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BigLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -75,11 +75,11 @@ void RandomFilter::step() {
         rFilter->setFilterType(filter_type);
         // rFilter->setCutoffFreq(distr2(eng));
         // rFilter->setResonance(distr2(eng));
-        rFilter->setSampleRate(engineGetSampleRate());
+        rFilter->setSampleRate(APP->engine->getSampleRate());
 
     }
 
-    resetLight -= resetLight / lightLambda / engineGetSampleRate();
+    resetLight -= resetLight / lightLambda / APP->engine->getSampleRate();
 
     float dry = inputs[CH1_INPUT].value;
     float wet = rFilter->processAudioSample(dry, 1);
@@ -103,7 +103,7 @@ RandomFilterWidget::RandomFilterWidget(RandomFilter *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/RandomFilter.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/RandomFilter.svg")));
         addChild(panel);
     }
 
@@ -115,13 +115,13 @@ RandomFilterWidget::RandomFilterWidget(RandomFilter *module) {
     addParam(createParam<BigAssLEDButton>(Vec(15, 60), module, RandomFilter::RESET_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, RandomFilter::MIX_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, RandomFilter::BUTTON_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, RandomFilter::MIX_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, RandomFilter::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, RandomFilter::BUTTON_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, RandomFilter::MIX_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 310), module, RandomFilter::CH1_INPUT));
 
     addChild(createLight<GiantLight<GreenLight>>(Vec(25, 70), module, RandomFilter::RESET_LIGHT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, RandomFilter::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 310), module, RandomFilter::CH1_OUTPUT));
 }
 
 Model *modelRandomFilter = createModel<RandomFilter, RandomFilterWidget>("RandomFilter");

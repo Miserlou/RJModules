@@ -37,7 +37,7 @@ struct BpmCalculator {
 	float timer = 0.0f;
 	int misses = 0;
 	float seconds = 0;
-	SchmittTrigger gateTrigger;
+	dsp::SchmittTrigger gateTrigger;
 
 	inline bool checkBeat(int mult) {
 		return ( ((timer - mult * seconds) * (timer - mult * seconds) / (seconds * seconds) < 0.2f ) && misses < 4);

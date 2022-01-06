@@ -45,7 +45,7 @@ struct SORoundLargeBlackKnob : RoundHugeBlackKnob
 {
     SORoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
     }
 };
 
@@ -186,7 +186,7 @@ struct SubOsc : Module {
 struct SubOscWidget : ModuleWidget {
     SubOscWidget(SubOsc *module) {
         setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/SubOsc.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SubOsc.svg")));
 
         int TWO = 45;
         int BUFF = 15;
@@ -196,9 +196,9 @@ struct SubOscWidget : ModuleWidget {
         addParam(createParam<SORoundLargeBlackKnob>(mm2px(Vec(6, 55 + BUFF)), module, SubOsc::C_PARAM));
         addParam(createParam<SORoundLargeBlackKnob>(mm2px(Vec(6, 80 + BUFF)), module, SubOsc::D_PARAM));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(1.51398, 73.3 + TWO)), PortWidget::INPUT, module, SubOsc::IN_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(1.51398, 73.3 + TWO)), module, SubOsc::IN_INPUT));
 
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(20, 73.3 + TWO)), PortWidget::OUTPUT, module, SubOsc::OUT_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(20, 73.3 + TWO)), module, SubOsc::OUT_OUTPUT));
 
     }
 

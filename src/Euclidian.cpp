@@ -48,8 +48,8 @@ struct Euclidian : Module {
 
     // Player
     int head = -1;
-    SchmittTrigger clockTrigger;
-    SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger clockTrigger;
+    dsp::SchmittTrigger resetTrigger;
     int old_K;
     int old_J;
     int old_I;
@@ -226,14 +226,8 @@ Display
 */
 
 struct EuclidianSmallStringDisplayWidget : TransparentWidget {
-
   Euclidian *module;
   bool is_left = true;
-  std::shared_ptr<Font> font;
-
-  EuclidianSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -253,9 +247,12 @@ struct EuclidianSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
+  }
 
     if (!module)
         return;
@@ -278,7 +275,7 @@ struct EuclidianRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     EuclidianRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
     }
 };
 
@@ -286,7 +283,7 @@ struct EuclidianRoundLargeBlackSnapKnob : RoundLargeBlackKnob
 {
     EuclidianRoundLargeBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -297,7 +294,7 @@ struct EuclidianRoundBlackSnapKnob : RoundBlackKnob
 {
     EuclidianRoundBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -315,7 +312,7 @@ struct EuclidianWidget : ModuleWidget {
 
     SVGPanel *panel = new SVGPanel();
     panel->box.size = box.size;
-    panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Euclidian.svg")));
+    panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Euclidian.svg")));
     addChild(panel);
 
     if (!module)
@@ -348,8 +345,8 @@ struct EuclidianWidget : ModuleWidget {
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT + RIGHT, BASE), module, Euclidian::N_PARAM));
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT, BASE + DIST), module, Euclidian::I_PARAM));
     addParam(createParam<EuclidianRoundLargeBlackSnapKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, Euclidian::J_PARAM));
-    addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, Euclidian::CLOCK_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Euclidian::RESET_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(11, 320), module, Euclidian::CLOCK_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(45, 320), module, Euclidian::RESET_INPUT));
 
     for(int j=0;j<8;j++){
         addChild(createLight<EuclidianLight<WhiteLight>>(Vec(j * 16 + 15, 265), module, Euclidian::PATTERN_LIGHT + j));
@@ -358,7 +355,7 @@ struct EuclidianWidget : ModuleWidget {
         addChild(createLight<EuclidianLight<WhiteLight>>(Vec(k * 16 + 15, 285), module, Euclidian::PATTERN_LIGHT + (k + 8)));
     }
 
-    addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, Euclidian::OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(112.5, 320), module, Euclidian::OUTPUT));
 
     }
 

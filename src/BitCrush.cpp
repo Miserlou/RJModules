@@ -62,7 +62,7 @@ BitCrushWidget::BitCrushWidget(BitCrush *module) {
 	{
 		SVGPanel *panel = new SVGPanel();
 		panel->box.size = box.size;
-		panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/BitCrush.svg")));
+		panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BitCrush.svg")));
 		addChild(panel);
 	}
 
@@ -74,12 +74,12 @@ BitCrushWidget::BitCrushWidget(BitCrush *module) {
 	addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, BitCrush::CH1_PARAM));
 	addParam(createParam<RoundBlackKnob>(Vec(57, 219), module, BitCrush::CH2_PARAM));
 
-	addInput(createPort<PJ301MPort>(Vec(22, 129), PortWidget::INPUT, module, BitCrush::CH1_INPUT));
-	addInput(createPort<PJ301MPort>(Vec(22, 160), PortWidget::INPUT, module, BitCrush::CH1_CV_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(22, 129), module, BitCrush::CH1_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(22, 160), module, BitCrush::CH1_CV_INPUT));
 
-	addInput(createPort<PJ301MPort>(Vec(22, 241), PortWidget::INPUT, module, BitCrush::CH2_CV_INPUT));
+	addInput(createInput<PJ301MPort>(Vec(22, 241), module, BitCrush::CH2_CV_INPUT));
 
-	addOutput(createPort<PJ301MPort>(Vec(110, 145), PortWidget::OUTPUT, module, BitCrush::CH1_OUTPUT));
+	addOutput(createOutput<PJ301MPort>(Vec(110, 145), module, BitCrush::CH1_OUTPUT));
 }
 
 Model *modelBitCrush = createModel<BitCrush, BitCrushWidget>("BitCrush");

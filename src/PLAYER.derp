@@ -65,13 +65,13 @@ struct PLAYER : Module {
     string fileDesc;
     bool fileLoaded = false;
 
-    SchmittTrigger playTrigger;
-    SchmittTrigger playGater;
-    SchmittTrigger nextTrigger;
-    SchmittTrigger prevTrigger;
-    SchmittTrigger nextinTrigger;
-    SchmittTrigger previnTrigger;
-    SchmittTrigger oscTrigger;
+    dsp::SchmittTrigger playTrigger;
+    dsp::SchmittTrigger playGater;
+    dsp::SchmittTrigger nextTrigger;
+    dsp::SchmittTrigger prevTrigger;
+    dsp::SchmittTrigger nextinTrigger;
+    dsp::SchmittTrigger previnTrigger;
+    dsp::SchmittTrigger oscTrigger;
 
     vector <string> fichier;
 
@@ -286,16 +286,16 @@ if (!oscState) {
 
 struct upButton : SVGSwitch, MomentarySwitch {
     upButton() {
-        addFrame(SVG::load(assetPlugin(pluginInstance, "res/upButton.svg")));
-        addFrame(SVG::load(assetPlugin(pluginInstance, "res/upButtonDown.svg")));
+        addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/upButton.svg")));
+        addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/upButtonDown.svg")));
         sw->wrap();
         box.size = sw->box.size;
     }
 };
 struct downButton : SVGSwitch, MomentarySwitch {
     downButton() {
-        addFrame(SVG::load(assetPlugin(pluginInstance, "res/downButton.svg")));
-        addFrame(SVG::load(assetPlugin(pluginInstance, "res/downButtonDown.svg")));
+        addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/downButton.svg")));
+        addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/downButtonDown.svg")));
         sw->wrap();
         box.size = sw->box.size;
     }
@@ -389,7 +389,7 @@ struct PLAYERWidget : ModuleWidget {
 
 PLAYERWidget::PLAYERWidget(PLAYER *module) {
 		setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/PLAYER.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/PLAYER.svg")));
 
     addChild(createWidget<ScrewSilver>(Vec(15, 0)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
@@ -412,21 +412,21 @@ PLAYERWidget::PLAYERWidget(PLAYER *module) {
     addParam(createParam<Trimpot>(Vec(42, 278), module, PLAYER::TSTART_PARAM, -1.0f, 1.0f, 0.0f));
     addParam(createParam<Trimpot>(Vec(73, 278), module, PLAYER::TSPEED_PARAM, -1.0f, 1.0f, 0.0f));
 
-    addInput(createPort<PJ301MPort>(Vec(portX0[0], 321), PortWidget::INPUT, module, PLAYER::GATE_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(portX0[1], 321), PortWidget::INPUT, module, PLAYER::POS_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(portX0[2], 321), PortWidget::INPUT, module, PLAYER::SPD_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(portX0[3], 275), PortWidget::OUTPUT, module, PLAYER::OUT_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(portX0[3], 321), PortWidget::OUTPUT, module, PLAYER::OUT2_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[0], 321), module, PLAYER::GATE_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[1], 321), module, PLAYER::POS_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[2], 321), module, PLAYER::SPD_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(portX0[3], 275), module, PLAYER::OUT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(portX0[3], 321), module, PLAYER::OUT2_OUTPUT));
 
-    addInput(createPort<PJ301MPort>(Vec(portX0[0], 91), PortWidget::INPUT, module, PLAYER::PREV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(portX0[3], 91), PortWidget::INPUT, module, PLAYER::NEXT_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(portX0[0], 275), PortWidget::INPUT, module, PLAYER::TRIG_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[0], 91), module, PLAYER::PREV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[3], 91), module, PLAYER::NEXT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[0], 275), module, PLAYER::TRIG_INPUT));
     addParam(createParam<upButton>(Vec(43, 95), module, PLAYER::PREV_PARAM, 0.0f, 1.0f, 0.0f));
     addParam(createParam<downButton>(Vec(73, 95), module, PLAYER::NEXT_PARAM, 0.0f, 1.0f, 0.0f));
 
     addParam(createParam<LEDButton>(Vec(104, 212), module, PLAYER::OSC_PARAM, 0.0, 1.0, 0.0));
         addChild(createLight<MediumLight<BlueLight>>(Vec(108.4, 216.4), module, PLAYER::OSC_LIGHT));
-    addInput(createPort<PJ301MPort>(Vec(portX0[0], 210), PortWidget::INPUT, module, PLAYER::VO_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(portX0[0], 210), module, PLAYER::VO_INPUT));
 }
 
 struct PLAYERItem : MenuItem {

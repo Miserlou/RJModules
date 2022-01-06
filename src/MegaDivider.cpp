@@ -288,11 +288,6 @@ struct MegaDividerSmallStringDisplayWidget : TransparentWidget {
   bool is_b = false;
   bool is_c = false;
   bool is_d = false;
-  std::shared_ptr<Font> font;
-
-  MegaDividerSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -312,9 +307,12 @@ struct MegaDividerSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
+    }
 
     if (!module)
         return;
@@ -341,7 +339,7 @@ struct MegaDividerRoundSmallBlackKnob : RoundSmallBlackKnob
 {
     MegaDividerRoundSmallBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -358,7 +356,7 @@ struct MegaDividerWidget: ModuleWidget {
         {
             SVGPanel *panel = new SVGPanel();
             panel->box.size = box.size;
-            panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/MegaDivider.svg")));
+            panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MegaDivider.svg")));
             addChild(panel);
         }
 
@@ -378,7 +376,7 @@ struct MegaDividerWidget: ModuleWidget {
             addChild(a_Display);
         }
         addParam(createParam<MegaDividerRoundSmallBlackKnob>(Vec(145, 40), module, MegaDivider::A_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(170, 39), PortWidget::INPUT, module, MegaDivider::A_CV));
+        addInput(createInput<PJ301MPort>(Vec(170, 39), module, MegaDivider::A_CV));
 
         if(module != NULL){
             MegaDividerSmallStringDisplayWidget *b_Display = new MegaDividerSmallStringDisplayWidget();
@@ -393,8 +391,8 @@ struct MegaDividerWidget: ModuleWidget {
         }
 
         addParam(createParam<MegaDividerRoundSmallBlackKnob>(Vec(237, 40), module, MegaDivider::B_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(262, 39), PortWidget::INPUT, module, MegaDivider::B_CV));
-        addOutput(createPort<PJ301MPort>(Vec(295, 39), PortWidget::OUTPUT, module, MegaDivider::MULTI_A));
+        addInput(createInput<PJ301MPort>(Vec(262, 39), module, MegaDivider::B_CV));
+        addOutput(createOutput<PJ301MPort>(Vec(295, 39), module, MegaDivider::MULTI_A));
         addChild(createLight<MediumLight<WhiteLight>>(Vec(302.5, 68), module, MegaDivider::A_LIGHT));
 
         // Row 2
@@ -411,7 +409,7 @@ struct MegaDividerWidget: ModuleWidget {
             addChild(c_Display);
         }
         addParam(createParam<MegaDividerRoundSmallBlackKnob>(Vec(145, 40 + ROW_TWO), module, MegaDivider::C_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(170, 39 + ROW_TWO), PortWidget::INPUT, module, MegaDivider::C_CV));
+        addInput(createInput<PJ301MPort>(Vec(170, 39 + ROW_TWO), module, MegaDivider::C_CV));
 
         if(module != NULL){
             MegaDividerSmallStringDisplayWidget *d_Display = new MegaDividerSmallStringDisplayWidget();
@@ -426,8 +424,8 @@ struct MegaDividerWidget: ModuleWidget {
         }
 
         addParam(createParam<MegaDividerRoundSmallBlackKnob>(Vec(237, 40 + ROW_TWO), module, MegaDivider::D_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(262, 39 + ROW_TWO), PortWidget::INPUT, module, MegaDivider::D_CV));
-        addOutput(createPort<PJ301MPort>(Vec(295, 39 + ROW_TWO), PortWidget::OUTPUT, module, MegaDivider::MULTI_B));
+        addInput(createInput<PJ301MPort>(Vec(262, 39 + ROW_TWO), module, MegaDivider::D_CV));
+        addOutput(createOutput<PJ301MPort>(Vec(295, 39 + ROW_TWO), module, MegaDivider::MULTI_B));
         addChild(createLight<MediumLight<WhiteLight>>(Vec(302.5, 68 + ROW_TWO), module, MegaDivider::B_LIGHT));
 
         // GRID
@@ -435,20 +433,20 @@ struct MegaDividerWidget: ModuleWidget {
         int BASE = 136;
         int LEFT = 38;
 
-        addInput(createPort<PJ301MPort>(Vec(LEFT - 20, 30), PortWidget::INPUT, module, MegaDivider::CLOCK_CV));
-        addInput(createPort<PJ301MPort>(Vec(LEFT - 20, 60), PortWidget::INPUT, module, MegaDivider::RESET_CV));
-        // addInput(createPort<PJ301MPort>(Vec(LEFT - 20, 30), PortWidget::INPUT, module, MegaDivider::CLOCK_CV));
+        addInput(createInput<PJ301MPort>(Vec(LEFT - 20, 30), module, MegaDivider::CLOCK_CV));
+        addInput(createInput<PJ301MPort>(Vec(LEFT - 20, 60), module, MegaDivider::RESET_CV));
+        // addInput(createInput<PJ301MPort>(Vec(LEFT - 20, 30), module, MegaDivider::CLOCK_CV));
 
         int i = 0;
         for(int x = 1; x <= 8; x++){
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + (SPACE * 0)), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 1), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 2), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 3), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 4), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 5), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 6), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
-            addOutput(createPort<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 7), PortWidget::OUTPUT, module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + (SPACE * 0)), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 1), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 2), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 3), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 4), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 5), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 6), module, MegaDivider::CH_OUTPUT + i)); i++;
+            addOutput(createOutput<PJ301MPort>(Vec((LEFT * x) - 20, BASE + SPACE * 7), module, MegaDivider::CH_OUTPUT + i)); i++;
         }
 
         BASE = BASE + 8;

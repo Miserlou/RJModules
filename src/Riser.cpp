@@ -1,4 +1,3 @@
-#include "dsp/digital.hpp"
 #include <iostream>
 #include "RJModules.hpp"
 
@@ -9,7 +8,7 @@ struct LowFrequencyOscillator {
     bool offset = false;
     bool invert = false;
 
-    SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger;
     LowFrequencyOscillator() {}
 
     void setPitch(float pitch) {
@@ -107,20 +106,20 @@ void Riser::step() {
 
     oscillator.setPitch(osc0_root);
     //oscillator.setPitch(-4.0);
-    oscillator.step(0.3 / engineGetSampleRate());
+    oscillator.step(0.3 / APP->engine->getSampleRate());
 
     // float root_pitch2 = params[FREQ_PARAM_2].value * clamp(inputs[FREQ_CV_INPUT_2].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
     // oscillator2.setPitch(root_pitch2);
     // oscillator2.offset = (params[OFFSET_PARAM].value > 0.0);
     // oscillator2.invert = (params[INVERT_PARAM].value <= 0.0);
-    // oscillator2.step(0.3 / engineGetSampleRate());
+    // oscillator2.step(0.3 / APP->engine->getSampleRate());
     // oscillator2.setReset(inputs[RESET_INPUT].value);
 
     // float root_pitch = params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) * clamp(oscillator2.sin(), 0.0f, 1.0f);
     // oscillator.setPitch(root_pitch);
     // oscillator.offset = (params[OFFSET_PARAM].value > 0.0);
     // oscillator.invert = (params[INVERT_PARAM].value <= 0.0);
-    // oscillator.step(0.3 / engineGetSampleRate());
+    // oscillator.step(0.3 / APP->engine->getSampleRate());
     // oscillator.setReset(inputs[RESET_INPUT].value);
 
     //float shape_percent = params[SHAPE_PARAM].value * clamp(inputs[SHAPE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
@@ -148,7 +147,7 @@ RiserWidget::RiserWidget(Riser *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Riser.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Riser.svg")));
         addChild(panel);
     }
 
@@ -157,19 +156,19 @@ RiserWidget::RiserWidget(Riser *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addParam(createParam<CKSS>(Vec(119, 100), module, Riser::OFFSET_PARAM, 0.0, 1.0, 1.0));
-    addParam(createParam<CKSS>(Vec(119, 180), module, Riser::INVERT_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<CKSS>(Vec(119, 100), module, Riser::OFFSET_PARAM));
+    addParam(createParam<CKSS>(Vec(119, 180), module, Riser::INVERT_PARAM));
 
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Riser::FREQ_PARAM, 0.0, 8.0, 5.0));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Riser::FREQ_PARAM_2, 0.0, 8.0, 0.5));
-    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Riser::SHAPE_PARAM, 0.0, 1.0, 1.0));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, Riser::FREQ_PARAM));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Riser::FREQ_PARAM_2));
+    addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Riser::SHAPE_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Riser::FREQ_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Riser::FREQ_CV_INPUT_2));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Riser::SHAPE_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(38, 310), PortWidget::INPUT, module, Riser::RESET_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Riser::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Riser::FREQ_CV_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Riser::SHAPE_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(38, 310), module, Riser::RESET_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Riser::SAW_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, Riser::SAW_OUTPUT));
 
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Riser::PHASE_POS_LIGHT));
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 140), module, Riser::PHASE_POS_LIGHT2));

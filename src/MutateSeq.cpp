@@ -54,7 +54,7 @@ struct MutateSeq : Module {
     int index = 0;
     float phase = 0.f;
     int currentPosition;
-    SchmittTrigger clockTrigger;
+    dsp::SchmittTrigger clockTrigger;
 
     bool init = false;
     float seq_notes[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
@@ -224,7 +224,7 @@ struct MutateSeqWidget: ModuleWidget {
 
 MutateSeqWidget::MutateSeqWidget(MutateSeq *module) {
     setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/MutateSeq.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MutateSeq.svg")));
 
     // MAGNETS
     // addChild(createWidget<ScrewSilver>(Vec(15, 0)));
@@ -274,9 +274,9 @@ MutateSeqWidget::MutateSeqWidget(MutateSeq *module) {
     addParam(createParam<MutateSnapKnobLg>(mm2px(Vec(28.0, 102.0)), module, MutateSeq::NOTE_DEPTH));
 
     // Ins/Outs
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 117.809)), PortWidget::INPUT, module, MutateSeq::IN_INPUT));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 117.809)), module, MutateSeq::IN_INPUT));
     addParam(createParam<MutateSnapKnob>(mm2px(Vec(16.57, 117.809)), module, MutateSeq::STEPS_PARAM));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 117.809)), PortWidget::OUTPUT, module, MutateSeq::OUT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 117.809)), module, MutateSeq::OUT_OUTPUT));
 
 
 }

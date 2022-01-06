@@ -130,7 +130,7 @@ void deesp::DSPBLOscillator::updatePitch() {
     if (lfoMode) {
         /* convert knob value to unipolar */
         fm = input[FM_CV].value;
-        tune = quadraticBipolar((input[TUNE].value + 1) / 2);
+        tune = rack::dsp::quadraticBipolar((input[TUNE].value + 1) / 2);
         tune *= LFO_SCALE;
         fm *= LFO_SCALE;
         oct = -8;
@@ -143,7 +143,7 @@ void deesp::DSPBLOscillator::updatePitch() {
     /* optimize the usage of expensive exp function and other computations */
     float coeff = (_oct != oct) ? powf(2.f, oct) : _coeff;
     float base = (_cv != cv) ? powf(2.f, cv) : _base;
-    float biqufm = (_tune != tune + fm) ? quadraticBipolar(tune + fm) : _biqufm;
+    float biqufm = (_tune != tune + fm) ? rack::dsp::quadraticBipolar(tune + fm) : _biqufm;
 
     if (lfoMode)
         setFrequency(tune + fm);

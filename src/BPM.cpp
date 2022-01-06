@@ -62,10 +62,8 @@ struct BigOlLight : BASE {
 struct NumberDisplayWidget : TransparentWidget {
 
   int *value;
-  std::shared_ptr<Font> font;
 
   NumberDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
   };
 
   void draw(NVGcontext *vg) override
@@ -78,9 +76,13 @@ struct NumberDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
+    if (font) {
     nvgFontSize(vg, 32);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << (int) *value;
@@ -106,7 +108,7 @@ void BPM::step() {
 
     const float lightLambda = 0.075;
     float output = 0.0;
-    SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger;
 
     bool bMainClockTrig = false;
 
@@ -117,9 +119,9 @@ void BPM::step() {
     m_fBPM = mapped_bpm;
     m_fMainClockCount += (mapped_bpm/60.0);
 
-    if( ( m_fMainClockCount ) >= engineGetSampleRate() )
+    if( ( m_fMainClockCount ) >= APP->engine->getSampleRate() )
     {
-        m_fMainClockCount = m_fMainClockCount - engineGetSampleRate();
+        m_fMainClockCount = m_fMainClockCount - APP->engine->getSampleRate();
         bMainClockTrig = true;
     }
 
@@ -137,7 +139,7 @@ void BPM::step() {
         m_fMainClockCount = 0;
     }
 
-    pulseLight -= pulseLight / lightLambda / engineGetSampleRate();
+    pulseLight -= pulseLight / lightLambda / APP->engine->getSampleRate();
 
     outputs[CH1_OUTPUT].value = output;
     outputs[CH2_OUTPUT].value = output;
@@ -160,7 +162,7 @@ BPMWidget::BPMWidget(BPM *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/BPM.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BPM.svg")));
         addChild(panel);
     }
 
@@ -169,18 +171,18 @@ BPMWidget::BPMWidget(BPM *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(createPort<PJ301MPort>(Vec(24, 160), PortWidget::INPUT, module, BPM::CH1_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(106, 165), PortWidget::INPUT, module, BPM::RESET_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(24, 160), module, BPM::CH1_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(106, 165), module, BPM::RESET_CV_INPUT));
     addParam(createParam<LEDButton>(Vec(109, 132), module, BPM::RESET_PARAM));
     addChild(createLight<MediumLight<GreenLight>>(Vec(113.4, 136.4), module, BPM::RESET_LIGHT));
 
-    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, BPM::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, BPM::CH2_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, BPM::CH3_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(24, 223), module, BPM::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(65, 223), module, BPM::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(105, 223), module, BPM::CH3_OUTPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, BPM::CH4_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, BPM::CH5_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, BPM::CH6_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(24, 274), module, BPM::CH4_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(65, 274), module, BPM::CH5_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(106, 274), module, BPM::CH6_OUTPUT));
 
     addParam(createParam<RoundBlackKnob>(Vec(58, 140), module, BPM::BPM_PARAM));
     // addChild(createLight<LargeLight<GreenLight>>(Vec(28, 130), module, BPM::PULSE_LIGHT));

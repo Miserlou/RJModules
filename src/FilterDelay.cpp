@@ -23,12 +23,12 @@ struct FilterDelay : Module {
         NUM_OUTPUTS
     };
 
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-    DoubleRingBuffer<float, 16> outBuffer;
-    SampleRateConverter<1> src;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
+    dsp::DoubleRingBuffer<float, 16> outBuffer;
+    dsp::SampleRateConverter<1> src;
     float lastWet = 0.0;
-    RCFilter lowpassFilter;
-    RCFilter highpassFilter;
+    dsp::RCFilter lowpassFilter;
+    dsp::RCFilter highpassFilter;
 
     FilterDelay() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);
@@ -52,7 +52,7 @@ void FilterDelay::step() {
     // Compute delay time in seconds
     float delay = .001 * powf(10.0 / .001, clamp(params[TIME_PARAM].value + inputs[TIME_INPUT].value / 10.0f, 0.0f, 1.0f));
     // Number of delay samples
-    float index = delay * engineGetSampleRate();
+    float index = delay * APP->engine->getSampleRate();
 
     // The delay algorithm is taken from Fundamentals,
     // which it seems is written by somebody who didn't know what they're doing,
@@ -72,13 +72,13 @@ void FilterDelay::step() {
         else if (consume >= 16)
             ratio = 2.0;
 
-        float inSR = engineGetSampleRate();
+        float inSR = APP->engine->getSampleRate();
         float outSR = ratio * inSR;
 
-        int inFrames = min(historyBuffer.size(), 16);
+        int inFrames = fmin(historyBuffer.size(), 16);
         int outFrames = outBuffer.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer.startData(), &inFrames, (Frame<1>*)outBuffer.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer.startData(), &inFrames, (dsp::Frame<1>*)outBuffer.endData(), &outFrames);
         historyBuffer.startIncr(inFrames);
         outBuffer.endIncr(outFrames);
     }
@@ -90,13 +90,13 @@ void FilterDelay::step() {
 
     float color = clamp(params[COLOR_PARAM].value + inputs[COLOR_INPUT].value / 10.0f, 0.0f, 1.0f);
     float lowpassFreq = 4000.0 * powf(10.0, clamp(2.0f*color, 0.0f, 1.0f));
-    lowpassFilter.setCutoff(lowpassFreq / engineGetSampleRate());
+    lowpassFilter.setCutoff(lowpassFreq / APP->engine->getSampleRate());
     lowpassFilter.process(wet);
     wet = lowpassFilter.lowpass();
 
     // No muddy sub
     float highpassFreq = 80.0;
-    highpassFilter.setCutoff(highpassFreq / engineGetSampleRate());
+    highpassFilter.setCutoff(highpassFreq / APP->engine->getSampleRate());
     highpassFilter.process(wet);
     wet = highpassFilter.highpass();
 
@@ -123,7 +123,7 @@ FilterDelayWidget::FilterDelayWidget(FilterDelay *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/FilterDelay.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/FilterDelay.svg")));
         addChild(panel);
     }
 
@@ -137,12 +137,12 @@ FilterDelayWidget::FilterDelayWidget(FilterDelay *module) {
     addParam(createParam<RoundBlackKnob>(Vec(97, 180), module, FilterDelay::COLOR_PARAM));
     addParam(createParam<RoundBlackKnob>(Vec(97, 240), module, FilterDelay::MIX_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 65), PortWidget::INPUT, module, FilterDelay::TIME_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 125), PortWidget::INPUT, module, FilterDelay::FEEDBACK_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 185), PortWidget::INPUT, module, FilterDelay::COLOR_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 245), PortWidget::INPUT, module, FilterDelay::MIX_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 65), module, FilterDelay::TIME_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 125), module, FilterDelay::FEEDBACK_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 185), module, FilterDelay::COLOR_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 245), module, FilterDelay::MIX_INPUT));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 305), PortWidget::INPUT, module, FilterDelay::IN_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(105, 305), PortWidget::OUTPUT, module, FilterDelay::OUT_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 305), module, FilterDelay::IN_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(105, 305), module, FilterDelay::OUT_OUTPUT));
 }
 Model *modelFilterDelay = createModel<FilterDelay, FilterDelayWidget>("FilterDelay");

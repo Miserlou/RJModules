@@ -39,14 +39,14 @@ void BPF::step() {
     float dry = inputs[CH1_INPUT].value;
     float wet = 0.0;
 
-    dry += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
+    dry += 1.0e-6 * (2.0*random::uniform() - 1.0)*1000;
 
     BPFilter->setFilterType(1);
 
     BPFilter->setCutoffFreq(params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
     // BPFilter->setQ(params[WIDTH_PARAM].value * clamp(inputs[VOL_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
     BPFilter->setResonance(params[VOL_PARAM].value * clamp(inputs[WIDTH_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
-    BPFilter->setSampleRate(engineGetSampleRate());
+    BPFilter->setSampleRate(APP->engine->getSampleRate());
 
     wet = BPFilter->processAudioSample(dry, 1);
     outputs[CH1_OUTPUT].value = wet;
@@ -64,7 +64,7 @@ BPFWidget::BPFWidget(BPF *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/BPF.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/BPF.svg")));
         addChild(panel);
     }
 
@@ -76,11 +76,11 @@ BPFWidget::BPFWidget(BPF *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, BPF::FREQ_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, BPF::VOL_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, BPF::FREQ_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, BPF::VOL_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, BPF::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, BPF::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, BPF::VOL_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 310), module, BPF::CH1_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, BPF::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 310), module, BPF::CH1_OUTPUT));
 }
 
 Model *modelBPF = createModel<BPF, BPFWidget>("BPF");

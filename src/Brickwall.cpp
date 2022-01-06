@@ -14,7 +14,7 @@ struct BrickwallRoundSmallBlackKnob : RoundSmallBlackKnob
 {
     BrickwallRoundSmallBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
     }
 };
 
@@ -65,7 +65,7 @@ struct Brickwall : Module {
     float lastCv = 0.f;
     bool decaying = false;
     float env = 0.0f;
-    SchmittTrigger trigger;
+    dsp::SchmittTrigger trigger;
 
     Brickwall() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -123,7 +123,7 @@ struct Brickwall : Module {
         //             env = sustain;
         //         }
         //         else {
-        //             env += powf(base, 1 - decay) / maxTime * (sustain - env) * engineGetSampleTime();
+        //             env += powf(base, 1 - decay) / maxTime * (sustain - env) * APP->engine->getSampleTime();
         //         }
         //     }
         //     else {
@@ -133,7 +133,7 @@ struct Brickwall : Module {
         //             env = 1.0f;
         //         }
         //         else {
-        //             env += powf(base, 1 - attack) / maxTime * (1.01f - env) * engineGetSampleTime();
+        //             env += powf(base, 1 - attack) / maxTime * (1.01f - env) * APP->engine->getSampleTime();
         //         }
         //         if (env >= 1.0f) {
         //             env = 1.0f;
@@ -147,7 +147,7 @@ struct Brickwall : Module {
         //         env = 0.0f;
         //     }
         //     else {
-        //         env += powf(base, 1 - release) / maxTime * (0.0f - env) * engineGetSampleTime();
+        //         env += powf(base, 1 - release) / maxTime * (0.0f - env) * APP->engine->getSampleTime();
         //     }
         //     decaying = false;
         // }
@@ -169,7 +169,7 @@ struct Brickwall : Module {
 struct BrickwallWidget : ModuleWidget {
     BrickwallWidget(Brickwall *module) {
 		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Brickwall.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Brickwall.svg")));
 
         addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
@@ -177,17 +177,17 @@ struct BrickwallWidget : ModuleWidget {
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
         addParam(createParam<BrickwallRoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Brickwall::DEPTH_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), PortWidget::INPUT, module, Brickwall::DEPTH_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), module, Brickwall::DEPTH_INPUT));
 
         addParam(createParam<BrickwallRoundSmallBlackKnob>(mm2px(Vec(3.5, 65.9593)), module, Brickwall::PREAMP_PARAM));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), PortWidget::INPUT, module, Brickwall::EXP_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), module, Brickwall::EXP_INPUT));
 
         addParam(createParam<BrickwallRoundSmallBlackKnob>(mm2px(Vec(3.5, 81.9593)), module, Brickwall::POSTAMP_PARAM));
 
         // addChild(createLight<SmallLight<GreenRedLight>>(Vec(3, 84), module, Brickwall::ACTIVE_LIGHT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), PortWidget::INPUT, module, Brickwall::GATE_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), PortWidget::INPUT, module, Brickwall::IN_INPUT));
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), PortWidget::OUTPUT, module, Brickwall::OUT_OUTPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), module, Brickwall::GATE_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), module, Brickwall::IN_INPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), module, Brickwall::OUT_OUTPUT));
     }
 };
 

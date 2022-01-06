@@ -32,7 +32,7 @@
 //     };
 
 //     bool state[NUM_CHANNELS];
-//     SchmittTrigger muteTrigger[NUM_CHANNELS];
+//     dsp::SchmittTrigger muteTrigger[NUM_CHANNELS];
 
 //     Soundpipe() {
 //         config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -85,7 +85,7 @@
 
 // SoundpipeWidget::SoundpipeWidget(Soundpipe *module) {
 //         setModule(module);
-//     setPanel(SVG::load(assetPlugin(pluginInstance, "res/Soundpipe.svg")));
+//     setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Soundpipe.svg")));
 
 //     addChild(createWidget<ScrewSilver>(Vec(15, 0)));
 //     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
@@ -93,8 +93,8 @@
 //     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
 //     addParam(createParam<SnapKnob>(mm2px(Vec(16.57, 17.165)), module, Soundpipe::MUTE_PARAM + 0));
-//     addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Soundpipe::IN_INPUT + 0));
-//     addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 17.81)), PortWidget::OUTPUT, module, Soundpipe::OUT_OUTPUT + 0));
+//     addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 17.81)), module, Soundpipe::IN_INPUT + 0));
+//     addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 17.81)), module, Soundpipe::OUT_OUTPUT + 0));
 
 // }
 

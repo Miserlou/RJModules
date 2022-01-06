@@ -1,4 +1,3 @@
-#include "dsp/digital.hpp"
 #include <iostream>
 #include "RJModules.hpp"
 
@@ -9,7 +8,7 @@ struct LowFrequencyOscillator {
     bool offset = false;
     bool invert = false;
 
-    SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger;
     LowFrequencyOscillator() {}
 
     void setPitch(float pitch) {
@@ -98,19 +97,19 @@ void Supersaw::step() {
     oscillator.setPitch(root_pitch);
     oscillator.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator.invert = (params[INVERT_PARAM].value <= 0.0);
-    oscillator.step(1.0 / engineGetSampleRate());
+    oscillator.step(1.0 / APP->engine->getSampleRate());
     oscillator.setReset(inputs[RESET_INPUT].value);
 
     oscillator2.setPitch(root_pitch + (params[DETUNE_PARAM].value * DETUNE_STEP * clamp(inputs[DETUNE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)));
     oscillator2.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator2.invert = (params[INVERT_PARAM].value <= 0.0);
-    oscillator2.step(1.0 / engineGetSampleRate());
+    oscillator2.step(1.0 / APP->engine->getSampleRate());
     oscillator2.setReset(inputs[RESET_INPUT].value);
 
     oscillator3.setPitch(root_pitch - (params[DETUNE_PARAM].value * DETUNE_STEP * clamp(inputs[DETUNE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)));
     oscillator3.offset = (params[OFFSET_PARAM].value > 0.0);
     oscillator3.invert = (params[INVERT_PARAM].value <= 0.0);
-    oscillator3.step(1.0 / engineGetSampleRate());
+    oscillator3.step(1.0 / APP->engine->getSampleRate());
     oscillator3.setReset(inputs[RESET_INPUT].value);
 
     float osc3_saw = oscillator3.saw();
@@ -138,7 +137,7 @@ SupersawWidget::SupersawWidget(Supersaw *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Supersaw.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Supersaw.svg")));
         addChild(panel);
     }
 
@@ -155,12 +154,12 @@ SupersawWidget::SupersawWidget(Supersaw *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Supersaw::DETUNE_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Supersaw::MIX_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Supersaw::FREQ_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Supersaw::DETUNE_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Supersaw::MIX_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(38, 310), PortWidget::INPUT, module, Supersaw::RESET_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Supersaw::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Supersaw::DETUNE_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Supersaw::MIX_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(38, 310), module, Supersaw::RESET_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Supersaw::SAW_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, Supersaw::SAW_OUTPUT));
 
     addChild(createLight<SmallLight<GreenRedLight>>(Vec(99, 60), module, Supersaw::PHASE_POS_LIGHT));
 }

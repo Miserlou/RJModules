@@ -53,7 +53,7 @@ struct Sequential : Module {
     int index = 0;
     float phase = 0.f;
     int currentPosition;
-    SchmittTrigger clockTrigger;
+    dsp::SchmittTrigger clockTrigger;
 
     bool init = false;
     float seq_notes[8] = {-99,-99,-99,-99,-99,-99,-99,-99};
@@ -249,7 +249,7 @@ struct SequentialWidget: ModuleWidget {
 
 SequentialWidget::SequentialWidget(Sequential *module) {
     setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Sequential.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Sequential.svg")));
 
     // MAGNETS
     // addChild(createWidget<ScrewSilver>(Vec(15, 0)));
@@ -257,23 +257,23 @@ SequentialWidget::SequentialWidget(Sequential *module) {
     // addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     // addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 365)));
 
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.810)), PortWidget::INPUT, module, Sequential::IN_INPUT + 0));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Sequential::IN_INPUT + 1));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 37.809)), PortWidget::INPUT, module, Sequential::IN_INPUT + 2));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 47.810)), PortWidget::INPUT, module, Sequential::IN_INPUT + 3));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 57.810)), PortWidget::INPUT, module, Sequential::IN_INPUT + 4));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 67.809)), PortWidget::INPUT, module, Sequential::IN_INPUT + 5));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 77.810)), PortWidget::INPUT, module, Sequential::IN_INPUT + 6));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 87.810)), PortWidget::INPUT, module, Sequential::IN_INPUT + 7));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 17.810)), module, Sequential::IN_INPUT + 0));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 27.809)), module, Sequential::IN_INPUT + 1));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 37.809)), module, Sequential::IN_INPUT + 2));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 47.810)), module, Sequential::IN_INPUT + 3));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 57.810)), module, Sequential::IN_INPUT + 4));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 67.809)), module, Sequential::IN_INPUT + 5));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 77.810)), module, Sequential::IN_INPUT + 6));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 87.810)), module, Sequential::IN_INPUT + 7));
 
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 17.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 0));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 27.809)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 1));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 37.809)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 2));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 47.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 3));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 57.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 4));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 67.809)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 5));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 77.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 6));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(16.57, 87.810)), PortWidget::OUTPUT, module, Sequential::OUT_GATE + 7));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 17.810)), module, Sequential::OUT_GATE + 0));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 27.809)), module, Sequential::OUT_GATE + 1));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 37.809)), module, Sequential::OUT_GATE + 2));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 47.810)), module, Sequential::OUT_GATE + 3));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 57.810)), module, Sequential::OUT_GATE + 4));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 67.809)), module, Sequential::OUT_GATE + 5));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 77.810)), module, Sequential::OUT_GATE + 6));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.57, 87.810)), module, Sequential::OUT_GATE + 7));
 
     addParam(createParam<LEDBezel>(mm2px(Vec(28.214, 17.810)), module, Sequential::LOCK_PARAM + 0));
     addParam(createParam<LEDBezel>(mm2px(Vec(28.214, 27.809)), module, Sequential::LOCK_PARAM + 1));
@@ -316,9 +316,9 @@ SequentialWidget::SequentialWidget(Sequential *module) {
     addParam(createParam<SequentialSnapKnobLg>(mm2px(Vec(23.0, 101.0)), module, Sequential::STEP_SIZE_PARAM));
 
     // Ins/Outs
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 117.809)), PortWidget::INPUT, module, Sequential::STEP_INPUT));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 117.809)), module, Sequential::STEP_INPUT));
     addParam(createParam<SequentialSnapKnob>(mm2px(Vec(16.57, 117.809)), module, Sequential::STEPS_PARAM));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 117.809)), PortWidget::OUTPUT, module, Sequential::OUT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 117.809)), module, Sequential::OUT_OUTPUT));
 
 
 }

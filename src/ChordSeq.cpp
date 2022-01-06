@@ -7,13 +7,7 @@
 
 // Displays
 struct SmallStringDisplayWidget : TransparentWidget {
-
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  SmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -25,10 +19,12 @@ struct SmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+	std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+  if (font) {
     nvgFontSize(vg, 13);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2);
-
+}
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
 
@@ -86,10 +82,10 @@ struct ChordSeq : Module {
 	};
 
 	bool running = true;
-	SchmittTrigger clockTrigger;
-	SchmittTrigger runningTrigger;
-	SchmittTrigger resetTrigger;
-	SchmittTrigger gateTriggers[8];
+	dsp::SchmittTrigger clockTrigger;
+	dsp::SchmittTrigger runningTrigger;
+	dsp::SchmittTrigger resetTrigger;
+	dsp::SchmittTrigger gateTriggers[8];
 	/** Phase of internal LFO */
 	float phase = 0.f;
 	int index = 0;
@@ -155,7 +151,7 @@ struct ChordSeq : Module {
 
 	void onRandomize() override {
 		for (int i = 0; i < 8; i++) {
-			gates[i] = (randomUniform() > 0.5f);
+			gates[i] = (random::uniform() > 0.5f);
 		}
 	}
 
@@ -218,7 +214,7 @@ struct ChordSeq : Module {
 			else {
 				// Internal clock
 				float clockTime = powf(2.0f, params[CLOCK_PARAM].value + inputs[CLOCK_INPUT].value);
-				phase += clockTime * engineGetSampleTime();
+				phase += clockTime * APP->engine->getSampleTime();
 				if (phase >= 1.0f) {
 					setIndex(index + 1);
 				}
@@ -391,7 +387,7 @@ struct ChordSeq : Module {
 struct ChordSeqWidget : ModuleWidget {
 	ChordSeqWidget(ChordSeq *module) {
 		setModule(module);
-		setPanel(SVG::load(assetPlugin(pluginInstance, "res/ChordSeq.svg")));
+		setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ChordSeq.svg")));
 
 		addChild(createWidget<ScrewSilver>(Vec(15, 0)));
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 0)));
@@ -410,14 +406,14 @@ struct ChordSeqWidget : ModuleWidget {
 		addChild(createLight<MediumLight<GreenLight>>(Vec(295.4f, 64.4f), module, ChordSeq::ROW_LIGHTS + 2));
 
 		static const float portX[8] = {20, 58, 96, 135, 173, 212, 250, 289};
-		addInput(createPort<PJ301MPort>(Vec(portX[0]-1, 98), PortWidget::INPUT, module, ChordSeq::CLOCK_INPUT));
-		addInput(createPort<PJ301MPort>(Vec(portX[1]-1, 98), PortWidget::INPUT, module, ChordSeq::EXT_CLOCK_INPUT));
-		addInput(createPort<PJ301MPort>(Vec(portX[2]-1, 98), PortWidget::INPUT, module, ChordSeq::RESET_INPUT));
-		addInput(createPort<PJ301MPort>(Vec(portX[3]-1, 98), PortWidget::INPUT, module, ChordSeq::STEPS_INPUT));
-		addOutput(createPort<PJ301MPort>(Vec(portX[4]-1, 98), PortWidget::OUTPUT, module, ChordSeq::GATES_OUTPUT));
-		addOutput(createPort<PJ301MPort>(Vec(portX[5]-1, 98), PortWidget::OUTPUT, module, ChordSeq::ROW1_OUTPUT));
-		addOutput(createPort<PJ301MPort>(Vec(portX[6]-1, 98), PortWidget::OUTPUT, module, ChordSeq::ROW2_OUTPUT));
-		addOutput(createPort<PJ301MPort>(Vec(portX[7]-1, 98), PortWidget::OUTPUT, module, ChordSeq::ROW3_OUTPUT));
+		addInput(createInput<PJ301MPort>(Vec(portX[0]-1, 98), module, ChordSeq::CLOCK_INPUT));
+		addInput(createInput<PJ301MPort>(Vec(portX[1]-1, 98), module, ChordSeq::EXT_CLOCK_INPUT));
+		addInput(createInput<PJ301MPort>(Vec(portX[2]-1, 98), module, ChordSeq::RESET_INPUT));
+		addInput(createInput<PJ301MPort>(Vec(portX[3]-1, 98), module, ChordSeq::STEPS_INPUT));
+		addOutput(createOutput<PJ301MPort>(Vec(portX[4]-1, 98), module, ChordSeq::GATES_OUTPUT));
+		addOutput(createOutput<PJ301MPort>(Vec(portX[5]-1, 98), module, ChordSeq::ROW1_OUTPUT));
+		addOutput(createOutput<PJ301MPort>(Vec(portX[6]-1, 98), module, ChordSeq::ROW2_OUTPUT));
+		addOutput(createOutput<PJ301MPort>(Vec(portX[7]-1, 98), module, ChordSeq::ROW3_OUTPUT));
 
 		if(module != NULL){
 			SmallStringDisplayWidget *display = new SmallStringDisplayWidget();
@@ -432,7 +428,7 @@ struct ChordSeqWidget : ModuleWidget {
 				addParam(createParam<RoundBlackSnapKnob>(Vec(portX[i]-2, 240), module, ChordSeq::ROW3_PARAM + i));
 				addParam(createParam<LEDButton>(Vec(portX[i]+2, 278-1), module, ChordSeq::GATE_PARAM + i));
 				addChild(createLight<MediumLight<GreenLight>>(Vec(portX[i]+6.4f, 281.4f), module, ChordSeq::GATE_LIGHTS + i));
-				addOutput(createPort<PJ301MPort>(Vec(portX[i]-1, 307), PortWidget::OUTPUT, module, ChordSeq::GATE_OUTPUT + i));
+				addOutput(createOutput<PJ301MPort>(Vec(portX[i]-1, 307), module, ChordSeq::GATE_OUTPUT + i));
 			}
 		}
 	}

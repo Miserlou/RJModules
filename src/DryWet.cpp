@@ -9,7 +9,7 @@
 /* UI */
 struct DryWetBigSwitchLEDButton : SVGSwitch {
         DryWetBigSwitchLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/SwitchLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SwitchLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -57,11 +57,11 @@ struct DryWet : Module {
     };
 
     // Knob One
-    SchmittTrigger resetTrigger;
-    SchmittTrigger resetTrigger2;
-    SchmittTrigger recTriggerCV;
-    SchmittTrigger replayTrigger;
-    SchmittTrigger replayTriggerCV;
+    dsp::SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger2;
+    dsp::SchmittTrigger recTriggerCV;
+    dsp::SchmittTrigger replayTrigger;
+    dsp::SchmittTrigger replayTriggerCV;
     bool on = false;
 
     std::vector<float> replayVector;
@@ -75,7 +75,7 @@ struct DryWet : Module {
     float last_press2 = 999999;
 
     // Knob Two
-    SchmittTrigger switchOne;
+    dsp::SchmittTrigger switchOne;
 
     std::vector<float> replayVector_2;
     float param_2;
@@ -99,7 +99,7 @@ struct DryWet : Module {
 
 struct LilLEDButton : SVGSwitch {
         LilLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/LilLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LilLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -147,7 +147,7 @@ DryWetWidget::DryWetWidget(DryWet *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/DryWet.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/DryWet.svg")));
         addChild(panel);
     }
 
@@ -160,10 +160,10 @@ DryWetWidget::DryWetWidget(DryWet *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, DryWet::BIG_PARAM));
     // addParam(createParam<DryWetBigSwitchLEDButton>(Vec(47, 61), module, DryWet::BIG_PARAM));
     // addChild(createLight<DryWetBigOlLight<GreenLight>>(Vec(53, 67), module, DryWet::RESET_LIGHT));
-    addInput(createPort<PJ301MPort>(Vec(17, 50), PortWidget::INPUT, module, DryWet::BIG_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(18, 142), PortWidget::INPUT, module, DryWet::IN_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(64, 142), PortWidget::INPUT, module, DryWet::IN2_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 142), PortWidget::OUTPUT, module, DryWet::OUT_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(17, 50), module, DryWet::BIG_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(18, 142), module, DryWet::IN_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(64, 142), module, DryWet::IN2_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 142), module, DryWet::OUT_OUTPUT));
     addChild(createLight<MediumLight<GreenLight>>(Vec(26, 178), module, DryWet::IN_LIGHT));
     addChild(createLight<MediumLight<GreenLight>>(Vec(72, 178), module, DryWet::IN2_LIGHT));
 
@@ -171,10 +171,10 @@ DryWetWidget::DryWetWidget(DryWet *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61 + offset), module, DryWet::BIG_PARAM_2));
     // addParam(createParam<DryWetBigSwitchLEDButton>(Vec(47, 61 + offset), module, DryWet::BIG_PARAM_2));
     // addChild(createLight<DryWetBigOlLight<GreenLight>>(Vec(53, 67 + offset), module, DryWet::RESET_LIGHT_2));
-    addInput(createPort<PJ301MPort>(Vec(17, 50 + offset), PortWidget::INPUT, module, DryWet::BIG_CV_INPUT_2));
-    addInput(createPort<PJ301MPort>(Vec(18, 142 + offset), PortWidget::INPUT, module, DryWet::IN_INPUT_2));
-    addInput(createPort<PJ301MPort>(Vec(64, 142 + offset), PortWidget::INPUT, module, DryWet::IN2_INPUT_2));
-    addOutput(createPort<PJ301MPort>(Vec(110, 142 + offset), PortWidget::OUTPUT, module, DryWet::OUT_OUTPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(17, 50 + offset), module, DryWet::BIG_CV_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(18, 142 + offset), module, DryWet::IN_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(64, 142 + offset), module, DryWet::IN2_INPUT_2));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 142 + offset), module, DryWet::OUT_OUTPUT_2));
     addChild(createLight<MediumLight<GreenLight>>(Vec(26, 178 + offset), module, DryWet::IN_LIGHT_2));
     addChild(createLight<MediumLight<GreenLight>>(Vec(72, 178 + offset), module, DryWet::IN2_LIGHT_2));
 

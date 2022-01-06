@@ -31,9 +31,9 @@ struct Widener : Module {
         NUM_LIGHTS
     };
 
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-    DoubleRingBuffer<float, 16> outBuffer;
-    SampleRateConverter<1> src;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
+    dsp::DoubleRingBuffer<float, 16> outBuffer;
+    dsp::SampleRateConverter<1> src;
 
     float low = 99;
     float high = 0;
@@ -67,7 +67,7 @@ void Widener::step(){
   // Compute delay time in seconds
   float delay = .001 * powf(10.0 / .001, clamp(params[TIME_PARAM].value + inputs[TIME_CV_INPUT].value / 10.0f, 0.0f, 1.0f));
   // Number of delay samples
-  float index = delay * engineGetSampleRate();
+  float index = delay * APP->engine->getSampleRate();
 
   if (!historyBuffer.full()) {
       historyBuffer.push(in);
@@ -82,13 +82,13 @@ void Widener::step(){
       else if (consume >= 16)
           ratio = 2.0;
 
-      float inSR = engineGetSampleRate();
+      float inSR = APP->engine->getSampleRate();
       float outSR = ratio * inSR;
 
-      int inFrames = min(historyBuffer.size(), 16);
+      int inFrames = fmin(historyBuffer.size(), 16);
       int outFrames = outBuffer.capacity();
       src.setRates(inSR, outSR);
-      src.process((const Frame<1>*)historyBuffer.startData(), &inFrames, (Frame<1>*)outBuffer.endData(), &outFrames);
+      src.process((const dsp::Frame<1>*)historyBuffer.startData(), &inFrames, (dsp::Frame<1>*)outBuffer.endData(), &outFrames);
       historyBuffer.startIncr(inFrames);
       outBuffer.endIncr(outFrames);
   }
@@ -105,8 +105,8 @@ void Widener::step(){
   lpFilter->setResonance(.7);
   hpFilter->setResonance(.7);
 
-  lpFilter->setSampleRate(engineGetSampleRate());
-  hpFilter->setSampleRate(engineGetSampleRate());
+  lpFilter->setSampleRate(APP->engine->getSampleRate());
+  hpFilter->setSampleRate(APP->engine->getSampleRate());
 
   float param = params[FILTER_PARAM].value * clamp(inputs[FILTER_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);
 
@@ -146,7 +146,7 @@ WidenerWidget::WidenerWidget(Widener *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Widener.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Widener.svg")));
         addChild(panel);
     }
 
@@ -159,12 +159,12 @@ WidenerWidget::WidenerWidget(Widener *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Widener::MIX_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Widener::FILTER_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Widener::TIME_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Widener::MIX_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Widener::FILTER_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Widener::TIME_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Widener::MIX_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Widener::FILTER_CV_INPUT));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 315), PortWidget::INPUT, module, Widener::CH1_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(62, 315), PortWidget::OUTPUT, module, Widener::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(100, 315), PortWidget::OUTPUT, module, Widener::CH2_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 315), module, Widener::CH1_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(62, 315), module, Widener::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(100, 315), module, Widener::CH2_OUTPUT));
 }
 Model *modelWidener = createModel<Widener, WidenerWidget>("Widener");

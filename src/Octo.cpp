@@ -13,7 +13,7 @@ struct OctoRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     OctoRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
     }
 };
 
@@ -21,7 +21,7 @@ struct OctoRoundSmallBlackKnob : RoundSmallBlackKnob
 {
     OctoRoundSmallBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
     }
 };
 
@@ -240,25 +240,25 @@ struct OctoWidget: ModuleWidget {
         {
             SVGPanel *panel = new SVGPanel();
             panel->box.size = box.size;
-            panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Octo.svg")));
+            panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Octo.svg")));
             addChild(panel);
         }
 
         addParam(createParam<OctoRoundLargeBlackKnob>(Vec(12, 55), module, Octo::SPEED_PARAM));
         addParam(createParam<OctoRoundSmallBlackKnob>(Vec(5, 100), module, Octo::SPEED_ATTEN_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(32, 99), PortWidget::INPUT, module, Octo::SPEED_CV));
+        addInput(createInput<PJ301MPort>(Vec(32, 99), module, Octo::SPEED_CV));
 
         int SPACE = 30;
         int BASE = 136;
         int LEFT = 18;
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE), PortWidget::OUTPUT, module, Octo::CH_OUTPUT));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 1), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 1));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 2), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 2));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 3), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 3));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 4), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 4));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 5), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 5));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 6), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 6));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 7), PortWidget::OUTPUT, module, Octo::CH_OUTPUT + 7));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE), module, Octo::CH_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 1), module, Octo::CH_OUTPUT + 1));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 2), module, Octo::CH_OUTPUT + 2));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 3), module, Octo::CH_OUTPUT + 3));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 4), module, Octo::CH_OUTPUT + 4));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 5), module, Octo::CH_OUTPUT + 5));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 6), module, Octo::CH_OUTPUT + 6));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 7), module, Octo::CH_OUTPUT + 7));
 
         BASE = BASE + 8;
         int RIGHT = 46;
@@ -273,14 +273,14 @@ struct OctoWidget: ModuleWidget {
         addChild(createLight<MediumLight<WhiteLight>>(Vec(LEFT,  BASE + SPACE * 7), module, Octo::CH_LIGHT + 7));
     }
 
-    json_t *toJson() override {
+    json_t *toJson() {
         json_t *rootJ = ModuleWidget::toJson();
         Octo *module = dynamic_cast<Octo *>(this->module);
         json_object_set_new(rootJ, "wave", json_real(module->wave_mode_index));
         return rootJ;
     }
 
-    void fromJson(json_t *rootJ) override {
+    void fromJson(json_t *rootJ) {
         ModuleWidget::fromJson(rootJ);
         json_t *waveJ = json_object_get(rootJ, "wave");
         Octo *module = dynamic_cast<Octo *>(this->module);

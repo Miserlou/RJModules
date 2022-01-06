@@ -21,13 +21,13 @@ struct AHModule : Module {
 	float rho;
 
 	AHModule(int numParams, int numInputs, int numOutputs, int numLights = 0) : Module(numParams, numInputs, numOutputs, numLights) {
-		delta = engineGetSampleTime();
-		rho = engineGetSampleRate();
+		delta = APP->engine->getSampleTime();
+		rho = APP->engine->getSampleRate();
 	}
 
 	void onSampleRateChange() override {
-		delta = engineGetSampleTime();
-		rho = engineGetSampleRate();
+		delta = APP->engine->getSampleTime();
+		rho = APP->engine->getSampleRate();
 	}
 
 	int stepX = 0;
@@ -67,20 +67,17 @@ struct StateDisplay : TransparentWidget {
 
 	AHModule *module;
 	int frame = 0;
-	std::shared_ptr<Font> font;
-
-	StateDisplay() {
-		font = Font::load(assetPlugin(pluginInstance, "res/EurostileBold.ttf"));
-	}
 
 	void draw(NVGcontext *vg) override {
 
 		Vec pos = Vec(0, 15);
 
+		std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/EurostileBold.ttf"));
+		if (font) {
 		nvgFontSize(vg, 16);
 		nvgFontFaceId(vg, font->handle);
 		nvgTextLetterSpacing(vg, -1);
-
+		}
 		nvgFillColor(vg, nvgRGBA(255, 0, 0, 0xff));
 
 		char text[128];
@@ -112,7 +109,7 @@ struct AHParamWidget { // it's a mix-in
 // Not going to monitor buttons
 struct AHButton : SVGSwitch {
 	AHButton() {
-		addFrame(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHButton.svg")));
+		addFrame(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHButton.svg")));
 	}
 };
 
@@ -130,42 +127,42 @@ struct AHKnob : RoundKnob, AHParamWidget {
 struct AHKnobSnap : AHKnob {
 	AHKnobSnap() {
 		snap = true;
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHKnob.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHKnob.svg")));
 	}
 };
 
 struct AHKnobNoSnap : AHKnob {
 	AHKnobNoSnap() {
 		snap = false;
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHKnob.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHKnob.svg")));
 	}
 };
 
 struct AHBigKnobNoSnap : AHKnob {
 	AHBigKnobNoSnap() {
 		snap = false;
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHBigKnob.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHBigKnob.svg")));
 	}
 };
 
 struct AHBigKnobSnap : AHKnob {
 	AHBigKnobSnap() {
 		snap = true;
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHBigKnob.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHBigKnob.svg")));
 	}
 };
 
 struct AHTrimpotSnap : AHKnob {
 	AHTrimpotSnap() {
 		snap = true;
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHTrimpot.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHTrimpot.svg")));
 	}
 };
 
 struct AHTrimpotNoSnap : AHKnob {
 	AHTrimpotNoSnap() {
 		snap = false;
-		setSVG(SVG::load(assetPlugin(pluginInstance,"res/ComponentLibrary/AHTrimpot.svg")));
+		setSVG(APP->window->loadSvg(asset::plugin(pluginInstance,"res/ComponentLibrary/AHTrimpot.svg")));
 	}
 };
 
@@ -239,7 +236,7 @@ struct ColorValueLight : ModuleLightWidget {
 		baseColor = bColor;
 		if (baseColors.size() < 1)
 		{
-			baseColors.push_back(bColor);			
+			baseColors.push_back(bColor);
 		}
 		else
 		{
@@ -272,40 +269,40 @@ struct RJ_PadSwitch : Switch {
 	int btnId = -1;
 	// Group id (to match guys that should respond to mouse down drag).
 	int groupId = -1;
-	
+
 	RJ_PadSwitch() : Switch() {
 		momentary = true;
 		return;
 	}
 	RJ_PadSwitch(Vec size) {
-		box.size = size;	
+		box.size = size;
 		return;
 	}
 	void setValue(float val) {
-		if (paramQuantity)
+		if (getParamQuantity())
 		{
-			paramQuantity->setValue(val);
-		}		
+			getParamQuantity()->setValue(val);
+		}
 		return;
 	}
-	// Allow mouse-down & drag to set buttons (i.e. on Sequencer grid where there are many buttons). 
+	// Allow mouse-down & drag to set buttons (i.e. on Sequencer grid where there are many buttons).
 	// Suggestion from @LKHSogpit, Solution from @AndrewBelt.
 	// https://github.com/j4s0n-c/trowaSoft-VCV/issues/7
 	// https://github.com/VCVRack/Rack/issues/607
 	/** Called when a widget responds to `onMouseDown` for a left button press */
 	void onDragStart(const event::DragStart &e) override {
 		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-			return;		
-		if (paramQuantity)
+			return;
+		if (getParamQuantity())
 		{
 			if (momentary)
 			{
-				paramQuantity->setValue(paramQuantity->maxValue); // Trigger Value				
+				getParamQuantity()->setValue(getParamQuantity()->maxValue); // Trigger Value
 			}
 			else
 			{
-				float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-				paramQuantity->setValue(newVal); // Toggle Value				
+				float newVal = (getParamQuantity()->getValue() < getParamQuantity()->maxValue) ? getParamQuantity()->maxValue : getParamQuantity()->minValue;
+				getParamQuantity()->setValue(newVal); // Toggle Value
 			}
 		}
 		return;
@@ -314,40 +311,40 @@ struct RJ_PadSwitch : Switch {
 	// https://github.com/j4s0n-c/trowaSoft-VCV/issues/12
 	// Last button keeps pressed down.
 	// void onDragEnd(const event::DragEnd &e) override {
-		// if (paramQuantity) {
+		// if (getParamQuantity()) {
 		// }
 		// return;
 	// }
 	/** Called when a widget responds to `onMouseUp` for a left button release and a widget is being dragged */
-	void onDragEnter(const event::DragEnter &e) override 
-	{	
-		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-			return;	
-		// Set these no matter what because if you drag back onto your starting square, you want to toggle it again.
-		RJ_PadSwitch *origin = dynamic_cast<RJ_PadSwitch*>(e.origin);
-		if (origin && origin != this && origin->groupId == this->groupId && paramQuantity) 
-		{
-			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-			//DEBUG("onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);				
-			paramQuantity->setValue(newVal); // Toggle Value
-		}	
-	}
-	void onDragLeave(const event::DragLeave &e) override 
+	void onDragEnter(const event::DragEnter &e) override
 	{
 		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-			return;				
+			return;
+		// Set these no matter what because if you drag back onto your starting square, you want to toggle it again.
 		RJ_PadSwitch *origin = dynamic_cast<RJ_PadSwitch*>(e.origin);
-		if (origin && origin->groupId == this->groupId && paramQuantity) 
+		if (origin && origin != this && origin->groupId == this->groupId && getParamQuantity())
+		{
+			float newVal = (getParamQuantity()->getValue() < getParamQuantity()->maxValue) ? getParamQuantity()->maxValue : getParamQuantity()->minValue;
+			//DEBUG("onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);
+			getParamQuantity()->setValue(newVal); // Toggle Value
+		}
+	}
+	void onDragLeave(const event::DragLeave &e) override
+	{
+		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
+			return;
+		RJ_PadSwitch *origin = dynamic_cast<RJ_PadSwitch*>(e.origin);
+		if (origin && origin->groupId == this->groupId && getParamQuantity())
 		{
 			if (momentary)
 			{
-				//DEBUG("onDragLeave(%d) (momentary) - Set Value to %3.1f.", btnId, paramQuantity->minValue);
-				paramQuantity->setValue(paramQuantity->minValue); // Turn Off				
+				//DEBUG("onDragLeave(%d) (momentary) - Set Value to %3.1f.", btnId, getParamQuantity()->minValue);
+				getParamQuantity()->setValue(getParamQuantity()->minValue); // Turn Off
 			}
-		}		
+		}
 		return;
 	}
-	void onButton(const event::Button &e) override 
+	void onButton(const event::Button &e) override
 	{
 		ParamWidget::onButton(e);
 		return;
@@ -369,91 +366,91 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 		return;
 	}
 	RJ_PadSvgSwitch(Vec size) : RJ_PadSvgSwitch() {
-		box.size = size;	
+		box.size = size;
 		return;
 	}
 	void setValue(float val) {
-		if (paramQuantity)
+		if (getParamQuantity())
 		{
-			paramQuantity->setValue(val);
-		}		
-		return;
-	}
-	
-	void toggleVal()
-	{
-		if (paramQuantity)
-		{
-			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-			paramQuantity->setValue(newVal); // Toggle Value
+			getParamQuantity()->setValue(val);
 		}
 		return;
 	}
-	
-	// Allow mouse-down & drag to set buttons (i.e. on Sequencer grid where there are many buttons). 
+
+	void toggleVal()
+	{
+		if (getParamQuantity())
+		{
+			float newVal = (getParamQuantity()->getValue() < getParamQuantity()->maxValue) ? getParamQuantity()->maxValue : getParamQuantity()->minValue;
+			getParamQuantity()->setValue(newVal); // Toggle Value
+		}
+		return;
+	}
+
+	// Allow mouse-down & drag to set buttons (i.e. on Sequencer grid where there are many buttons).
 	// Suggestion from @LKHSogpit, Solution from @AndrewBelt.
 	// https://github.com/j4s0n-c/trowaSoft-VCV/issues/7
 	// https://github.com/VCVRack/Rack/issues/607
 	/** Called when a widget responds to `onMouseDown` for a left button press */
 	void onDragStart(const event::DragStart &e) override {
 		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-			return;		
-		
-		if (paramQuantity)
+			return;
+
+		if (getParamQuantity())
 		{
 			// if (momentary)
 			// {
-			// 	DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Momentary - Set Value to %3.1f.", btnId, paramQuantity->maxValue);
-			// 	paramQuantity->setValue(paramQuantity->maxValue); // Trigger Value				
+			// 	DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Momentary - Set Value to %3.1f.", btnId, getParamQuantity()->maxValue);
+			// 	getParamQuantity()->setValue(getParamQuantity()->maxValue); // Trigger Value
 			// }
 			// else
 			// {
-			// 	float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-			// 	DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
-			// 	paramQuantity->setValue(newVal); // Toggle Value
+			// 	float newVal = (getParamQuantity()->getValue() < getParamQuantity()->maxValue) ? getParamQuantity()->maxValue : getParamQuantity()->minValue;
+			// 	DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);
+			// 	getParamQuantity()->setValue(newVal); // Toggle Value
 			// }
 
-			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-			DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);						
-			paramQuantity->setValue(1.0); // Toggle Value
+			float newVal = (getParamQuantity()->getValue() < getParamQuantity()->maxValue) ? getParamQuantity()->maxValue : getParamQuantity()->minValue;
+			DEBUG("RJ_PadSvgSwitch onDragStart(%d) - Set Value to %3.1f.", btnId, newVal);
+			getParamQuantity()->setValue(1.0); // Toggle Value
 
-		}	
+		}
 		return;
 	}
 	/** Called when the left button is released and this widget is being dragged */
 	// https://github.com/j4s0n-c/trowaSoft-VCV/issues/12
 	// Last button keeps pressed down.
-	// void onDragEnd(const event::DragEnd &e) override 
-	// {		
+	// void onDragEnd(const event::DragEnd &e) override
+	// {
 		// return;
 	// }
-	
+
 	/** Called when a widget responds to `onMouseUp` for a left button release and a widget is being dragged */
-	void onDragEnter(const event::DragEnter &e) override 
-	{	
+	void onDragEnter(const event::DragEnter &e) override
+	{
 		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-			return;			
+			return;
 		// Set these no matter what because if you drag back onto your starting square, you want to toggle it again.
-		RJ_PadSvgSwitch *origin = dynamic_cast<RJ_PadSvgSwitch*>(e.origin);			
+		RJ_PadSvgSwitch *origin = dynamic_cast<RJ_PadSvgSwitch*>(e.origin);
 		// XXX THIS
-		// if (origin && origin != this && origin->groupId == this->groupId && paramQuantity) 
+		// if (origin && origin != this && origin->groupId == this->groupId && getParamQuantity())
 		// {
-		if (origin && origin->groupId == this->groupId && paramQuantity) 
+		if (origin && origin->groupId == this->groupId && getParamQuantity())
 		{
-			float newVal = (paramQuantity->getValue() < paramQuantity->maxValue) ? paramQuantity->maxValue : paramQuantity->minValue;
-			DEBUG("RJ_PadSvgSwitch onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);				
-			paramQuantity->setValue(1.0); // Toggle Value
-		}		
+			float newVal = (getParamQuantity()->getValue() < getParamQuantity()->maxValue) ? getParamQuantity()->maxValue : getParamQuantity()->minValue;
+			DEBUG("RJ_PadSvgSwitch onDragEnter(%d) - Set Value to %3.1f.", btnId, newVal);
+			getParamQuantity()->setValue(1.0); // Toggle Value
+		}
 		return;
 	}
 	void onDragLeave(const event::DragLeave &e) override {
 		if (e.button != GLFW_MOUSE_BUTTON_LEFT)
-			return;		
+			return;
 		SvgSwitch::onDragLeave(e);
-		paramQuantity->setValue(0);
+		getParamQuantity()->setValue(0);
 		return;
 	}
-	void onButton(const event::Button &e) override 
+	void onButton(const event::Button &e) override
 	{
 		this->ParamWidget::onButton(e); // Need to call this base method to be set as the touchedParam for MIDI mapping to work.
 	}
@@ -464,7 +461,7 @@ struct RJ_PadSvgSwitch : SvgSwitch {
 // RJ_PadSquare - A Square Pad button.
 //--------------------------------------------------------------
 struct RJ_PadSquare : RJ_PadSvgSwitch {
-	RJ_PadSquare() 
+	RJ_PadSquare()
 	{
 		this->SvgSwitch::addFrame(APP->window->loadSvg(asset::plugin(pluginInstance,"res/TS_pad_0.svg")));
 		sw->wrap();
@@ -478,7 +475,7 @@ struct RJ_PadSquare : RJ_PadSvgSwitch {
 	}
 };
 
-struct RJ_LightSquare : ColorValueLight 
+struct RJ_LightSquare : ColorValueLight
 {
 	// Radius on corners
 	float cornerRadius = 5.0;
@@ -522,8 +519,8 @@ struct RJ_LightSquare : ColorValueLight
 		ocol.a = 0.0;
 		float feather = 1;
 		// Feather defines how blurry the border of the rectangle is. // Fixed 01/19/2018, made it too tiny before
-		paint = nvgBoxGradient(args.vg, /*x*/ radius - oradius, /*y*/ radius - oradius, /*w*/ 2 * oradius, /*h*/ 2 * oradius,  //args.vg, /*x*/ -5, /*y*/ -5, /*w*/ 2*oradius + 10, /*h*/ 2*oradius + 10, 
-			/*r: corner radius*/ cornerRadius, /*f: feather*/ feather, 
+		paint = nvgBoxGradient(args.vg, /*x*/ radius - oradius, /*y*/ radius - oradius, /*w*/ 2 * oradius, /*h*/ 2 * oradius,  //args.vg, /*x*/ -5, /*y*/ -5, /*w*/ 2*oradius + 10, /*h*/ 2*oradius + 10,
+			/*r: corner radius*/ cornerRadius, /*f: feather*/ feather,
 			/*inner color*/ icol, /*outer color */ ocol);
 		nvgFillPaint(args.vg, paint);
 		nvgFill(args.vg);
@@ -536,7 +533,7 @@ ColorValueLight * RJ_createColorValueLight(Vec pos,  Module *module, int lightId
 	ColorValueLight *light = new TModuleLightWidget();
 	light->box.pos = pos;
 	light->module = module;
-	light->firstLightId = lightId;	
+	light->firstLightId = lightId;
 	//light->value = value;
 	light->box.size = size;
 	light->setColor(lightColor);
@@ -548,9 +545,9 @@ ColorValueLight * RJ_createColorValueLight(Vec pos, Module *module, int lightId,
 	ColorValueLight *light = new TModuleLightWidget();
 	light->box.pos = pos;
 	light->module = module;
-	light->firstLightId = lightId;	
+	light->firstLightId = lightId;
 	light->box.size = size;
-	light->setColor(lightColor);	
+	light->setColor(lightColor);
 	light->bgColor = backColor;
 	return light;
 }

@@ -45,7 +45,7 @@ struct Pluck : Module {
     float lastCv = 0.f;
     bool decaying = false;
     float env = 0.0f;
-    SchmittTrigger trigger;
+    dsp::SchmittTrigger trigger;
 
     Pluck() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -76,7 +76,7 @@ struct Pluck : Module {
                     env = sustain;
                 }
                 else {
-                    env += powf(base, 1 - decay) / maxTime * (sustain - env) * engineGetSampleTime();
+                    env += powf(base, 1 - decay) / maxTime * (sustain - env) * APP->engine->getSampleTime();
                 }
             }
             else {
@@ -86,7 +86,7 @@ struct Pluck : Module {
                     env = 1.0f;
                 }
                 else {
-                    env += powf(base, 1 - attack) / maxTime * (1.01f - env) * engineGetSampleTime();
+                    env += powf(base, 1 - attack) / maxTime * (1.01f - env) * APP->engine->getSampleTime();
                 }
                 if (env >= 1.0f) {
                     env = 1.0f;
@@ -100,7 +100,7 @@ struct Pluck : Module {
                 env = 0.0f;
             }
             else {
-                env += powf(base, 1 - release) / maxTime * (0.0f - env) * engineGetSampleTime();
+                env += powf(base, 1 - release) / maxTime * (0.0f - env) * APP->engine->getSampleTime();
             }
             decaying = false;
         }
@@ -139,7 +139,7 @@ struct PluckVUKnob : SliderKnob {
         Rect r = box.zeroPos().grow(margin.neg());
 
         for (int i = 0; i < segs; i++) {
-            float value = paramQuantity ? paramQuantity->getValue() : 1.f;
+            float value = getParamQuantity() ? getParamQuantity()->getValue() : 1.f;
             float segValue = clamp(value * segs - (segs - i - 1), 0.f, 1.f);
             float segAmplitude = clamp(amplitude * segs - (segs - i - 1), 0.f, 1.f);
             nvgBeginPath(args.vg);
@@ -160,7 +160,7 @@ struct PluckVUKnob : SliderKnob {
 struct PluckWidget : ModuleWidget {
     PluckWidget(Pluck *module) {
 		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Pluck.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Pluck.svg")));
 
         addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
@@ -170,14 +170,14 @@ struct PluckWidget : ModuleWidget {
         addParam(createParam<PluckVUKnob>(mm2px(Vec(2.62103, 12.31692)), module, Pluck::LEVEL_PARAM));
 
         addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593)), module, Pluck::RELEASE_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), PortWidget::INPUT, module, Pluck::RELEASE_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 48.74977)), module, Pluck::RELEASE_INPUT));
 
         addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(3.5, 61.9593)), module, Pluck::EXP_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), PortWidget::INPUT, module, Pluck::EXP_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 71.74977)), module, Pluck::EXP_INPUT));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), PortWidget::INPUT, module, Pluck::GATE_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), PortWidget::INPUT, module, Pluck::IN_INPUT));
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), PortWidget::OUTPUT, module, Pluck::OUT_OUTPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 84.74977)), module, Pluck::GATE_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 97.74977)), module, Pluck::IN_INPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.51398, 108.64454)), module, Pluck::OUT_OUTPUT));
     }
 };
 

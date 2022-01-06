@@ -18,10 +18,6 @@ struct LeftHandRightHandSmallStringDisplayWidget : TransparentWidget {
   std::string *value;
   std::shared_ptr<Font> font;
 
-  LeftHandRightHandSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
-
   void draw(NVGcontext *vg) override
   {
 
@@ -40,9 +36,12 @@ struct LeftHandRightHandSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
@@ -58,7 +57,7 @@ struct LeftHandRightHandRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     LeftHandRightHandRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSvg(Svg::load(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
     }
 };
 
@@ -66,7 +65,7 @@ struct LeftHandRightHandRoundLargeBlackSnapKnob : RoundLargeBlackKnob
 {
     LeftHandRightHandRoundLargeBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSvg(Svg::load(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -77,7 +76,7 @@ struct LeftHandRightHandRoundBlackSnapKnob : RoundBlackKnob
 {
     LeftHandRightHandRoundBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSvg(Svg::load(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -208,7 +207,7 @@ struct LeftHandRightHand : Module {
 
     void process(const ProcessArgs& args) override {
         midi::Message msg;
-        while (midiInput.shift(&msg)) {
+        while (midiInput.tryPop(&msg, args.frame)) {
             processMessage(msg);
         }
 
@@ -248,7 +247,7 @@ struct LeftHandRightHand : Module {
         // DEBUG("MIDI: %01x %01x %02x %02x", msg.getStatus(), msg.getChannel(), msg.getNote(), msg.getValue());
         // DEBUG("NOTE: %03x", msg.getNote());
 
-        if(msg.getNote() < 60){
+        if(msg.getNote() < (int)params[SPLIT_PARAM].getValue()){
             leftHandMessage = true;
             rightHandMessage = false;
         }
@@ -643,7 +642,7 @@ struct LeftHandRightHandWidget : ModuleWidget {
         box.size = Vec(15*8, 380);
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/LeftHandRightHand.svg")));
+        panel->setBackground(Svg::load(asset::plugin(pluginInstance, "res/LeftHandRightHand.svg")));
         addChild(panel);
 
         // Displays
@@ -674,7 +673,7 @@ struct LeftHandRightHandWidget : ModuleWidget {
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(16.214, 118.1449)), module, LeftHandRightHand::RETRIGGER_OUTPUT_2));
         addOutput(createOutput<PJ301MPort>(mm2px(Vec(27.8143, 108.144)), module, LeftHandRightHand::VELOCITY_OUTPUT_2));
 
-        MidiWidget* midiWidget = createWidget<MidiWidget>(mm2px(Vec(3.41891, 14.8373)));
+        MidiDisplay* midiWidget = createWidget<MidiDisplay  >(mm2px(Vec(3.41891, 14.8373)));
         midiWidget->box.size = mm2px(Vec(33.840, 28));
         midiWidget->setMidiPort(module ? &module->midiInput : NULL);
         addChild(midiWidget);
@@ -713,4 +712,3 @@ struct LeftHandRightHandWidget : ModuleWidget {
 
 // Use legacy slug for compatibility
 Model* modelLeftHandRightHand = createModel<LeftHandRightHand, LeftHandRightHandWidget>("LeftHandRightHand");
-

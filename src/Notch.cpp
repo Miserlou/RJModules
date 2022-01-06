@@ -40,14 +40,14 @@ void Notch::step() {
     float dry = inputs[CH1_INPUT].value;
     float wet = 0.0;
 
-    dry += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
+    dry += 1.0e-6 * (2.0*random::uniform() - 1.0)*1000;
 
     notchFilter->setFilterType(5);
 
     notchFilter->setCutoffFreq(params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
     notchFilter->setShelfGain(params[VOL_PARAM].value * clamp(inputs[VOL_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
     notchFilter->setResonance(params[WIDTH_PARAM].value * clamp(inputs[WIDTH_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
-    notchFilter->setSampleRate(engineGetSampleRate());
+    notchFilter->setSampleRate(APP->engine->getSampleRate());
 
     wet = notchFilter->processAudioSample(dry, 1);
     outputs[CH1_OUTPUT].value = wet;
@@ -65,7 +65,7 @@ NotchWidget::NotchWidget(Notch *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Notch.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Notch.svg")));
         addChild(panel);
     }
 
@@ -78,12 +78,12 @@ NotchWidget::NotchWidget(Notch *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Notch::VOL_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Notch::WIDTH_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Notch::FREQ_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Notch::VOL_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Notch::WIDTH_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, Notch::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Notch::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Notch::VOL_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Notch::WIDTH_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 310), module, Notch::CH1_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, Notch::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 310), module, Notch::CH1_OUTPUT));
 }
 
 Model *modelNotch = createModel<Notch, NotchWidget>("Notch");

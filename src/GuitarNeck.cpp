@@ -8,7 +8,7 @@ struct GuitarSnapKnob : RoundSmallBlackKnob
 {
     GuitarSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -19,7 +19,7 @@ struct GuitarSnapKnobLg : RoundLargeBlackKnob
 {
     GuitarSnapKnobLg()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -28,7 +28,7 @@ struct GuitarSnapKnobLg : RoundLargeBlackKnob
 
 struct GuitarLEDButton : SVGSwitch {
         GuitarLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/LilLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LilLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -59,8 +59,8 @@ struct GuitarNeck: Module {
         NUM_LIGHTS
     };
     
-    SchmittTrigger returnTrigger;
-    SchmittTrigger holdTrigger;
+    dsp::SchmittTrigger returnTrigger;
+    dsp::SchmittTrigger holdTrigger;
     bool RETURN = true;
     bool HOLD = false;
 
@@ -110,7 +110,7 @@ struct GuitarNeck: Module {
 
 struct MedLEDButton : SVGSwitch {
         MedLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/MedLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MedLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -166,7 +166,7 @@ void GuitarNeck::step() {
 
         lights[LIGHT + i].value = lightValues[i];
         if(lightValues[i] > 0){
-            lightValues[i] -= lightValues[i] / lightLambda / engineGetSampleRate();
+            lightValues[i] -= lightValues[i] / lightLambda / APP->engine->getSampleRate();
         }
 
     }
@@ -250,7 +250,7 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/GuitarNeck.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/GuitarNeck.svg")));
         addChild(panel);
     }
 
@@ -259,8 +259,8 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
     addParam(createParam<GuitarSnapKnobLg>(Vec(368, 120), module, GuitarNeck::OCT_PARAM));
 
     // CV
-    addInput(createPort<PJ301MPort>(Vec(375, 85), PortWidget::INPUT, module, GuitarNeck::ROOT_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(375, 165), PortWidget::INPUT, module, GuitarNeck::OCT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(375, 85), module, GuitarNeck::ROOT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(375, 165), module, GuitarNeck::OCT_INPUT));
 
 
     // Buttons
@@ -271,8 +271,8 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
     addChild(createLight<MediumLight<GreenLight>>(Vec(378+4.4, 240+4.4), module, GuitarNeck::HOLD_LIGHT));
 
     // Outputs
-    addOutput(createPort<PJ301MPort>(Vec(375, 280), PortWidget::OUTPUT, module, GuitarNeck::NOTE_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(375, 330), PortWidget::OUTPUT, module, GuitarNeck::GATE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(375, 280), module, GuitarNeck::NOTE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(375, 330), module, GuitarNeck::GATE_OUTPUT));
 
     // Pads
     int BASE_X = 37;
@@ -307,12 +307,12 @@ GuitarNeckWidget::GuitarNeckWidget(GuitarNeck *module) {
             pad->box.pos = Vec(x, y);
             pad->btnId = id;
             pad->groupId = groupId;
-            if (pad->paramQuantity)
+            if (pad->getParamQuantity())
             {
-                pad->paramQuantity->minValue = 0;
-                pad->paramQuantity->maxValue = 1;
-                pad->paramQuantity->defaultValue = 0;
-                pad->paramQuantity->setValue(0);
+                pad->getParamQuantity()->minValue = 0;
+                pad->getParamQuantity()->maxValue = 1;
+                pad->getParamQuantity()->defaultValue = 0;
+                pad->getParamQuantity()->setValue(0);
             
             }
             addParam(pad);

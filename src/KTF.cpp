@@ -12,7 +12,7 @@ struct KTFRoundHugeBlackSnapKnob : RoundHugeBlackKnob
 {
     KTFRoundHugeBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -23,7 +23,7 @@ struct KTFRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     KTFRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
     }
 };
 
