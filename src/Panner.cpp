@@ -49,7 +49,7 @@ PannerWidget::PannerWidget(Panner *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Panner.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Panner.svg")));
         addChild(panel);
     }
 
@@ -60,11 +60,11 @@ PannerWidget::PannerWidget(Panner *module) {
 
     addParam(createParam<RoundBlackKnob>(Vec(57, 139), module, Panner::CH1_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 129), PortWidget::INPUT, module, Panner::CH1_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 160), PortWidget::INPUT, module, Panner::CH1_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 129), module, Panner::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 160), module, Panner::CH1_CV_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 125), PortWidget::OUTPUT, module, Panner::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 175), PortWidget::OUTPUT, module, Panner::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 125), module, Panner::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 175), module, Panner::CH2_OUTPUT));
 }
 
 Model *modelPanner = createModel<Panner, PannerWidget>("Panner");

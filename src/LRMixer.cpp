@@ -57,7 +57,7 @@ LRMixerWidget::LRMixerWidget(LRMixer *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/LRMixer.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LRMixer.svg")));
         addChild(panel);
     }
 
@@ -68,22 +68,22 @@ LRMixerWidget::LRMixerWidget(LRMixer *module) {
 
     addParam(createParam<RoundSmallBlackKnob>(Vec(23, 320), module, LRMixer::CH1_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(25, 96), PortWidget::INPUT, module, LRMixer::L1_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(65, 96), PortWidget::INPUT, module, LRMixer::L2_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(105, 96), PortWidget::INPUT, module, LRMixer::L3_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(25, 148), PortWidget::INPUT, module, LRMixer::L4_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(65, 148), PortWidget::INPUT, module, LRMixer::L5_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(105, 148), PortWidget::INPUT, module, LRMixer::L6_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(25, 96), module, LRMixer::L1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(65, 96), module, LRMixer::L2_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(105, 96), module, LRMixer::L3_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(25, 148), module, LRMixer::L4_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(65, 148), module, LRMixer::L5_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(105, 148), module, LRMixer::L6_INPUT));
 
-    addInput(createPort<PJ301MPort>(Vec(25, 220), PortWidget::INPUT, module, LRMixer::R1_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(65, 220), PortWidget::INPUT, module, LRMixer::R2_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(105, 220), PortWidget::INPUT, module, LRMixer::R3_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(25, 270), PortWidget::INPUT, module, LRMixer::R4_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(65, 270), PortWidget::INPUT, module, LRMixer::R5_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(105, 270), PortWidget::INPUT, module, LRMixer::R6_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(25, 220), module, LRMixer::R1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(65, 220), module, LRMixer::R2_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(105, 220), module, LRMixer::R3_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(25, 270), module, LRMixer::R4_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(65, 270), module, LRMixer::R5_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(105, 270), module, LRMixer::R6_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(65, 322), PortWidget::OUTPUT, module, LRMixer::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(104, 322), PortWidget::OUTPUT, module, LRMixer::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(65, 322), module, LRMixer::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(104, 322), module, LRMixer::CH2_OUTPUT));
 
 }
 

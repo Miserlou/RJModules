@@ -1,4 +1,3 @@
-#include "dsp/digital.hpp"
 #include <iostream>
 #include "RJModules.hpp"
 
@@ -48,7 +47,7 @@ MonoWidget::MonoWidget(Mono *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Mono.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Mono.svg")));
         addChild(panel);
     }
 
@@ -57,14 +56,14 @@ MonoWidget::MonoWidget(Mono *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 85), PortWidget::INPUT, module, Mono::CH1_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(104, 85), PortWidget::INPUT, module, Mono::CH2_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 85), module, Mono::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(104, 85), module, Mono::CH2_INPUT));
 
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Mono::MONO_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Mono::MONO_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Mono::MONO_CV_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(22, 255), PortWidget::OUTPUT, module, Mono::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(104, 255), PortWidget::OUTPUT, module, Mono::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(22, 255), module, Mono::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(104, 255), module, Mono::CH2_OUTPUT));
 }
 Model *modelMono = createModel<Mono, MonoWidget>("Mono");

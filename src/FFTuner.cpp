@@ -86,9 +86,9 @@
 //     };
 
 
-//     DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-//     DoubleRingBuffer<float, 16> outBuffer;
-//     SampleRateConverter<1> src;
+//     dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
+//     dsp::DoubleRingBuffer<float, 16> outBuffer;
+//     dsp::SampleRateConverter<1> src;
 
 //     FFTuner() {
 		// config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS);}
@@ -113,7 +113,7 @@
 //         int inFrames = mini(historyBuffer.size(), 16);
 //         int outFrames = outBuffer.capacity();
 //         src.setRatioSmooth(ratio);
-//         src.process((const Frame<1>*)historyBuffer.startData(), &inFrames, (Frame<1>*)outBuffer.endData(), &outFrames);
+//         src.process((const dsp::Frame<1>*)historyBuffer.startData(), &inFrames, (dsp::Frame<1>*)outBuffer.endData(), &outFrames);
 //         historyBuffer.startIncr(inFrames);
 //         outBuffer.endIncr(outFrames);
 //     }
@@ -283,7 +283,7 @@
 //     {
 //         SVGPanel *panel = new SVGPanel();
 //         panel->box.size = box.size;
-//         panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/FFTuner.svg")));
+//         panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/FFTuner.svg")));
 //         addChild(panel);
 //     }
 
@@ -293,8 +293,8 @@
 //     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 //     addParam(createParam<RoundBlackKnob>(Vec(57, 79), module, FFTuner::CH1_PARAM, 0.0, 1.0, 0.5));
-//     addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, FFTuner::CH1_INPUT));
-//     addOutput(createPort<PJ301MPort>(Vec(110, 85), PortWidget::OUTPUT, module, FFTuner::CH1_OUTPUT));
+//     addInput(createInput<PJ301MPort>(Vec(22, 100), module, FFTuner::CH1_INPUT));
+//     addOutput(createOutput<PJ301MPort>(Vec(110, 85), module, FFTuner::CH1_OUTPUT));
 // }
 
 

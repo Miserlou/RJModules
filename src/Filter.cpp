@@ -40,7 +40,7 @@ void Filter::step() {
 
     float dry = inputs[CH1_INPUT].value;
     float wet = 0.0;
-    dry += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
+    dry += 1.0e-6 * (2.0*random::uniform() - 1.0)*1000;
     float mixed = 1.0;
 
     float param = params[FREQ_PARAM].value * clamp(inputs[FREQ_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 10.0f);
@@ -58,8 +58,8 @@ void Filter::step() {
     lpFilter->setResonance(params[RES_PARAM].value * clamp(inputs[RES_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
     hpFilter->setResonance(params[RES_PARAM].value * clamp(inputs[RES_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f));
 
-    lpFilter->setSampleRate(engineGetSampleRate());
-    hpFilter->setSampleRate(engineGetSampleRate());
+    lpFilter->setSampleRate(APP->engine->getSampleRate());
+    hpFilter->setSampleRate(APP->engine->getSampleRate());
 
     if(param < .5){
 
@@ -97,7 +97,7 @@ FilterWidget::FilterWidget(Filter *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Filter.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Filter.svg")));
         addChild(panel);
     }
 
@@ -110,12 +110,12 @@ FilterWidget::FilterWidget(Filter *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Filter::RES_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Filter::MIX_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Filter::FREQ_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Filter::RES_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Filter::MIX_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 310), PortWidget::INPUT, module, Filter::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Filter::FREQ_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Filter::RES_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Filter::MIX_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 310), module, Filter::CH1_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 310), PortWidget::OUTPUT, module, Filter::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 310), module, Filter::CH1_OUTPUT));
 }
 
 Model *modelFilter = createModel<Filter, FilterWidget>("Filter");

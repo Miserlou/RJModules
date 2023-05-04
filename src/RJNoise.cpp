@@ -3,7 +3,6 @@
 #include <random>
 #include <cmath>
 
-#include "dsp/digital.hpp"
 #include "RJModules.hpp"
 #include "VAStateVariableFilter.h"
 
@@ -118,7 +117,7 @@ void Noise::step(){
     mixed = ( (mapped_pink * mix_value) + (white * (1.0 - mix_value)) )/ 2;
 
     // filtration
-    mixed += 1.0e-6 * (2.0*randomUniform() - 1.0)*1000;
+    mixed += 1.0e-6 * (2.0*random::uniform() - 1.0)*1000;
 
     //float cutoffcv =  400;//*params[LPF_PARAM].value * inputs[FREQ_INPUT].value+ 400*inputs[FREQ_INPUT2].value *params[FREQ_CV_PARAM2].value ;
     float lp_cutoff = params[LPF_PARAM].value * clamp(inputs[LPF_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f);;
@@ -133,8 +132,8 @@ void Noise::step(){
     lpFilter->setResonance(.6);
     hpFilter->setResonance(.6);
 
-    lpFilter->setSampleRate(engineGetSampleRate());
-    hpFilter->setSampleRate(engineGetSampleRate());
+    lpFilter->setSampleRate(APP->engine->getSampleRate());
+    hpFilter->setSampleRate(APP->engine->getSampleRate());
 
     mixed = lpFilter->processAudioSample(mixed, 1);
     mixed = hpFilter->processAudioSample(mixed, 1);
@@ -156,7 +155,7 @@ NoiseWidget::NoiseWidget(Noise *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Noise.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Noise.svg")));
         addChild(panel);
     }
 
@@ -169,11 +168,11 @@ NoiseWidget::NoiseWidget(Noise *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Noise::LPF_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Noise::HPF_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Noise::COLOR_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Noise::LPF_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Noise::HPF_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Noise::COLOR_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Noise::LPF_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Noise::HPF_CV_INPUT));
     addParam(createParam<RoundSmallBlackKnob>(Vec(20, 310), module, Noise::VOL_PARAM));
 
-    addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, Noise::NOISE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, Noise::NOISE_OUTPUT));
 }
 Model *modelNoise = createModel<Noise, NoiseWidget>("Noise");

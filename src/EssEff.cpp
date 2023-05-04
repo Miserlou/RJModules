@@ -28,14 +28,7 @@ Display
 */
 
 struct EssEffSmallStringDisplayWidget : TransparentWidget {
-
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  EssEffSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
-
   void draw(NVGcontext *vg) override
   {
     // Background
@@ -46,9 +39,12 @@ struct EssEffSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
@@ -111,7 +107,7 @@ struct EssEff : Module {
     std::string preset_name = "Hello!";
     std::string last_path = "";
 
-    SchmittTrigger gateTrigger;
+    dsp::SchmittTrigger gateTrigger;
     tsf* tee_ess_eff;
 
     EssEff() {
@@ -159,7 +155,7 @@ void EssEff::loadFile(std::string path){
     if(tee_ess_eff == TSF_NULL){
         return;
     }
-    tsf_set_output(tee_ess_eff, TSF_MONO, engineGetSampleRate(), 0.0);
+    tsf_set_output(tee_ess_eff, TSF_MONO, APP->engine->getSampleRate(), 0.0);
 
     this->loaded = true;
     this->loading = false;
@@ -188,7 +184,7 @@ void EssEff::step() {
         }
         if(cur_file != last_file){
             this->loading = true;
-            this->loadFile(getAbsolutePath(assetPlugin(pluginInstance, soundfont_files[cur_file])));
+            this->loadFile(getAbsolutePath(asset::plugin(pluginInstance, soundfont_files[cur_file])));
             last_file = cur_file;
         }
     }
@@ -281,7 +277,7 @@ struct RecButton : SvgSwitch {
     }
 
     void onDragStart(const event::DragStart &e) override {
-        EssEff *module = dynamic_cast<EssEff*>(paramQuantity->module);
+        EssEff *module = dynamic_cast<EssEff*>(getParamQuantity()->module);
         if (module && module->last_path == ""){
             std::string dir = "";
             char *path = osdialog_file(OSDIALOG_OPEN, dir.c_str(), NULL, NULL);
@@ -309,7 +305,7 @@ EssEffWidget::EssEffWidget(EssEff *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/EssEff.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/EssEff.svg")));
         addChild(panel);
     }
 
@@ -336,16 +332,16 @@ EssEffWidget::EssEffWidget(EssEff *module) {
     // Knobs
     addParam(createParam<RoundBlackSnapKnob>(Vec(85, 115), module, EssEff::FILE_PARAM));
     addParam(createParam<RoundBlackSnapKnob>(Vec(85, 215), module, EssEff::PRESET_PARAM));
-    addInput(createPort<PJ301MPort>(Vec(37, 117.5), PortWidget::INPUT, module, EssEff::FILE_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(37, 217.5), PortWidget::INPUT, module, EssEff::PRESET_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(37, 117.5), module, EssEff::FILE_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(37, 217.5), module, EssEff::PRESET_INPUT));
 
     addParam(createParam<RoundBlackKnob>(Vec(85, 262), module, EssEff::BEND_PARAM));
-    addInput(createPort<PJ301MPort>(Vec(37, 264.5), PortWidget::INPUT, module, EssEff::BEND_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(37, 264.5), module, EssEff::BEND_INPUT));
 
     // Inputs and Knobs
-    addInput(createPort<PJ301MPort>(Vec(16, 320), PortWidget::INPUT, module, EssEff::VOCT_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(53, 320), PortWidget::INPUT, module, EssEff::GATE_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, EssEff::MAIN_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(16, 320), module, EssEff::VOCT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(53, 320), module, EssEff::GATE_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(112.5, 320), module, EssEff::MAIN_OUTPUT));
 
     //Button
     addParam(createParam<RecButton>(Vec(114, 40), module, EssEff::REC_BUTTON));

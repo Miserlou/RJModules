@@ -9,7 +9,7 @@
 /* UI */
 struct TriggerSwitchBigSwitchLEDButton : SVGSwitch {
         TriggerSwitchBigSwitchLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/SwitchLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SwitchLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -59,11 +59,11 @@ struct TriggerSwitch : Module {
     };
 
     // Knob One
-    SchmittTrigger resetTrigger;
-    SchmittTrigger resetTrigger2;
-    SchmittTrigger recTriggerCV;
-    SchmittTrigger replayTrigger;
-    SchmittTrigger replayTriggerCV;
+    dsp::SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger2;
+    dsp::SchmittTrigger recTriggerCV;
+    dsp::SchmittTrigger replayTrigger;
+    dsp::SchmittTrigger replayTriggerCV;
     bool on = false;
 
     std::vector<float> replayVector;
@@ -77,7 +77,7 @@ struct TriggerSwitch : Module {
     float last_press2 = 999999;
 
     // Knob Two
-    SchmittTrigger switchOne;
+    dsp::SchmittTrigger switchOne;
 
     std::vector<float> replayVector_2;
     float param_2;
@@ -101,7 +101,7 @@ struct TriggerSwitch : Module {
 
 struct LilLEDButton : SVGSwitch {
         LilLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/LilLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/LilLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -202,7 +202,7 @@ TriggerSwitchWidget::TriggerSwitchWidget(TriggerSwitch *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/TriggerSwitch.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/TriggerSwitch.svg")));
         addChild(panel);
     }
 
@@ -215,20 +215,20 @@ TriggerSwitchWidget::TriggerSwitchWidget(TriggerSwitch *module) {
     //addParam(createParam<RoundHugeBlackKnob>(Vec(47, 61), module, TriggerSwitch::BIG_PARAM));
     addParam(createParam<TriggerSwitchBigSwitchLEDButton>(Vec(47, 61), module, TriggerSwitch::BIG_PARAM));
     addChild(createLight<TriggerSwitchBigOlLight<GreenLight>>(Vec(53, 67), module, TriggerSwitch::RESET_LIGHT));
-    addInput(createPort<PJ301MPort>(Vec(17, 50), PortWidget::INPUT, module, TriggerSwitch::BIG_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(18, 142), PortWidget::INPUT, module, TriggerSwitch::IN_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(64, 142), PortWidget::INPUT, module, TriggerSwitch::IN2_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 142), PortWidget::OUTPUT, module, TriggerSwitch::OUT_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(17, 50), module, TriggerSwitch::BIG_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(18, 142), module, TriggerSwitch::IN_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(64, 142), module, TriggerSwitch::IN2_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 142), module, TriggerSwitch::OUT_OUTPUT));
     addChild(createLight<MediumLight<GreenLight>>(Vec(26, 178), module, TriggerSwitch::IN_LIGHT));
     addChild(createLight<MediumLight<GreenLight>>(Vec(72, 178), module, TriggerSwitch::IN2_LIGHT));
 
     // Knob Two
     addParam(createParam<TriggerSwitchBigSwitchLEDButton>(Vec(47, 61 + offset), module, TriggerSwitch::BIG_PARAM_2));
     addChild(createLight<TriggerSwitchBigOlLight<GreenLight>>(Vec(53, 67 + offset), module, TriggerSwitch::RESET_LIGHT_2));
-    addInput(createPort<PJ301MPort>(Vec(17, 50 + offset), PortWidget::INPUT, module, TriggerSwitch::BIG_CV_INPUT_2));
-    addInput(createPort<PJ301MPort>(Vec(18, 142 + offset), PortWidget::INPUT, module, TriggerSwitch::IN_INPUT_2));
-    addInput(createPort<PJ301MPort>(Vec(64, 142 + offset), PortWidget::INPUT, module, TriggerSwitch::IN2_INPUT_2));
-    addOutput(createPort<PJ301MPort>(Vec(110, 142 + offset), PortWidget::OUTPUT, module, TriggerSwitch::OUT_OUTPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(17, 50 + offset), module, TriggerSwitch::BIG_CV_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(18, 142 + offset), module, TriggerSwitch::IN_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(64, 142 + offset), module, TriggerSwitch::IN2_INPUT_2));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 142 + offset), module, TriggerSwitch::OUT_OUTPUT_2));
     addChild(createLight<MediumLight<GreenLight>>(Vec(26, 178 + offset), module, TriggerSwitch::IN_LIGHT_2));
     addChild(createLight<MediumLight<GreenLight>>(Vec(72, 178 + offset), module, TriggerSwitch::IN2_LIGHT_2));
 

@@ -14,7 +14,7 @@ struct GaussianRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     GaussianRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
     }
 };
 
@@ -22,7 +22,7 @@ struct GaussianRoundSmallBlackKnob : RoundSmallBlackKnob
 {
     GaussianRoundSmallBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
     }
 };
 
@@ -72,8 +72,8 @@ struct Gaussian: Module {
     float genny = 0.0;
     std::random_device rd{};
     std::mt19937 gen{rd()};
-    SchmittTrigger inTrigger;
-    SchmittTrigger btnTrigger;
+    dsp::SchmittTrigger inTrigger;
+    dsp::SchmittTrigger btnTrigger;
     int lightValue = 0.0;
 
     int result = -1;
@@ -158,7 +158,7 @@ struct GaussianWidget: ModuleWidget {
         {
             SVGPanel *panel = new SVGPanel();
             panel->box.size = box.size;
-            panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Gaussian.svg")));
+            panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Gaussian.svg")));
             addChild(panel);
         }
 
@@ -167,20 +167,20 @@ struct GaussianWidget: ModuleWidget {
 
         addParam(createParam<LEDButton>(Vec(8, 76), module, Gaussian::BUTTON_PARAM));
         addChild(createLight<MediumLight<GreenLight>>(Vec(12.4, 80.4), module, Gaussian::BUTTON_LIGHT));
-        addInput(createPort<PJ301MPort>(Vec(32, 75 - 1), PortWidget::INPUT, module, Gaussian::TRIGGER_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(32, 75 - 1), module, Gaussian::TRIGGER_INPUT));
 
         int SPACE = 30;
         int BASE = 106;
         int LEFT = 18;
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 1), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 1));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 2), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 2));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 3), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 3));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 4), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 4));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 5), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 5));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 6), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 6));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 7), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 7));
-        addOutput(createPort<PJ301MPort>(Vec(LEFT, BASE + SPACE * 8), PortWidget::OUTPUT, module, Gaussian::CH_OUTPUT + 8));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE), module, Gaussian::CH_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 1), module, Gaussian::CH_OUTPUT + 1));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 2), module, Gaussian::CH_OUTPUT + 2));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 3), module, Gaussian::CH_OUTPUT + 3));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 4), module, Gaussian::CH_OUTPUT + 4));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 5), module, Gaussian::CH_OUTPUT + 5));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 6), module, Gaussian::CH_OUTPUT + 6));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 7), module, Gaussian::CH_OUTPUT + 7));
+        addOutput(createOutput<PJ301MPort>(Vec(LEFT, BASE + SPACE * 8), module, Gaussian::CH_OUTPUT + 8));
 
         BASE = BASE + 8;
         int RIGHT = 46;
@@ -207,14 +207,14 @@ struct GaussianWidget: ModuleWidget {
 
     }
 
-    json_t *toJson() override {
+    json_t *toJson() {
         json_t *rootJ = ModuleWidget::toJson();
         Gaussian *module = dynamic_cast<Gaussian *>(this->module);
         json_object_set_new(rootJ, "wave", json_real(module->wave_mode_index));
         return rootJ;
     }
 
-    void fromJson(json_t *rootJ) override {
+    void fromJson(json_t *rootJ) {
         ModuleWidget::fromJson(rootJ);
         json_t *waveJ = json_object_get(rootJ, "wave");
         Gaussian *module = dynamic_cast<Gaussian *>(this->module);

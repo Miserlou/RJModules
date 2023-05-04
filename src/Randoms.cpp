@@ -80,7 +80,7 @@ RandomsWidget::RandomsWidget(Randoms *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Randoms.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Randoms.svg")));
         addChild(panel);
     }
 
@@ -90,18 +90,18 @@ RandomsWidget::RandomsWidget(Randoms *module) {
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
 
-    addInput(createPort<PJ301MPort>(Vec(22, 70), PortWidget::INPUT, module, Randoms::CH1_CV_INPUT_1));
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Randoms::CH1_CV_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(22, 70), module, Randoms::CH1_CV_INPUT_1));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Randoms::CH1_CV_INPUT_2));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 150), PortWidget::INPUT, module, Randoms::CH2_CV_INPUT_1));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Randoms::CH2_CV_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(22, 150), module, Randoms::CH2_CV_INPUT_1));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Randoms::CH2_CV_INPUT_2));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 230), PortWidget::INPUT, module, Randoms::CH3_CV_INPUT_1));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Randoms::CH3_CV_INPUT_2));
+    addInput(createInput<PJ301MPort>(Vec(22, 230), module, Randoms::CH3_CV_INPUT_1));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Randoms::CH3_CV_INPUT_2));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 85), PortWidget::OUTPUT, module, Randoms::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 165), PortWidget::OUTPUT, module, Randoms::CH2_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Randoms::CH3_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 85), module, Randoms::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 165), module, Randoms::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 245), module, Randoms::CH3_OUTPUT));
 }
 
 Model *modelRandoms = createModel<Randoms, RandomsWidget>("Randoms");

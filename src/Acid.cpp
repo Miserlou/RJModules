@@ -35,13 +35,13 @@ using namespace std;
 
 struct AcidRoundLargeBlackKnob : RoundLargeBlackKnob {
     AcidRoundLargeBlackKnob() {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/AcidRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/AcidRoundLargeBlackKnob.svg")));
     }
 };
 
 struct AcidRoundLargeHappyKnob : RoundLargeBlackKnob {
     AcidRoundLargeHappyKnob() {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/AcidRoundLargeHappyKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/AcidRoundLargeHappyKnob.svg")));
     }
 };
 
@@ -175,8 +175,8 @@ struct Acid : Module {
     };
 
     // Wave
-    DSPBLOscillator *osc1 = new DSPBLOscillator(engineGetSampleRate());
-    DSPBLOscillator *osc2 = new DSPBLOscillator(engineGetSampleRate());
+    DSPBLOscillator *osc1 = new DSPBLOscillator(APP->engine->getSampleRate());
+    DSPBLOscillator *osc2 = new DSPBLOscillator(APP->engine->getSampleRate());
 
     // Sample
     unsigned int channels;
@@ -198,7 +198,7 @@ struct Acid : Module {
     vector<double> displayBuff; // unused
 
     // Env
-    SchmittTrigger env_trigger;
+    dsp::SchmittTrigger env_trigger;
     float env_out = 0.0f;
     float env_gate = 0.0f;
     float env_in = 0.0f;
@@ -214,7 +214,7 @@ struct Acid : Module {
     float lastCv = 0.f;
     bool decaying = false;
     float env = 0.0f;
-    SchmittTrigger trigger;
+    dsp::SchmittTrigger trigger;
 
     Acid() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
@@ -246,7 +246,7 @@ struct Acid : Module {
         Load up our 303 samples
         */
         if(!fileLoaded){
-            loadSample(assetPlugin(pluginInstance, "samples/303_wavetable_c.wav"));
+            loadSample(asset::plugin(pluginInstance, "samples/303_wavetable_c.wav"));
             return;
         }
 
@@ -355,7 +355,7 @@ struct Acid : Module {
         if (delta > 0) {
             float riseCv = 0.0;
             float rise = minTime * powf(2.0, riseCv * 10.0);
-            env_out += shapeDelta(delta, rise, shape) / engineGetSampleRate();
+            env_out += shapeDelta(delta, rise, shape) / APP->engine->getSampleRate();
             rising = (env_in - env_out > 1e-3);
             if (!rising) {
                 env_gate = false;
@@ -365,7 +365,7 @@ struct Acid : Module {
             float fallCv = params[ENV_REL_PARAM].value * clamp(inputs[ENV_REL_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) + 0.0 / 10.0;
             fallCv = clamp(fallCv, 0.0, 1.0);
             float fall = minTime * powf(2.0, fallCv * 10.0);
-            env_out += shapeDelta(delta, fall, shape) / engineGetSampleRate();
+            env_out += shapeDelta(delta, fall, shape) / APP->engine->getSampleRate();
             falling = (env_in - env_out < -1e-3);
         }
         else {
@@ -388,7 +388,7 @@ struct Acid : Module {
 
         // Stage 1
         //float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value + quadraticBipolar(params[FILTER_FM_2_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT2].value + quadraticBipolar(params[FILTER_FM_PARAM].value) * 0.1f * inputs[CUTOFF_INPUT].value / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f));
-        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value * clamp(inputs[FILTER_CUT_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) + quadraticBipolar(params[FILTER_FM_2_PARAM].value * clamp(inputs[FILTER_FM_2_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)  ) * 0.1f * vca_out + quadraticBipolar(params[FILTER_FM_1_PARAM].value * clamp(inputs[FILTER_FM_1_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) ) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f)) ;
+        float cutoff = pow(2.0f, rescale(clamp(params[FILTER_CUT_PARAM].value * clamp(inputs[FILTER_CUT_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) + rack::dsp::quadraticBipolar(params[FILTER_FM_2_PARAM].value * clamp(inputs[FILTER_FM_2_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)  ) * 0.1f * vca_out + rack::dsp::quadraticBipolar(params[FILTER_FM_1_PARAM].value * clamp(inputs[FILTER_FM_1_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) ) * 0.1f * vca_out / 5.0f, 0.0f , 1.0f), 0.0f, 1.0f, 4.5f, 13.0f)) ;
         //float q = 10.0f * clamp(params[FILTER_Q_PARAM].value + inputs[Q_INPUT].value / 5.0f, 0.1f, 1.0f);
 
         // I don't love this, but okay..
@@ -396,7 +396,7 @@ struct Acid : Module {
 
         // TODO: Find best values for these
         float q = 40.0f * clamp(params[FILTER_Q_PARAM].value * clamp(inputs[FILTER_Q_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f) / 5.0f, 0.1f, 1.0f);
-        filter.setParams(cutoff, q, engineGetSampleRate());
+        filter.setParams(cutoff, q, APP->engine->getSampleRate());
         float in = wave_mixed / 5.0f;
 
         // Stage 2
@@ -453,7 +453,7 @@ struct Acid : Module {
                         env = sustain;
                     }
                     else {
-                        env += powf(base, 1 - decay) / maxTime * (sustain - env) * engineGetSampleTime();
+                        env += powf(base, 1 - decay) / maxTime * (sustain - env) * APP->engine->getSampleTime();
                     }
                 }
                 else {
@@ -463,7 +463,7 @@ struct Acid : Module {
                         env = 1.0f;
                     }
                     else {
-                        env += powf(base, 1 - attack) / maxTime * (1.01f - env) * engineGetSampleTime();
+                        env += powf(base, 1 - attack) / maxTime * (1.01f - env) * APP->engine->getSampleTime();
                     }
                     if (env >= 1.0f) {
                         env = 1.0f;
@@ -477,7 +477,7 @@ struct Acid : Module {
                     env = 0.0f;
                 }
                 else {
-                    env += powf(base, 1 - release) / maxTime * (0.0f - env) * engineGetSampleTime();
+                    env += powf(base, 1 - release) / maxTime * (0.0f - env) * APP->engine->getSampleTime();
                 }
                 decaying = false;
             }
@@ -536,7 +536,7 @@ struct Acid : Module {
             if (reload) {
                 DIR* rep = NULL;
                 struct dirent* dirp = NULL;
-                std::string dir = path.empty() ? assetLocal("") : "";
+                std::string dir = path.empty() ? rack::system::getDirectory(lastPath) : "";
 
                 rep = opendir(dir.c_str());
                 int i = 0;
@@ -573,7 +573,7 @@ struct Acid : Module {
 struct AcidWidget : ModuleWidget {
     AcidWidget(Acid *module) {
 		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Acid.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Acid.svg")));
 
         /* Bullshit */
         addChild(createWidget<ScrewSilver>(Vec(15, 0)));
@@ -604,18 +604,18 @@ struct AcidWidget : ModuleWidget {
         addParam(createParam<AcidRoundLargeBlackSnapKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + TOP_BUFFER)), module, Acid::WAVE_2_PARAM));
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + TOP_BUFFER)), module, Acid::WAVE_MIX_PARAM));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Acid::WAVE_1_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Acid::WAVE_2_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Acid::WAVE_MIX_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), module, Acid::WAVE_1_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), module, Acid::WAVE_2_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + CV_DIST)), module, Acid::WAVE_MIX_INPUT));
 
         // Envelope
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_REL_PARAM));
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_AMT_PARAM));
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::ENV_SHAPE_PARAM));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Acid::ENV_REL_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Acid::ENV_AMT_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Acid::ENV_SHAPE_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Acid::ENV_REL_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Acid::ENV_AMT_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Acid::ENV_SHAPE_INPUT));
 
         /*
             Right Side
@@ -628,11 +628,11 @@ struct AcidWidget : ModuleWidget {
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_FM_2_PARAM));
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Acid::FILTER_DRIVE_PARAM));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Acid::FILTER_CUT_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), PortWidget::INPUT, module, Acid::FILTER_FM_1_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), PortWidget::INPUT, module, Acid::FILTER_Q_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Acid::FILTER_FM_2_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Acid::FILTER_DRIVE_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), module, Acid::FILTER_CUT_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), module, Acid::FILTER_FM_1_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), module, Acid::FILTER_Q_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), module, Acid::FILTER_FM_2_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), module, Acid::FILTER_DRIVE_INPUT));
 
 
         // Pluck
@@ -640,19 +640,19 @@ struct AcidWidget : ModuleWidget {
         addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_EXP_PARAM));
         // addParam(createParam<AcidRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Acid::PLUCK_ATTACK_PARAM));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Acid::PLUCK_REL_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Acid::PLUCK_EXP_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Acid::PLUCK_REL_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Acid::PLUCK_EXP_INPUT));
 
         /*
             Bottom
         */
         float OUTLINE = 117.5f;
-        addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::INPUT, module, Acid::VOCT_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::INPUT, module, Acid::VOCT2_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::INPUT, module, Acid::TRIG_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), module, Acid::VOCT_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), module, Acid::VOCT2_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + CV_SIZE, OUTLINE)), module, Acid::TRIG_INPUT));
 
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::OUTPUT, module, Acid::ENV_OUTPUT));
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::OUTPUT, module, Acid::OUT_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), module, Acid::ENV_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), module, Acid::OUT_OUTPUT));
     }
 };
 

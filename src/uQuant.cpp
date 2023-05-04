@@ -5,8 +5,6 @@ https://github.com/jhoar/AmalgamatedHarmonics
 
 */
 
-#include "dsp/digital.hpp"
-
 #include "RJModules.hpp"
 #include "Core.hpp"
 #include "UI.hpp"
@@ -20,11 +18,6 @@ https://github.com/jhoar/AmalgamatedHarmonics
 struct TinyStringDisplayWidget : TransparentWidget {
 
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  TinyStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -36,9 +29,12 @@ struct TinyStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 15);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
@@ -93,10 +89,10 @@ struct uQuant : AHModule {
     int lastRoot = 0;
     float lastTrans = -10000.0f;
 
-    SchmittTrigger holdTrigger[8];
+    dsp::SchmittTrigger holdTrigger[8];
     float holdPitch[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0};
     float lastPitch[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0};
-    PulseGenerator triggerPulse[8];
+    AHPulseGenerator triggerPulse[8];
 
     std::string keys[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     std::string scales[12] = {"Ch", "Io", "Do", "Ph", "Ly", "Mi", "Ae", "Lo", "5M", "5m", "Hm", "Bl"};
@@ -207,7 +203,7 @@ uQuantWidget::uQuantWidget(uQuant *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/uQuant.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/uQuant.svg")));
         addChild(panel);
     }
 
@@ -219,7 +215,7 @@ uQuantWidget::uQuantWidget(uQuant *module) {
     int leftPad = 3;
     int knobLeftPad = 6;
 
-    addInput(createPort<PJ301MPort>(Vec(leftPad, 41), PortWidget::INPUT, module, uQuant::IN_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(leftPad, 41), module, uQuant::IN_INPUT));
 
     if(module != NULL){
         TinyStringDisplayWidget *displayKey = new TinyStringDisplayWidget();
@@ -229,7 +225,7 @@ uQuantWidget::uQuantWidget(uQuant *module) {
         displayKey->value = &module->keyValue[0];
         addChild(displayKey);
         addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 101), module, uQuant::KEY_PARAM)); // 12 notes
-        addInput(createPort<PJ301MPort>(Vec(leftPad, 125), PortWidget::INPUT, module, uQuant::KEY_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(leftPad, 125), module, uQuant::KEY_INPUT));
 
         TinyStringDisplayWidget *displayScale = new TinyStringDisplayWidget();
         displayScale = new TinyStringDisplayWidget();
@@ -240,20 +236,19 @@ uQuantWidget::uQuantWidget(uQuant *module) {
     }
 
     addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 185), module, uQuant::SCALE_PARAM)); // 12 notes
-    addInput(createPort<PJ301MPort>(Vec(leftPad, 209), PortWidget::INPUT, module, uQuant::SCALE_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(leftPad, 209), module, uQuant::SCALE_INPUT));
 
     // Octave
     addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad, 240), module, uQuant::SHIFT_PARAM));
 
     // Transpose
     addParam(createParam<AHTrimpotSnap>(Vec(knobLeftPad,265), module, uQuant::TRANS_PARAM)); // 12 notes
-    addInput(createPort<PJ301MPort>(Vec(leftPad, 290), PortWidget::INPUT, module, uQuant::TRANS_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(leftPad, 290), module, uQuant::TRANS_INPUT));
 
     // Outputs
-    addOutput(createPort<PJ301MPort>(Vec(leftPad, 320), PortWidget::OUTPUT, module, uQuant::TRIG_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(leftPad, 350), PortWidget::OUTPUT, module, uQuant::OUT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(leftPad, 320), module, uQuant::TRIG_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(leftPad, 350), module, uQuant::OUT_OUTPUT));
 
 }
 
 Model *modeluQuant = createModel<uQuant, uQuantWidget>("uQuant");
-

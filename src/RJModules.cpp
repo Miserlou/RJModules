@@ -7,7 +7,7 @@ Plugin *pluginInstance;
 void init(rack::Plugin *p) {
 	pluginInstance = p;
 
-	stk::Stk::setRawwavePath(assetPlugin(pluginInstance, "rawwaves/"));
+	stk::Stk::setRawwavePath(asset::plugin(pluginInstance, "rawwaves/"));
 
     // Generators
     p->addModel(modelSupersaw);

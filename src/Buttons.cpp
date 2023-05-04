@@ -70,7 +70,7 @@ struct Buttons: Module {
 
 struct MedLEDButton : SVGSwitch {
         MedLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/MedLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/MedLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -133,15 +133,15 @@ void Buttons::step() {
         output9 = 12.0;
     }
 
-    resetLight -= resetLight / lightLambda / engineGetSampleRate();
-    resetLight2 -= resetLight2 / lightLambda / engineGetSampleRate();
-    resetLight3 -= resetLight3 / lightLambda / engineGetSampleRate();
-    resetLight4 -= resetLight4 / lightLambda / engineGetSampleRate();
-    resetLight5 -= resetLight5 / lightLambda / engineGetSampleRate();
-    resetLight6 -= resetLight6 / lightLambda / engineGetSampleRate();
-    resetLight7 -= resetLight7 / lightLambda / engineGetSampleRate();
-    resetLight8 -= resetLight8 / lightLambda / engineGetSampleRate();
-    resetLight9 -= resetLight9 / lightLambda / engineGetSampleRate();
+    resetLight -= resetLight / lightLambda / APP->engine->getSampleRate();
+    resetLight2 -= resetLight2 / lightLambda / APP->engine->getSampleRate();
+    resetLight3 -= resetLight3 / lightLambda / APP->engine->getSampleRate();
+    resetLight4 -= resetLight4 / lightLambda / APP->engine->getSampleRate();
+    resetLight5 -= resetLight5 / lightLambda / APP->engine->getSampleRate();
+    resetLight6 -= resetLight6 / lightLambda / APP->engine->getSampleRate();
+    resetLight7 -= resetLight7 / lightLambda / APP->engine->getSampleRate();
+    resetLight8 -= resetLight8 / lightLambda / APP->engine->getSampleRate();
+    resetLight9 -= resetLight9 / lightLambda / APP->engine->getSampleRate();
 
     outputs[CH1_OUTPUT].value = output;
     outputs[CH2_OUTPUT].value = output2;
@@ -177,7 +177,7 @@ ButtonsWidget::ButtonsWidget(Buttons *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Buttons.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Buttons.svg")));
         addChild(panel);
     }
 
@@ -186,17 +186,17 @@ ButtonsWidget::ButtonsWidget(Buttons *module) {
     addChild(createWidget<ScrewSilver>(Vec(15, 365)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x-30, 365)));
 
-    addOutput(createPort<PJ301MPort>(Vec(24, 223), PortWidget::OUTPUT, module, Buttons::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(65, 223), PortWidget::OUTPUT, module, Buttons::CH2_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(105, 223), PortWidget::OUTPUT, module, Buttons::CH3_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(24, 223), module, Buttons::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(65, 223), module, Buttons::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(105, 223), module, Buttons::CH3_OUTPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(24, 274), PortWidget::OUTPUT, module, Buttons::CH4_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(65, 274), PortWidget::OUTPUT, module, Buttons::CH5_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(106, 274), PortWidget::OUTPUT, module, Buttons::CH6_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(24, 274), module, Buttons::CH4_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(65, 274), module, Buttons::CH5_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(106, 274), module, Buttons::CH6_OUTPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(24, 324), PortWidget::OUTPUT, module, Buttons::CH7_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(65, 324), PortWidget::OUTPUT, module, Buttons::CH8_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(106, 324), PortWidget::OUTPUT, module, Buttons::CH9_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(24, 324), module, Buttons::CH7_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(65, 324), module, Buttons::CH8_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(106, 324), module, Buttons::CH9_OUTPUT));
 
     addParam(createParam<MedLEDButton>(Vec(15, 60), module, Buttons::RESET_PARAM));
     addChild(createLight<MedLight<GreenLight>>(Vec(20, 65), module, Buttons::RESET_LIGHT));

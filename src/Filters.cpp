@@ -82,8 +82,8 @@ void Filters::step() {
         lpFilter->setResonance(.7);
         hpFilter->setResonance(.7);
 
-        lpFilter->setSampleRate(engineGetSampleRate());
-        hpFilter->setSampleRate(engineGetSampleRate());
+        lpFilter->setSampleRate(APP->engine->getSampleRate());
+        hpFilter->setSampleRate(APP->engine->getSampleRate());
 
         float dry = inputs[IN_INPUT + i].value;
         float param = params[MUTE_PARAM + i].value;
@@ -132,7 +132,7 @@ struct FiltersWidget: ModuleWidget {
 
 FiltersWidget::FiltersWidget(Filters *module) {
 		setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Filters.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Filters.svg")));
 
     addChild(createWidget<ScrewSilver>(Vec(15, 0)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
@@ -150,27 +150,27 @@ FiltersWidget::FiltersWidget(Filters *module) {
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 97.165)), module, Filters::MUTE_PARAM + 8));
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(15.57, 107.166)), module, Filters::MUTE_PARAM + 9));
 
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Filters::IN_INPUT + 0));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Filters::IN_INPUT + 1));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 37.809)), PortWidget::INPUT, module, Filters::IN_INPUT + 2));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 47.81)), PortWidget::INPUT, module, Filters::IN_INPUT + 3));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 57.81)), PortWidget::INPUT, module, Filters::IN_INPUT + 4));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 67.809)), PortWidget::INPUT, module, Filters::IN_INPUT + 5));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 77.81)), PortWidget::INPUT, module, Filters::IN_INPUT + 6));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 87.81)), PortWidget::INPUT, module, Filters::IN_INPUT + 7));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 97.809)), PortWidget::INPUT, module, Filters::IN_INPUT + 8));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 107.809)), PortWidget::INPUT, module, Filters::IN_INPUT + 9));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 17.81)), module, Filters::IN_INPUT + 0));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 27.809)), module, Filters::IN_INPUT + 1));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 37.809)), module, Filters::IN_INPUT + 2));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 47.81)), module, Filters::IN_INPUT + 3));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 57.81)), module, Filters::IN_INPUT + 4));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 67.809)), module, Filters::IN_INPUT + 5));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 77.81)), module, Filters::IN_INPUT + 6));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 87.81)), module, Filters::IN_INPUT + 7));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 97.809)), module, Filters::IN_INPUT + 8));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 107.809)), module, Filters::IN_INPUT + 9));
 
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 17.81)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 0));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 27.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 1));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 37.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 2));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 47.81)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 3));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 57.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 4));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 67.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 5));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 77.81)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 6));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 87.81)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 7));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 97.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 8));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Filters::OUT_OUTPUT + 9));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 17.81)), module, Filters::OUT_OUTPUT + 0));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 27.809)), module, Filters::OUT_OUTPUT + 1));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 37.809)), module, Filters::OUT_OUTPUT + 2));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 47.81)), module, Filters::OUT_OUTPUT + 3));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 57.809)), module, Filters::OUT_OUTPUT + 4));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 67.809)), module, Filters::OUT_OUTPUT + 5));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 77.81)), module, Filters::OUT_OUTPUT + 6));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 87.81)), module, Filters::OUT_OUTPUT + 7));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 97.809)), module, Filters::OUT_OUTPUT + 8));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 107.809)), module, Filters::OUT_OUTPUT + 9));
 }
 
 Model *modelFilters = createModel<Filters, FiltersWidget>("Filters");

@@ -45,11 +45,6 @@ Display
 struct InstroSmallStringDisplayWidget : TransparentWidget {
 
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  InstroSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -69,9 +64,12 @@ struct InstroSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
@@ -87,7 +85,7 @@ struct InstroRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     InstroRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
     }
 };
 
@@ -95,7 +93,7 @@ struct InstroRoundBlackSnapKnob : RoundBlackKnob
 {
     InstroRoundBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -737,7 +735,7 @@ struct InstroWidget : ModuleWidget {
 
     SVGPanel *panel = new SVGPanel();
     panel->box.size = box.size;
-    panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Instro.svg")));
+    panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Instro.svg")));
     addChild(panel);
 
     // Displays
@@ -761,15 +759,15 @@ struct InstroWidget : ModuleWidget {
     addParam(createParam<InstroRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, Instro::PARAM_4));
 
     // Inputs and Knobs
-    addInput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::INPUT, module, Instro::PARAM_1_CV));
-    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, Instro::PARAM_2_CV));
-    addInput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::INPUT, module, Instro::PARAM_3_CV));
-    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, Instro::PARAM_4_CV));
+    addInput(createInput<PJ301MPort>(Vec(11, 277), module, Instro::PARAM_1_CV));
+    addInput(createInput<PJ301MPort>(Vec(45, 277), module, Instro::PARAM_2_CV));
+    addInput(createInput<PJ301MPort>(Vec(80, 277), module, Instro::PARAM_3_CV));
+    addInput(createInput<PJ301MPort>(Vec(112.5, 277), module, Instro::PARAM_4_CV));
 
-    addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, Instro::IN_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, Instro::GATE_INPUT));
-    // addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, Instro::LEFT_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, Instro::RIGHT_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(11, 320), module, Instro::IN_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(45, 320), module, Instro::GATE_INPUT));
+    // addOutput(createOutput<PJ301MPort>(Vec(80, 320), module, Instro::LEFT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(112.5, 320), module, Instro::RIGHT_OUTPUT));
     }
 
 };

@@ -20,7 +20,7 @@ struct GGRoundLargeBlackKnob : RoundHugeBlackKnob
 {
     GGRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
     }
 };
 
@@ -117,7 +117,7 @@ struct GravityGlide : Module {
 struct GravityGlideWidget : ModuleWidget {
     GravityGlideWidget(GravityGlide *module) {
         setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/GravityGlide.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/GravityGlide.svg")));
 
         int TWO = 45;
         int BUFF = 6;
@@ -126,9 +126,9 @@ struct GravityGlideWidget : ModuleWidget {
         addParam(createParam<GGRoundLargeBlackKnob>(mm2px(Vec(6, 55 + BUFF)), module, GravityGlide::M_PARAM));
         addParam(createParam<GGRoundLargeBlackKnob>(mm2px(Vec(6, 80 + BUFF)), module, GravityGlide::G_PARAM));
 
-        addInput(createPort<PJ301MPort>(mm2px(Vec(1.51398, 73.3 + TWO)), PortWidget::INPUT, module, GravityGlide::IN_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(1.51398, 73.3 + TWO)), module, GravityGlide::IN_INPUT));
 
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(20, 73.3 + TWO)), PortWidget::OUTPUT, module, GravityGlide::OUT_OUTPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(20, 73.3 + TWO)), module, GravityGlide::OUT_OUTPUT));
 
     }
 };

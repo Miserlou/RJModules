@@ -1,6 +1,5 @@
 // Lots of this is poached from Strum's Mental Chord and  Bogaudio's Retone!
 
-#include "dsp/digital.hpp"
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -12,11 +11,6 @@
 struct StringDisplayWidget : TransparentWidget {
 
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  StringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -28,10 +22,12 @@ struct StringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 24);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
-
+    }
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
 
@@ -265,7 +261,7 @@ ChordWidget::ChordWidget(Chord *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Chord.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Chord.svg")));
         addChild(panel);
     }
 
@@ -277,13 +273,13 @@ ChordWidget::ChordWidget(Chord *module) {
     addParam(createParam<LargeSnapKnob>(Vec(47, 143), module, Chord::CHORD_PARAM));
     addParam(createParam<LargeSnapKnob>(Vec(47, 228), module, Chord::SHAPE_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Chord::CHORD_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Chord::SHAPE_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Chord::CHORD_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Chord::SHAPE_CV_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(16, 319), PortWidget::OUTPUT, module, Chord::ROOT_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(48, 319), PortWidget::OUTPUT, module, Chord::THREE_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(81, 319), PortWidget::OUTPUT, module, Chord::FIVE_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(114, 319), PortWidget::OUTPUT, module, Chord::SEVEN_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(16, 319), module, Chord::ROOT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(48, 319), module, Chord::THREE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(81, 319), module, Chord::FIVE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(114, 319), module, Chord::SEVEN_OUTPUT));
 
     if(module != NULL){
         StringDisplayWidget *display = new StringDisplayWidget();

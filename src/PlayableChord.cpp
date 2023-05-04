@@ -1,6 +1,5 @@
 // Lots of this is poached from Strum's Mental PlayableChord and  Bogaudio's Retone!
 
-#include "dsp/digital.hpp"
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -13,7 +12,7 @@ struct PCRoundLargeBlackSnapKnob : RoundLargeBlackKnob
 {
     PCRoundLargeBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -23,11 +22,6 @@ struct PCRoundLargeBlackSnapKnob : RoundLargeBlackKnob
 struct StringDisplayWidget : TransparentWidget {
 
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  StringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -39,10 +33,12 @@ struct StringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 24);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
-
+    }
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
 
@@ -288,7 +284,7 @@ PlayableChordWidget::PlayableChordWidget(PlayableChord *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/PlayableChord.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/PlayableChord.svg")));
         addChild(panel);
     }
 
@@ -300,15 +296,15 @@ PlayableChordWidget::PlayableChordWidget(PlayableChord *module) {
     addParam(createParam<PCRoundLargeBlackSnapKnob>(Vec(47, 143), module, PlayableChord::OCTAVE_PARAM));
     addParam(createParam<PCRoundLargeBlackSnapKnob>(Vec(47, 228), module, PlayableChord::SHAPE_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 130), PortWidget::INPUT, module, PlayableChord::INPUT_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 130), module, PlayableChord::INPUT_INPUT));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, PlayableChord::OCTAVE_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, PlayableChord::SHAPE_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, PlayableChord::OCTAVE_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, PlayableChord::SHAPE_CV_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(16, 319), PortWidget::OUTPUT, module, PlayableChord::ROOT_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(48, 319), PortWidget::OUTPUT, module, PlayableChord::THREE_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(81, 319), PortWidget::OUTPUT, module, PlayableChord::FIVE_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(114, 319), PortWidget::OUTPUT, module, PlayableChord::SEVEN_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(16, 319), module, PlayableChord::ROOT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(48, 319), module, PlayableChord::THREE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(81, 319), module, PlayableChord::FIVE_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(114, 319), module, PlayableChord::SEVEN_OUTPUT));
 
     if(module != NULL){
         StringDisplayWidget *display = new StringDisplayWidget();

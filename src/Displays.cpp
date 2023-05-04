@@ -40,13 +40,8 @@ struct Displays: Module {
 };
 
 struct NumberDisplayWidgeter : TransparentWidget {
-
   float *value;
-  std::shared_ptr<Font> font;
 
-  NumberDisplayWidgeter() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -58,10 +53,12 @@ struct NumberDisplayWidgeter : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
+    if (font) {
     nvgFontSize(vg, 32);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 2.5);
-
+    }
     std::stringstream to_display;
     to_display = format4display(*value);
 
@@ -100,7 +97,7 @@ DisplaysWidget::DisplaysWidget(Displays *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Displays.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Displays.svg")));
         addChild(panel);
     }
 
@@ -118,8 +115,8 @@ DisplaysWidget::DisplaysWidget(Displays *module) {
         addChild(display);
     }
 
-    addInput(createPort<PJ301MPort>(Vec(35, 123), PortWidget::INPUT, module, Displays::CH1_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(95, 123), PortWidget::OUTPUT, module, Displays::CH1_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(35, 123), module, Displays::CH1_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(95, 123), module, Displays::CH1_OUTPUT));
 
     if(module != NULL){
         NumberDisplayWidgeter *display2 = new NumberDisplayWidgeter();
@@ -129,8 +126,8 @@ DisplaysWidget::DisplaysWidget(Displays *module) {
         addChild(display2);
     }
 
-    addInput(createPort<PJ301MPort>(Vec(35, 223), PortWidget::INPUT, module, Displays::CH2_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(95, 223), PortWidget::OUTPUT, module, Displays::CH2_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(35, 223), module, Displays::CH2_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(95, 223), module, Displays::CH2_OUTPUT));
 
     if(module != NULL){
         NumberDisplayWidgeter *display3 = new NumberDisplayWidgeter();
@@ -140,8 +137,8 @@ DisplaysWidget::DisplaysWidget(Displays *module) {
         addChild(display3);
     }
 
-    addInput(createPort<PJ301MPort>(Vec(35, 323), PortWidget::INPUT, module, Displays::CH3_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(95, 323), PortWidget::OUTPUT, module, Displays::CH3_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(35, 323), module, Displays::CH3_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(95, 323), module, Displays::CH3_OUTPUT));
 
 }
 

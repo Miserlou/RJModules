@@ -98,7 +98,7 @@ struct NotesWidget: ModuleWidget {
 
 NotesWidget::NotesWidget(Notes *module) {
     setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Notes.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Notes.svg")));
 
     // MAGNETS
     // addChild(createWidget<ScrewSilver>(Vec(15, 0)));
@@ -132,19 +132,19 @@ NotesWidget::NotesWidget(Notes *module) {
     addParam(createParam<NotesSnapKnob>(mm2px(Vec(MIDDLE, 97.164)),  module, Notes::SEMI_PARAM + 8));
     addParam(createParam<NotesSnapKnob>(mm2px(Vec(MIDDLE, 107.164)),  module, Notes::SEMI_PARAM + 9));
 
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 17.165)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 0));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 27.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 1));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 37.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 2));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 47.165)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 3));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 57.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 4));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 67.165)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 5));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 77.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 6));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 87.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 7));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 97.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 8));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(RIGHT, 107.164)), PortWidget::OUTPUT, module, Notes::OUT_OUTPUT + 9));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 17.165)), module, Notes::OUT_OUTPUT + 0));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 27.164)), module, Notes::OUT_OUTPUT + 1));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 37.164)), module, Notes::OUT_OUTPUT + 2));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 47.165)), module, Notes::OUT_OUTPUT + 3));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 57.164)), module, Notes::OUT_OUTPUT + 4));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 67.165)), module, Notes::OUT_OUTPUT + 5));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 77.164)), module, Notes::OUT_OUTPUT + 6));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 87.164)), module, Notes::OUT_OUTPUT + 7));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 97.164)), module, Notes::OUT_OUTPUT + 8));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(RIGHT, 107.164)), module, Notes::OUT_OUTPUT + 9));
 
     // Ins/Outs
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 117.809)), PortWidget::OUTPUT, module, Notes::OUT_POLY));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 117.809)), module, Notes::OUT_POLY));
 
 }
 

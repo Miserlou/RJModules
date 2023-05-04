@@ -27,36 +27,36 @@ struct Buffers : Module {
 
     bool state[NUM_CHANNELS];
 
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-    DoubleRingBuffer<float, 16> outBuffer;
-    SampleRateConverter<1> src;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer10;
-    DoubleRingBuffer<float, 16> outBuffer10;
-    SampleRateConverter<1> src10;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer2;
-    DoubleRingBuffer<float, 16> outBuffer2;
-    SampleRateConverter<1> src2;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer3;
-    DoubleRingBuffer<float, 16> outBuffer3;
-    SampleRateConverter<1> src3;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer4;
-    DoubleRingBuffer<float, 16> outBuffer4;
-    SampleRateConverter<1> src4;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer5;
-    DoubleRingBuffer<float, 16> outBuffer5;
-    SampleRateConverter<1> src5;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer6;
-    DoubleRingBuffer<float, 16> outBuffer6;
-    SampleRateConverter<1> src6;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer7;
-    DoubleRingBuffer<float, 16> outBuffer7;
-    SampleRateConverter<1> src7;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer8;
-    DoubleRingBuffer<float, 16> outBuffer8;
-    SampleRateConverter<1> src8;
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer9;
-    DoubleRingBuffer<float, 16> outBuffer9;
-    SampleRateConverter<1> src9;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
+    dsp::DoubleRingBuffer<float, 16> outBuffer;
+    dsp::SampleRateConverter<1> src;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer10;
+    dsp::DoubleRingBuffer<float, 16> outBuffer10;
+    dsp::SampleRateConverter<1> src10;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer2;
+    dsp::DoubleRingBuffer<float, 16> outBuffer2;
+    dsp::SampleRateConverter<1> src2;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer3;
+    dsp::DoubleRingBuffer<float, 16> outBuffer3;
+    dsp::SampleRateConverter<1> src3;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer4;
+    dsp::DoubleRingBuffer<float, 16> outBuffer4;
+    dsp::SampleRateConverter<1> src4;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer5;
+    dsp::DoubleRingBuffer<float, 16> outBuffer5;
+    dsp::SampleRateConverter<1> src5;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer6;
+    dsp::DoubleRingBuffer<float, 16> outBuffer6;
+    dsp::SampleRateConverter<1> src6;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer7;
+    dsp::DoubleRingBuffer<float, 16> outBuffer7;
+    dsp::SampleRateConverter<1> src7;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer8;
+    dsp::DoubleRingBuffer<float, 16> outBuffer8;
+    dsp::SampleRateConverter<1> src8;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer9;
+    dsp::DoubleRingBuffer<float, 16> outBuffer9;
+    dsp::SampleRateConverter<1> src9;
 
 
     Buffers() {
@@ -82,7 +82,7 @@ struct Buffers : Module {
     // }
     // void randomize() override {
     //     for (int i = 0; i < NUM_CHANNELS; i++) {
-    //         state[i] = (randomUniform() < 0.5);
+    //         state[i] = (random::uniform() < 0.5);
     //     }
     // }
 
@@ -118,9 +118,9 @@ void Buffers::step() {
 
     int outFrames = outBuffer.capacity();
     double ratio = 1.0;
-    float inSR = engineGetSampleRate();
+    float inSR = APP->engine->getSampleRate();
     float outSR = ratio * inSR;
-    int inFrames = min(historyBuffer.size(), 16);
+    int inFrames = fmin(historyBuffer.size(), 16);
 
 
     /*
@@ -135,7 +135,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     float delay = .01 * params[MUTE_PARAM].value;
     // Number of delay samples
-    float index = delay * engineGetSampleRate();
+    float index = delay * APP->engine->getSampleRate();
     if (!historyBuffer.full()) {
         historyBuffer.push(in);
     }
@@ -147,12 +147,12 @@ void Buffers::step() {
             ratio = 0.5;
         else if (consume >= 16)
             ratio = 2.0;
-        inSR = engineGetSampleRate();
+        inSR = APP->engine->getSampleRate();
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer.size(), 16);
+        inFrames = fmin(historyBuffer.size(), 16);
         outFrames = outBuffer.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer.startData(), &inFrames, (Frame<1>*)outBuffer.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer.startData(), &inFrames, (dsp::Frame<1>*)outBuffer.endData(), &outFrames);
         historyBuffer.startIncr(inFrames);
         outBuffer.endIncr(outFrames);
     }
@@ -170,7 +170,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 1].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer2.full()) {
         historyBuffer2.push(in);
     }
@@ -183,10 +183,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer2.size(), 16);
+        inFrames = fmin(historyBuffer2.size(), 16);
         outFrames = outBuffer2.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer2.startData(), &inFrames, (Frame<1>*)outBuffer2.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer2.startData(), &inFrames, (dsp::Frame<1>*)outBuffer2.endData(), &outFrames);
         historyBuffer2.startIncr(inFrames);
         outBuffer2.endIncr(outFrames);
     }
@@ -203,7 +203,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 2].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer3.full()) {
         historyBuffer3.push(in);
     }
@@ -216,10 +216,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer3.size(), 16);
+        inFrames = fmin(historyBuffer3.size(), 16);
         outFrames = outBuffer3.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer3.startData(), &inFrames, (Frame<1>*)outBuffer3.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer3.startData(), &inFrames, (dsp::Frame<1>*)outBuffer3.endData(), &outFrames);
         historyBuffer3.startIncr(inFrames);
         outBuffer3.endIncr(outFrames);
     }
@@ -236,7 +236,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 3].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer4.full()) {
         historyBuffer4.push(in);
     }
@@ -249,10 +249,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer4.size(), 16);
+        inFrames = fmin(historyBuffer4.size(), 16);
         outFrames = outBuffer4.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer4.startData(), &inFrames, (Frame<1>*)outBuffer4.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer4.startData(), &inFrames, (dsp::Frame<1>*)outBuffer4.endData(), &outFrames);
         historyBuffer4.startIncr(inFrames);
         outBuffer4.endIncr(outFrames);
     }
@@ -269,7 +269,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 4].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer5.full()) {
         historyBuffer5.push(in);
     }
@@ -282,10 +282,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer5.size(), 16);
+        inFrames = fmin(historyBuffer5.size(), 16);
         outFrames = outBuffer5.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer5.startData(), &inFrames, (Frame<1>*)outBuffer5.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer5.startData(), &inFrames, (dsp::Frame<1>*)outBuffer5.endData(), &outFrames);
         historyBuffer5.startIncr(inFrames);
         outBuffer5.endIncr(outFrames);
     }
@@ -302,7 +302,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 5].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer6.full()) {
         historyBuffer6.push(in);
     }
@@ -315,10 +315,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer6.size(), 16);
+        inFrames = fmin(historyBuffer6.size(), 16);
         outFrames = outBuffer6.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer6.startData(), &inFrames, (Frame<1>*)outBuffer6.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer6.startData(), &inFrames, (dsp::Frame<1>*)outBuffer6.endData(), &outFrames);
         historyBuffer6.startIncr(inFrames);
         outBuffer6.endIncr(outFrames);
     }
@@ -335,7 +335,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 6].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer7.full()) {
         historyBuffer7.push(in);
     }
@@ -348,10 +348,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer7.size(), 16);
+        inFrames = fmin(historyBuffer7.size(), 16);
         outFrames = outBuffer7.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer7.startData(), &inFrames, (Frame<1>*)outBuffer7.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer7.startData(), &inFrames, (dsp::Frame<1>*)outBuffer7.endData(), &outFrames);
         historyBuffer7.startIncr(inFrames);
         outBuffer7.endIncr(outFrames);
     }
@@ -368,7 +368,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 7].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer8.full()) {
         historyBuffer8.push(in);
     }
@@ -381,10 +381,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer8.size(), 16);
+        inFrames = fmin(historyBuffer8.size(), 16);
         outFrames = outBuffer8.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer8.startData(), &inFrames, (Frame<1>*)outBuffer8.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer8.startData(), &inFrames, (dsp::Frame<1>*)outBuffer8.endData(), &outFrames);
         historyBuffer8.startIncr(inFrames);
         outBuffer8.endIncr(outFrames);
     }
@@ -401,7 +401,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 8].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer9.full()) {
         historyBuffer9.push(in);
     }
@@ -414,10 +414,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer9.size(), 16);
+        inFrames = fmin(historyBuffer9.size(), 16);
         outFrames = outBuffer9.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer9.startData(), &inFrames, (Frame<1>*)outBuffer9.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer9.startData(), &inFrames, (dsp::Frame<1>*)outBuffer9.endData(), &outFrames);
         historyBuffer9.startIncr(inFrames);
         outBuffer9.endIncr(outFrames);
     }
@@ -434,7 +434,7 @@ void Buffers::step() {
     // Compute delay time in seconds
     delay = .01 * params[MUTE_PARAM + 9].value;
     // Number of delay samples
-    index = delay * engineGetSampleRate();
+    index = delay * APP->engine->getSampleRate();
     if (!historyBuffer10.full()) {
         historyBuffer10.push(in);
     }
@@ -447,10 +447,10 @@ void Buffers::step() {
         else if (consume >= 16)
             ratio = 2.0;
         outSR = ratio * inSR;
-        inFrames = min(historyBuffer10.size(), 16);
+        inFrames = fmin(historyBuffer10.size(), 16);
         outFrames = outBuffer10.capacity();
         src.setRates(inSR, outSR);
-        src.process((const Frame<1>*)historyBuffer10.startData(), &inFrames, (Frame<1>*)outBuffer10.endData(), &outFrames);
+        src.process((const dsp::Frame<1>*)historyBuffer10.startData(), &inFrames, (dsp::Frame<1>*)outBuffer10.endData(), &outFrames);
         historyBuffer10.startIncr(inFrames);
         outBuffer10.endIncr(outFrames);
     }
@@ -476,7 +476,7 @@ struct BuffersWidget: ModuleWidget {
 
 BuffersWidget::BuffersWidget(Buffers *module) {
 		setModule(module);
-    setPanel(SVG::load(assetPlugin(pluginInstance, "res/Buffers.svg")));
+    setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Buffers.svg")));
 
     addChild(createWidget<ScrewSilver>(Vec(15, 0)));
     addChild(createWidget<ScrewSilver>(Vec(box.size.x - 30, 0)));
@@ -494,27 +494,27 @@ BuffersWidget::BuffersWidget(Buffers *module) {
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 97.165)), module, Buffers::MUTE_PARAM + 8));
     addParam(createParam<RoundSmallBlackKnob>(mm2px(Vec(16.57, 107.166)), module, Buffers::MUTE_PARAM + 9));
 
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 17.81)), PortWidget::INPUT, module, Buffers::IN_INPUT + 0));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 27.809)), PortWidget::INPUT, module, Buffers::IN_INPUT + 1));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 37.809)), PortWidget::INPUT, module, Buffers::IN_INPUT + 2));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 47.81)), PortWidget::INPUT, module, Buffers::IN_INPUT + 3));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 57.81)), PortWidget::INPUT, module, Buffers::IN_INPUT + 4));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 67.809)), PortWidget::INPUT, module, Buffers::IN_INPUT + 5));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 77.81)), PortWidget::INPUT, module, Buffers::IN_INPUT + 6));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 87.81)), PortWidget::INPUT, module, Buffers::IN_INPUT + 7));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 97.809)), PortWidget::INPUT, module, Buffers::IN_INPUT + 8));
-    addInput(createPort<PJ301MPort>(mm2px(Vec(4.214, 107.809)), PortWidget::INPUT, module, Buffers::IN_INPUT + 9));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 17.81)), module, Buffers::IN_INPUT + 0));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 27.809)), module, Buffers::IN_INPUT + 1));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 37.809)), module, Buffers::IN_INPUT + 2));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 47.81)), module, Buffers::IN_INPUT + 3));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 57.81)), module, Buffers::IN_INPUT + 4));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 67.809)), module, Buffers::IN_INPUT + 5));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 77.81)), module, Buffers::IN_INPUT + 6));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 87.81)), module, Buffers::IN_INPUT + 7));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 97.809)), module, Buffers::IN_INPUT + 8));
+    addInput(createInput<PJ301MPort>(mm2px(Vec(4.214, 107.809)), module, Buffers::IN_INPUT + 9));
 
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 17.81)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 0));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 27.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 1));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 37.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 2));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 47.81)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 3));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 57.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 4));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 67.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 5));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 77.81)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 6));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 87.81)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 7));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 97.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 8));
-    addOutput(createPort<PJ301MPort>(mm2px(Vec(28.214, 107.809)), PortWidget::OUTPUT, module, Buffers::OUT_OUTPUT + 9));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 17.81)), module, Buffers::OUT_OUTPUT + 0));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 27.809)), module, Buffers::OUT_OUTPUT + 1));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 37.809)), module, Buffers::OUT_OUTPUT + 2));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 47.81)), module, Buffers::OUT_OUTPUT + 3));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 57.809)), module, Buffers::OUT_OUTPUT + 4));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 67.809)), module, Buffers::OUT_OUTPUT + 5));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 77.81)), module, Buffers::OUT_OUTPUT + 6));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 87.81)), module, Buffers::OUT_OUTPUT + 7));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 97.809)), module, Buffers::OUT_OUTPUT + 8));
+    addOutput(createOutput<PJ301MPort>(mm2px(Vec(28.214, 107.809)), module, Buffers::OUT_OUTPUT + 9));
 }
 
 Model *modelBuffers = createModel<Buffers, BuffersWidget>("Buffers");

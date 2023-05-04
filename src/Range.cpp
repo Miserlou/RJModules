@@ -51,11 +51,6 @@ struct Range: Module {
 struct SmallNumberDisplayWidgeter : TransparentWidget {
 
   float *value;
-  std::shared_ptr<Font> font;
-
-  SmallNumberDisplayWidgeter() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Segment7Standard.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -67,9 +62,12 @@ struct SmallNumberDisplayWidgeter : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Segment7Standard.ttf"));
+    if (font) {
     nvgFontSize(vg, 16);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.5);
+    }
 
     std::stringstream to_display;
     to_display = format4display(*value);
@@ -113,7 +111,7 @@ RangeWidget::RangeWidget(Range *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Range.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Range.svg")));
         addChild(panel);
     }
 
@@ -166,8 +164,8 @@ RangeWidget::RangeWidget(Range *module) {
     }
 
 
-    // addInput(createPort<PJ301MPort>(Vec(35, 123), PortWidget::INPUT, module, Range::CH1_INPUT));
-    // addOutput(createPort<PJ301MPort>(Vec(95, 123), PortWidget::OUTPUT, module, Range::CH1_OUTPUT));
+    // addInput(createInput<PJ301MPort>(Vec(35, 123), module, Range::CH1_INPUT));
+    // addOutput(createOutput<PJ301MPort>(Vec(95, 123), module, Range::CH1_OUTPUT));
 
     // SmallNumberDisplayWidgeter *display2 = new SmallNumberDisplayWidgeter();
     // display2->box.pos = Vec(28, 160);
@@ -175,8 +173,8 @@ RangeWidget::RangeWidget(Range *module) {
     // display2->value = &module->display2_val;
     // addChild(display2);
 
-    // addInput(createPort<PJ301MPort>(Vec(35, 223), PortWidget::INPUT, module, Range::CH2_INPUT));
-    // addOutput(createPort<PJ301MPort>(Vec(95, 223), PortWidget::OUTPUT, module, Range::CH2_OUTPUT));
+    // addInput(createInput<PJ301MPort>(Vec(35, 223), module, Range::CH2_INPUT));
+    // addOutput(createOutput<PJ301MPort>(Vec(95, 223), module, Range::CH2_OUTPUT));
 
     // SmallNumberDisplayWidgeter *display3 = new SmallNumberDisplayWidgeter();
     // display3->box.pos = Vec(28, 260);
@@ -184,8 +182,8 @@ RangeWidget::RangeWidget(Range *module) {
     // display3->value = &module->display3_val;
     // addChild(display3);
 
-    addInput(createPort<PJ301MPort>(Vec(35, 323), PortWidget::INPUT, module, Range::CH1_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(95, 323), PortWidget::OUTPUT, module, Range::CH1_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(35, 323), module, Range::CH1_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(95, 323), module, Range::CH1_OUTPUT));
 
 }
 

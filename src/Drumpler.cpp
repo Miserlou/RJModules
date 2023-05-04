@@ -39,13 +39,13 @@ using namespace std;
 
 struct DrumplerRoundLargeBlackKnob : RoundLargeBlackKnob {
     DrumplerRoundLargeBlackKnob() {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/DrumplerRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/DrumplerRoundLargeBlackKnob.svg")));
     }
 };
 
 struct DrumplerRoundLargeHappyKnob : RoundLargeBlackKnob {
     DrumplerRoundLargeHappyKnob() {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/DrumplerRoundLargeHappyKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/DrumplerRoundLargeHappyKnob.svg")));
     }
 };
 
@@ -71,13 +71,7 @@ Display
 */
 
 struct DrumplerSmallStringDisplayWidget : TransparentWidget {
-
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  DrumplerSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -89,9 +83,12 @@ struct DrumplerSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 16);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.5);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
@@ -230,8 +227,8 @@ struct Drumpler : Module {
     };
 
     // Wave
-    DSPBLOscillator *osc1 = new DSPBLOscillator(engineGetSampleRate());
-    DSPBLOscillator *osc2 = new DSPBLOscillator(engineGetSampleRate());
+    DSPBLOscillator *osc1 = new DSPBLOscillator(APP->engine->getSampleRate());
+    DSPBLOscillator *osc2 = new DSPBLOscillator(APP->engine->getSampleRate());
 
     // Sample
     unsigned int channels;
@@ -256,7 +253,7 @@ struct Drumpler : Module {
     std::string sample0 = "House";
 
     // Env
-    SchmittTrigger env_trigger;
+    dsp::SchmittTrigger env_trigger;
     float env_out = 0.0f;
     float env_gate = 0.0f;
     float env_in = 0.0f;
@@ -330,7 +327,7 @@ struct Drumpler : Module {
             if (reload) {
                 DIR* rep = NULL;
                 struct dirent* dirp = NULL;
-                std::string dir = path.empty() ? assetLocal("") : "";
+                std::string dir = path.empty() ? rack::system::getDirectory(lastPath) : "";
 
                 rep = opendir(dir.c_str());
                 int i = 0;
@@ -367,7 +364,7 @@ struct Drumpler : Module {
 struct DrumplerWidget : ModuleWidget {
     DrumplerWidget(Drumpler *module) {
 		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Drumpler.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Drumpler.svg")));
 
         /* Bullshit */
         addChild(createWidget<ScrewSilver>(Vec(15, 0)));
@@ -401,7 +398,7 @@ struct DrumplerWidget : ModuleWidget {
         */
 
         // Button / CV
-        addInput(createPort<PJ301MPort>(Vec(7, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(7, TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
         addParam(createParam<TrigButton>(Vec(7, TOP_BUFFER + BANK_OFFSET), module, Drumpler::TRIG0_BUTTON));
 
         // Displays
@@ -421,33 +418,33 @@ struct DrumplerWidget : ModuleWidget {
 
         // Row 1
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         // Row 2
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         // Row 3
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET+ ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, TOP_BUFFER + NEG_ROW + ROW_OFFSET + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
 
         /*
@@ -455,7 +452,7 @@ struct DrumplerWidget : ModuleWidget {
         */
 
         // Button / CV
-        addInput(createPort<PJ301MPort>(Vec(7, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(7, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
         addParam(createParam<TrigButton>(Vec(7, SAMPLER_BUFFER + TOP_BUFFER + BANK_OFFSET), module, Drumpler::TRIG0_BUTTON));
 
         // Displays
@@ -475,40 +472,40 @@ struct DrumplerWidget : ModuleWidget {
 
         // Row 1
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         // Row 2
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         // Row 3
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET+ ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         /*
             Row 2
         */
 
         // Button / CV
-        addInput(createPort<PJ301MPort>(Vec(7, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(7, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
         addParam(createParam<TrigButton>(Vec(7, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + BANK_OFFSET), module, Drumpler::TRIG0_BUTTON));
 
         // Displays
@@ -528,38 +525,38 @@ struct DrumplerWidget : ModuleWidget {
 
         // Row 1
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
         // Row 2
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         // Row 3
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET + ROW_OFFSET), module, Drumpler::WAVE_1_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(5 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET+ ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(70 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
         addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW + ROW_OFFSET + ROW_OFFSET), module, Drumpler::WAVE_2_PARAM));
-        addInput(createPort<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        addInput(createInput<PJ301MPort>(Vec(135 + LEFT_BUFFER + DISPLAY_SIZE_X + KNOB_SIZE, SAMPLER_BUFFER + SAMPLER_BUFFER + TOP_BUFFER + NEG_ROW_CV + ROW_OFFSET + ROW_OFFSET), module, Drumpler::TRIG0_INPUT));
 
 
 
         // addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(Vec(GROUP_OFFSET + GROUP_OFFSET, TOP_BUFFER + NEG_ROW), module, Drumpler::WAVE_1_PARAM));
-        // addInput(createPort<PJ301MPort>(Vec(GROUP_OFFSET + GROUP_OFFSET, TOP_BUFFER + NEG_ROW_CV), PortWidget::INPUT, module, Drumpler::TRIG0_INPUT));
+        // addInput(createInput<PJ301MPort>(Vec(GROUP_OFFSET + GROUP_OFFSET, TOP_BUFFER + NEG_ROW_CV), module, Drumpler::TRIG0_INPUT));
 
 
         // Wave
@@ -567,18 +564,18 @@ struct DrumplerWidget : ModuleWidget {
         // addParam(createParam<DrumplerRoundLargeBlackSnapKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + TOP_BUFFER)), module, Drumpler::WAVE_2_PARAM));
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + TOP_BUFFER)), module, Drumpler::WAVE_MIX_PARAM));
 
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Drumpler::WAVE_1_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Drumpler::WAVE_2_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Drumpler::WAVE_MIX_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), module, Drumpler::WAVE_1_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), module, Drumpler::WAVE_2_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + CV_DIST)), module, Drumpler::WAVE_MIX_INPUT));
 
         // // Envelope
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Drumpler::ENV_REL_PARAM));
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Drumpler::ENV_AMT_PARAM));
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Drumpler::ENV_SHAPE_PARAM));
 
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Drumpler::ENV_REL_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Drumpler::ENV_AMT_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Drumpler::ENV_SHAPE_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Drumpler::ENV_REL_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER+ CV_SIZE, 20 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Drumpler::ENV_AMT_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Drumpler::ENV_SHAPE_INPUT));
 
         // /*
         //     Right Side
@@ -591,11 +588,11 @@ struct DrumplerWidget : ModuleWidget {
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Drumpler::FILTER_FM_2_PARAM));
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 50 + TOP_BUFFER)), module, Drumpler::FILTER_DRIVE_PARAM));
 
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Drumpler::FILTER_CUT_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), PortWidget::INPUT, module, Drumpler::FILTER_FM_1_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), PortWidget::INPUT, module, Drumpler::FILTER_Q_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Drumpler::FILTER_FM_2_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), PortWidget::INPUT, module, Drumpler::FILTER_DRIVE_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 20 + TOP_BUFFER + CV_DIST)), module, Drumpler::FILTER_CUT_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), module, Drumpler::FILTER_FM_1_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER - CV_NEG_DIST)), module, Drumpler::FILTER_Q_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), module, Drumpler::FILTER_FM_2_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 50 + TOP_BUFFER + CV_DIST)), module, Drumpler::FILTER_DRIVE_INPUT));
 
 
         // // Pluck
@@ -603,19 +600,19 @@ struct DrumplerWidget : ModuleWidget {
         // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER, 35 + BOTTOM_OFFSET + TOP_BUFFER)), module, Drumpler::PLUCK_EXP_PARAM));
         // // addParam(createParam<DrumplerRoundLargeBlackKnob>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER, 20 + BOTTOM_OFFSET + TOP_BUFFER)), module, Drumpler::PLUCK_ATTACK_PARAM));
 
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Drumpler::PLUCK_REL_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), PortWidget::INPUT, module, Drumpler::PLUCK_EXP_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Drumpler::PLUCK_REL_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, 35 + TOP_BUFFER + BOTTOM_OFFSET + CV_DIST)), module, Drumpler::PLUCK_EXP_INPUT));
 
         /*
             Bottom
         */
         // float OUTLINE = 117.5f;
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::INPUT, module, Drumpler::VOCT_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::INPUT, module, Drumpler::VOCT2_INPUT));
-        // addInput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::INPUT, module, Drumpler::TRIG_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), module, Drumpler::VOCT_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + CV_SIZE, OUTLINE)), module, Drumpler::VOCT2_INPUT));
+        // addInput(createInput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + CV_SIZE, OUTLINE)), module, Drumpler::TRIG_INPUT));
 
-        // addOutput(createPort<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::OUTPUT, module, Drumpler::ENV_OUTPUT));
-        // addOutput(createPort<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), PortWidget::OUTPUT, module, Drumpler::OUT_OUTPUT));
+        // addOutput(createOutput<PJ301MPort>(mm2px(Vec(17.5 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), module, Drumpler::ENV_OUTPUT));
+        // addOutput(createOutput<PJ301MPort>(mm2px(Vec(30 + LEFT_BUFFER + RIGHT_BUFFER + CV_SIZE, OUTLINE)), module, Drumpler::OUT_OUTPUT));
     }
 };
 

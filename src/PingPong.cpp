@@ -17,11 +17,6 @@ Display
 struct PingPongSmallStringDisplayWidget : TransparentWidget {
 
   std::string *value;
-  std::shared_ptr<Font> font;
-
-  PingPongSmallStringDisplayWidget() {
-    font = Font::load(assetPlugin(pluginInstance, "res/Pokemon.ttf"));
-  };
 
   void draw(NVGcontext *vg) override
   {
@@ -41,9 +36,12 @@ struct PingPongSmallStringDisplayWidget : TransparentWidget {
     nvgFill(vg);
 
     // text
+    std::shared_ptr<Font> font = APP->window->loadFont(asset::plugin(pluginInstance, "res/Pokemon.ttf"));
+    if (font) {
     nvgFontSize(vg, 20);
     nvgFontFaceId(vg, font->handle);
     nvgTextLetterSpacing(vg, 0.4);
+    }
 
     std::stringstream to_display;
     to_display << std::setw(3) << *value;
@@ -59,7 +57,7 @@ struct PingPongRoundLargeBlackKnob : RoundLargeBlackKnob
 {
     PingPongRoundLargeBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundHugeBlackKnob.svg")));
     }
 };
 
@@ -67,7 +65,7 @@ struct PingPongRoundBlackSnapKnob : RoundBlackKnob
 {
     PingPongRoundBlackSnapKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundLargeBlackKnob.svg")));
         minAngle = -0.83 * M_PI;
         maxAngle = 0.83 * M_PI;
         snap = true;
@@ -601,7 +599,7 @@ struct PingPongWidget : ModuleWidget {
 
     SVGPanel *panel = new SVGPanel();
     panel->box.size = box.size;
-    panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/PingPong.svg")));
+    panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/PingPong.svg")));
     addChild(panel);
 
     // Magnets
@@ -631,26 +629,26 @@ struct PingPongWidget : ModuleWidget {
     addParam(createParam<PingPongRoundLargeBlackKnob>(Vec(LEFT + RIGHT, BASE + DIST), module, PingPong::MIX_PARAM));
 
     // Inputs and Knobs
-    addOutput(createPort<PJ301MPort>(Vec(11, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND));
-    addInput(createPort<PJ301MPort>(Vec(45, 277), PortWidget::INPUT, module, PingPong::COLOR_RETURN));
-    addOutput(createPort<PJ301MPort>(Vec(80, 277), PortWidget::OUTPUT, module, PingPong::COLOR_SEND_RIGHT));
-    addInput(createPort<PJ301MPort>(Vec(112.5, 277), PortWidget::INPUT, module, PingPong::COLOR_RETURN_RIGHT));
+    addOutput(createOutput<PJ301MPort>(Vec(11, 277), module, PingPong::COLOR_SEND));
+    addInput(createInput<PJ301MPort>(Vec(45, 277), module, PingPong::COLOR_RETURN));
+    addOutput(createOutput<PJ301MPort>(Vec(80, 277), module, PingPong::COLOR_SEND_RIGHT));
+    addInput(createInput<PJ301MPort>(Vec(112.5, 277), module, PingPong::COLOR_RETURN_RIGHT));
 
-    addInput(createPort<PJ301MPort>(Vec(11, 320), PortWidget::INPUT, module, PingPong::IN_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(45, 320), PortWidget::INPUT, module, PingPong::CLOCK_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(80, 320), PortWidget::OUTPUT, module, PingPong::LEFT_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(112.5, 320), PortWidget::OUTPUT, module, PingPong::RIGHT_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(11, 320), module, PingPong::IN_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(45, 320), module, PingPong::CLOCK_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(80, 320), module, PingPong::LEFT_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(112.5, 320), module, PingPong::RIGHT_OUTPUT));
     }
 
     // blah needs getters and setters
-    // json_t *toJson() override {
+    // json_t *toJson() {
     //     json_t *rootJ = ModuleWidget::toJson();
     //     json_object_set_new(rootJ, "feed", json_real(feedback_mode_index));
     //     json_object_set_new(rootJ, "poly", json_real(poly_mode_index));
     //     return rootJ;
     // }
 
-    // void fromJson(json_t *rootJ) override {
+    // void fromJson(json_t *rootJ) {
     //     ModuleWidget::fromJson(rootJ);
     //     json_t *feedJ = json_object_get(rootJ, "feed");
     //     if (feedJ)

@@ -61,7 +61,7 @@ FloatsWidget::FloatsWidget(Floats *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Floats.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Floats.svg")));
         addChild(panel);
     }
 
@@ -74,13 +74,13 @@ FloatsWidget::FloatsWidget(Floats *module) {
     addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Floats::CH2_PARAM));
     addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Floats::CH3_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Floats::CH1_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Floats::CH2_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Floats::CH3_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Floats::CH1_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Floats::CH2_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Floats::CH3_CV_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 85), PortWidget::OUTPUT, module, Floats::CH1_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 165), PortWidget::OUTPUT, module, Floats::CH2_OUTPUT));
-    addOutput(createPort<PJ301MPort>(Vec(110, 245), PortWidget::OUTPUT, module, Floats::CH3_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 85), module, Floats::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 165), module, Floats::CH2_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 245), module, Floats::CH3_OUTPUT));
 }
 
 Model *modelFloats = createModel<Floats, FloatsWidget>("Floats");

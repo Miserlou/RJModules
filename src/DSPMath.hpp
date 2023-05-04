@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <random>
-#include "rack0.hpp"
+#include "rack.hpp"
 // #include "dsp/resampler.hpp"
 #include "DSPEffect.hpp"
 
@@ -146,7 +146,7 @@ struct OverSampler {
     Vector y[CHANNELS] = {};
     float up[CHANNELS][OVERSAMPLE] = {};
     float data[CHANNELS][OVERSAMPLE] = {};
-    Decimator<OVERSAMPLE, OVERSAMPLE> decimator[CHANNELS];
+    rack::dsp::Decimator<OVERSAMPLE, OVERSAMPLE> decimator[CHANNELS];
     int factor = OVERSAMPLE;
 
 

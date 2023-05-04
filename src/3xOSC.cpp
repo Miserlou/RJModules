@@ -9,7 +9,7 @@
 //     bool offset = false;
 //     bool invert = false;
 
-//     SchmittTrigger resetTrigger;
+//     dsp::SchmittTrigger resetTrigger;
 //     Osc() {}
 
 //     void setPitch(float pitch) {
@@ -149,7 +149,7 @@
 
 //     bool decaying1 = false;
 //     float env1 = 0.0f;
-//     SchmittTrigger trigger1;
+//     dsp::SchmittTrigger trigger1;
 
 //     ThreeXOSC() {
 // 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);}
@@ -165,7 +165,7 @@
 
 //     float osc1_pitch = inputs[VOCT_1].value;
 //     osc1.setFreq(cvToFrequency(osc1_pitch));
-//     osc1.step(1.0 / engineGetSampleRate());
+//     osc1.step(1.0 / APP->engine->getSampleRate());
 
 //     // Gate
 //     if (last_1 == inputs[VOCT_1].value){
@@ -185,7 +185,7 @@
 //                 env1 = sustain1;
 //             }
 //             else {
-//                 env1 += powf(base, 1 - decay1) / maxTime * (sustain1 - env1) * engineGetSampleTime();
+//                 env1 += powf(base, 1 - decay1) / maxTime * (sustain1 - env1) * APP->engine->getSampleTime();
 //             }
 //         }
 //         else {
@@ -195,7 +195,7 @@
 //                 env1 = 1.0f;
 //             }
 //             else {
-//                 env1 += powf(base, 1 - attack1) / maxTime * (1.01f - env1) * engineGetSampleTime();
+//                 env1 += powf(base, 1 - attack1) / maxTime * (1.01f - env1) * APP->engine->getSampleTime();
 //             }
 //             if (env1 >= 1.0f) {
 //                 env1 = 1.0f;
@@ -209,7 +209,7 @@
 //             env1 = 0.0f;
 //         }
 //         else {
-//             env1 += powf(base, 1 - release1) / maxTime * (0.0f - env1) * engineGetSampleTime();
+//             env1 += powf(base, 1 - release1) / maxTime * (0.0f - env1) * APP->engine->getSampleTime();
 //         }
 //         decaying1 = false;
 //     }
@@ -236,19 +236,19 @@
 //     // oscillator.setPitch(root_pitch);
 //     // oscillator.offset = (params[OFFSET_PARAM].value > 0.0);
 //     // oscillator.invert = (params[INVERT_PARAM].value <= 0.0);
-//     // oscillator.step(1.0 / engineGetSampleRate());
+//     // oscillator.step(1.0 / APP->engine->getSampleRate());
 //     // oscillator.setReset(inputs[RESET_INPUT].value);
 
 //     // oscillator2.setPitch(root_pitch + (params[DETUNE_PARAM].value * DETUNE_STEP * clamp(inputs[DETUNE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)));
 //     // oscillator2.offset = (params[OFFSET_PARAM].value > 0.0);
 //     // oscillator2.invert = (params[INVERT_PARAM].value <= 0.0);
-//     // oscillator2.step(1.0 / engineGetSampleRate());
+//     // oscillator2.step(1.0 / APP->engine->getSampleRate());
 //     // oscillator2.setReset(inputs[RESET_INPUT].value);
 
 //     // oscillator3.setPitch(root_pitch - (params[DETUNE_PARAM].value * DETUNE_STEP * clamp(inputs[DETUNE_CV_INPUT].normalize(10.0f) / 10.0f, 0.0f, 1.0f)));
 //     // oscillator3.offset = (params[OFFSET_PARAM].value > 0.0);
 //     // oscillator3.invert = (params[INVERT_PARAM].value <= 0.0);
-//     // oscillator3.step(1.0 / engineGetSampleRate());
+//     // oscillator3.step(1.0 / APP->engine->getSampleRate());
 //     // oscillator3.setReset(inputs[RESET_INPUT].value);
 
 //     // float osc3_saw = oscillator3.saw();
@@ -276,7 +276,7 @@
 //     {
 //         SVGPanel *panel = new SVGPanel();
 //         panel->box.size = box.size;
-//         panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/ThreeXOSC.svg")));
+//         panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/ThreeXOSC.svg")));
 //         addChild(panel);
 //     }
 
@@ -290,12 +290,12 @@
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(75, row_base), module, ThreeXOSC::ATTACK_PARAM_1, 0.0, 1.0, 0.1));
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(125, row_base), module, ThreeXOSC::DECAY_PARAM_1, 0.0, 1.0, 1.0));
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(175, row_base), module, ThreeXOSC::MIX_PARAM_1, 0.0, 1.0, 1.0));
-//     addInput(createPort<PJ301MPort>(Vec(30, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::SHAPE_CV1_1));
-//     addInput(createPort<PJ301MPort>(Vec(80, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::ATTACK_CV1_1));
-//     addInput(createPort<PJ301MPort>(Vec(130, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::DECAY_CV1_1));
-//     addInput(createPort<PJ301MPort>(Vec(180, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::MIX_CV1_1));
-//     addInput(createPort<PJ301MPort>(Vec(30, row_base + 75), PortWidget::INPUT, module, ThreeXOSC::VOCT_1));
-//     addOutput(createPort<PJ301MPort>(Vec(180, row_base + 75), PortWidget::OUTPUT, module, ThreeXOSC::OUTPUT_1));
+//     addInput(createInput<PJ301MPort>(Vec(30, row_base + 45), module, ThreeXOSC::SHAPE_CV1_1));
+//     addInput(createInput<PJ301MPort>(Vec(80, row_base + 45), module, ThreeXOSC::ATTACK_CV1_1));
+//     addInput(createInput<PJ301MPort>(Vec(130, row_base + 45), module, ThreeXOSC::DECAY_CV1_1));
+//     addInput(createInput<PJ301MPort>(Vec(180, row_base + 45), module, ThreeXOSC::MIX_CV1_1));
+//     addInput(createInput<PJ301MPort>(Vec(30, row_base + 75), module, ThreeXOSC::VOCT_1));
+//     addOutput(createOutput<PJ301MPort>(Vec(180, row_base + 75), module, ThreeXOSC::OUTPUT_1));
 //     addChild(createLight<SmallLight<GreenRedLight>>(Vec(210, row_base + 80), module, ThreeXOSC::PHASE_POS_LIGHT_1));
 
 //     row_base = 140;
@@ -303,12 +303,12 @@
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(75, row_base), module, ThreeXOSC::ATTACK_PARAM_2, 0.0, 1.0, 0.1));
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(125, row_base), module, ThreeXOSC::DECAY_PARAM_2, 0.0, 1.0, 1.0));
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(175, row_base), module, ThreeXOSC::MIX_PARAM_2, 0.0, 1.0, 1.0));
-//     addInput(createPort<PJ301MPort>(Vec(30, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::SHAPE_CV1_2));
-//     addInput(createPort<PJ301MPort>(Vec(80, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::ATTACK_CV1_2));
-//     addInput(createPort<PJ301MPort>(Vec(130, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::DECAY_CV1_2));
-//     addInput(createPort<PJ301MPort>(Vec(180, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::MIX_CV1_2));
-//     addInput(createPort<PJ301MPort>(Vec(30, row_base + 75), PortWidget::INPUT, module, ThreeXOSC::VOCT_2));
-//     addOutput(createPort<PJ301MPort>(Vec(180, row_base + 75), PortWidget::OUTPUT, module, ThreeXOSC::OUTPUT_2));
+//     addInput(createInput<PJ301MPort>(Vec(30, row_base + 45), module, ThreeXOSC::SHAPE_CV1_2));
+//     addInput(createInput<PJ301MPort>(Vec(80, row_base + 45), module, ThreeXOSC::ATTACK_CV1_2));
+//     addInput(createInput<PJ301MPort>(Vec(130, row_base + 45), module, ThreeXOSC::DECAY_CV1_2));
+//     addInput(createInput<PJ301MPort>(Vec(180, row_base + 45), module, ThreeXOSC::MIX_CV1_2));
+//     addInput(createInput<PJ301MPort>(Vec(30, row_base + 75), module, ThreeXOSC::VOCT_2));
+//     addOutput(createOutput<PJ301MPort>(Vec(180, row_base + 75), module, ThreeXOSC::OUTPUT_2));
 //     addChild(createLight<SmallLight<GreenRedLight>>(Vec(210, row_base + 80), module, ThreeXOSC::PHASE_POS_LIGHT_2));
 
 //     row_base = 250;
@@ -316,20 +316,20 @@
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(75, row_base), module, ThreeXOSC::ATTACK_PARAM_3, 0.0, 1.0, 0.1));
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(125, row_base), module, ThreeXOSC::DECAY_PARAM_3, 0.0, 1.0, 1.0));
 //     addParam(createParam<RoundLargeBlackKnob>(Vec(175, row_base), module, ThreeXOSC::MIX_PARAM_3, 0.0, 1.0, 1.0));
-//     addInput(createPort<PJ301MPort>(Vec(30, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::SHAPE_CV1_3));
-//     addInput(createPort<PJ301MPort>(Vec(80, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::ATTACK_CV1_3));
-//     addInput(createPort<PJ301MPort>(Vec(130, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::DECAY_CV1_3));
-//     addInput(createPort<PJ301MPort>(Vec(180, row_base + 45), PortWidget::INPUT, module, ThreeXOSC::MIX_CV1_3));
-//     addInput(createPort<PJ301MPort>(Vec(30, row_base + 75), PortWidget::INPUT, module, ThreeXOSC::VOCT_3));
-//     addOutput(createPort<PJ301MPort>(Vec(180, row_base + 75), PortWidget::OUTPUT, module, ThreeXOSC::OUTPUT_3));
+//     addInput(createInput<PJ301MPort>(Vec(30, row_base + 45), module, ThreeXOSC::SHAPE_CV1_3));
+//     addInput(createInput<PJ301MPort>(Vec(80, row_base + 45), module, ThreeXOSC::ATTACK_CV1_3));
+//     addInput(createInput<PJ301MPort>(Vec(130, row_base + 45), module, ThreeXOSC::DECAY_CV1_3));
+//     addInput(createInput<PJ301MPort>(Vec(180, row_base + 45), module, ThreeXOSC::MIX_CV1_3));
+//     addInput(createInput<PJ301MPort>(Vec(30, row_base + 75), module, ThreeXOSC::VOCT_3));
+//     addOutput(createOutput<PJ301MPort>(Vec(180, row_base + 75), module, ThreeXOSC::OUTPUT_3));
 //     // addChild(createLight<SmallLight<GreenRedLight>>(Vec(210, row_base + 80), module, ThreeXOSC::PHASE_POS_LIGHT_3));
 
-//     // addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, ThreeXOSC::FREQ_CV_INPUT));
-//     // addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, ThreeXOSC::DETUNE_CV_INPUT));
-//     // addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, ThreeXOSC::MIX_CV_INPUT));
-//     // addInput(createPort<PJ301MPort>(Vec(38, 310), PortWidget::INPUT, module, ThreeXOSC::RESET_INPUT));
+//     // addInput(createInput<PJ301MPort>(Vec(22, 100), module, ThreeXOSC::FREQ_CV_INPUT));
+//     // addInput(createInput<PJ301MPort>(Vec(22, 190), module, ThreeXOSC::DETUNE_CV_INPUT));
+//     // addInput(createInput<PJ301MPort>(Vec(22, 270), module, ThreeXOSC::MIX_CV_INPUT));
+//     // addInput(createInput<PJ301MPort>(Vec(38, 310), module, ThreeXOSC::RESET_INPUT));
 
-//     // addOutput(createPort<PJ301MPort>(Vec(100, 310), PortWidget::OUTPUT, module, ThreeXOSC::SAW_OUTPUT));
+//     // addOutput(createOutput<PJ301MPort>(Vec(100, 310), module, ThreeXOSC::SAW_OUTPUT));
 
 
 // }

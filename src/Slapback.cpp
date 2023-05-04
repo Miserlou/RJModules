@@ -18,7 +18,7 @@ struct SlapbackRoundSmallBlackKnob : RoundSmallBlackKnob
 {
     SlapbackRoundSmallBlackKnob()
     {
-        setSVG(SVG::load(assetPlugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
+        setSVG(APP->window->loadSvg(asset::plugin(pluginInstance, "res/KTFRoundSmallBlackKnob.svg")));
     }
 };
 
@@ -219,19 +219,19 @@ struct Slapback : Module {
 struct SlapbackWidget : ModuleWidget {
     SlapbackWidget(Slapback *module) {
 		setModule(module);
-        setPanel(SVG::load(assetPlugin(pluginInstance, "res/Slapback.svg")));
+        setPanel(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Slapback.svg")));
 
         int ONE = -4;
         addParam(createParam<SlapbackRoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593 + ONE)), module, Slapback::TIME_PARAM));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + ONE)), PortWidget::INPUT, module, Slapback::TIME_INPUT));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 62.3 + ONE)), PortWidget::INPUT, module, Slapback::IN_INPUT));
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + ONE)), PortWidget::OUTPUT, module, Slapback::OUT_OUTPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + ONE)), module, Slapback::TIME_INPUT));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 62.3 + ONE)), module, Slapback::IN_INPUT));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + ONE)), module, Slapback::OUT_OUTPUT));
 
         int TWO = 45;
         addParam(createParam<SlapbackRoundSmallBlackKnob>(mm2px(Vec(3.5, 38.9593 + TWO)), module, Slapback::TIME_PARAM_2));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + TWO)), PortWidget::INPUT, module, Slapback::TIME_INPUT_2));
-        addInput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 62.3 + TWO)), PortWidget::INPUT, module, Slapback::IN_INPUT_2));
-        addOutput(createPort<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + TWO)), PortWidget::OUTPUT, module, Slapback::OUT_OUTPUT_2));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 48.74977 + TWO)), module, Slapback::TIME_INPUT_2));
+        addInput(createInput<PJ301MPort>(mm2px(Vec(3.51398, 62.3 + TWO)), module, Slapback::IN_INPUT_2));
+        addOutput(createOutput<PJ301MPort>(mm2px(Vec(3.51398, 73.3 + TWO)), module, Slapback::OUT_OUTPUT_2));
 
 
     }

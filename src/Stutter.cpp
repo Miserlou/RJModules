@@ -32,14 +32,14 @@ struct Stutter : Module {
         NUM_LIGHTS
     };
 
-    DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
-    DoubleRingBuffer<float, 16> outBuffer;
-    SampleRateConverter<1> src;
+    dsp::DoubleRingBuffer<float, HISTORY_SIZE> historyBuffer;
+    dsp::DoubleRingBuffer<float, 16> outBuffer;
+    dsp::SampleRateConverter<1> src;
 
     bool on = false;
     float last_press = 999999;
 
-    SchmittTrigger resetTrigger;
+    dsp::SchmittTrigger resetTrigger;
 
     float bufferedSamples[36000] = {0.0};
     int tapeHead = 0;
@@ -57,7 +57,7 @@ configParam(Stutter::MIX_PARAM, 0.0, 1.0, 1.0, "");
 
 struct BigSwitchLEDButton : SVGSwitch {
         BigSwitchLEDButton() {
-                addFrame(SVG::load(assetPlugin(pluginInstance, "res/SwitchLEDButton.svg")));
+                addFrame(APP->window->loadSvg(asset::plugin(pluginInstance, "res/SwitchLEDButton.svg")));
                 momentary = true;
         }
 };
@@ -137,7 +137,7 @@ StutterWidget::StutterWidget(Stutter *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Stutter.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Stutter.svg")));
         addChild(panel);
     }
 
@@ -153,11 +153,11 @@ StutterWidget::StutterWidget(Stutter *module) {
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 143), module, Stutter::TIME_PARAM));
     addParam(createParam<RoundHugeBlackKnob>(Vec(47, 228), module, Stutter::MIX_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Stutter::ONOFF_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 190), PortWidget::INPUT, module, Stutter::TIME_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 270), PortWidget::INPUT, module, Stutter::MIX_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Stutter::ONOFF_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 190), module, Stutter::TIME_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 270), module, Stutter::MIX_CV_INPUT));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 315), PortWidget::INPUT, module, Stutter::CH1_INPUT));
-    addOutput(createPort<PJ301MPort>(Vec(100, 315), PortWidget::OUTPUT, module, Stutter::CH1_OUTPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 315), module, Stutter::CH1_INPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(100, 315), module, Stutter::CH1_OUTPUT));
 }
 Model *modelStutter = createModel<Stutter, StutterWidget>("Stutter");

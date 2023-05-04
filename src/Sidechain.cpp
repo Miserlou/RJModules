@@ -74,7 +74,7 @@ SidechainWidget::SidechainWidget(Sidechain *module) {
     {
         SVGPanel *panel = new SVGPanel();
         panel->box.size = box.size;
-        panel->setBackground(SVG::load(assetPlugin(pluginInstance, "res/Sidechain.svg")));
+        panel->setBackground(APP->window->loadSvg(asset::plugin(pluginInstance, "res/Sidechain.svg")));
         addChild(panel);
     }
 
@@ -86,12 +86,12 @@ SidechainWidget::SidechainWidget(Sidechain *module) {
     addParam(createParam<RoundBlackKnob>(Vec(57, 159), module, Sidechain::RATIO_PARAM));
     addParam(createParam<RoundBlackKnob>(Vec(57, 239), module, Sidechain::DECAY_PARAM));
 
-    addInput(createPort<PJ301MPort>(Vec(22, 100), PortWidget::INPUT, module, Sidechain::CH1_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 180), PortWidget::INPUT, module, Sidechain::RATIO_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(22, 260), PortWidget::INPUT, module, Sidechain::DECAY_CV_INPUT));
-    addInput(createPort<PJ301MPort>(Vec(110, 100), PortWidget::INPUT, module, Sidechain::TRIGGER_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 100), module, Sidechain::CH1_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 180), module, Sidechain::RATIO_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(22, 260), module, Sidechain::DECAY_CV_INPUT));
+    addInput(createInput<PJ301MPort>(Vec(110, 100), module, Sidechain::TRIGGER_INPUT));
 
-    addOutput(createPort<PJ301MPort>(Vec(110, 305), PortWidget::OUTPUT, module, Sidechain::CH1_OUTPUT));
+    addOutput(createOutput<PJ301MPort>(Vec(110, 305), module, Sidechain::CH1_OUTPUT));
 }
 
 Model *modelSidechain = createModel<Sidechain, SidechainWidget>("Sidechain");
